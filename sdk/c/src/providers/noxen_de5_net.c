@@ -1250,7 +1250,7 @@ tm_email_t *tm_provider_noxen_de5_net_get_emails(const char *email,
         cJSON_AddStringToObject(raw, "text", preview);
     }
     {
-      const cJSON *ir = cJSON_GetObjectItemCaseSensitive(m, "is_read");
+      cJSON *ir = cJSON_GetObjectItemCaseSensitive(m, "is_read");
       if (ir)
         cJSON_AddItemReferenceToObject(raw, "is_read", ir);
     }

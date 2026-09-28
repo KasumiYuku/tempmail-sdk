@@ -35,6 +35,21 @@
 #include <strings.h>
 #endif
 
+/*
+ * 大小写不敏感 strstr（跨平台稳定实现，不依赖 GNU strcasestr——
+ * Windows MSVC 无此符号，CI Release 链接即 LNK2019 失败）。
+ */
+static const char *gg_istrstr(const char *hay, const char *needle) {
+  if (!*needle)
+    return hay;
+  size_t nl = strlen(needle);
+  for (const char *p = hay; *p; p++) {
+    if (strncasecmp(p, needle, nl) == 0)
+      return p;
+  }
+  return NULL;
+}
+
 #define GG_BASE "https://temp-mail.gg"
 #define GG_UA                                                                 \
   "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) " \
@@ -228,8 +243,8 @@ static char *gg_html_to_text(const char *src) {
   for (size_t i = 0; i < n;) {
     if (gg_is_open_at(src + i, "script") || gg_is_open_at(src + i, "style")) {
       const char *close = NULL;
-      const char *e1 = strcasestr(src + i + 1, "</script>");
-      const char *e2 = strcasestr(src + i + 1, "</style>");
+      const char *e1 = gg_istrstr(src + i + 1, "</script>");
+      const char *e2 = gg_istrstr(src + i + 1, "</style>");
       if (e1 && e2)
         close = (e1 < e2) ? e1 : e2;
       else

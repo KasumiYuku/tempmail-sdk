@@ -247,6 +247,10 @@ target_include_directories(tempmail_sdk PUBLIC
 
 target_compile_definitions(tempmail_sdk PRIVATE "TEMPMAIL_SDK_VERSION=\"${PROJECT_VERSION}\"")
 
+if (MSVC)
+  target_compile_definitions(tempmail_sdk PRIVATE _CRT_SECURE_NO_WARNINGS)
+endif ()
+
 find_package(Threads REQUIRED)
 target_link_libraries(tempmail_sdk PUBLIC CURL::libcurl PRIVATE Threads::Threads OpenSSL::Crypto)
 

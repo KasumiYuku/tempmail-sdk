@@ -390,7 +390,7 @@ tm_email_t *tm_provider_nukemail_get_emails(const char *email,
         cJSON_AddStringToObject(raw, "date", received);
     }
     {
-      const cJSON *rd = cJSON_GetObjectItemCaseSensitive(m, "read");
+      cJSON *rd = cJSON_GetObjectItemCaseSensitive(m, "read");
       if (rd)
         cJSON_AddItemReferenceToObject(raw, "read", rd);
     }
