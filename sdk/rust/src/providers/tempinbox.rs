@@ -42,7 +42,7 @@ fn pick_domain(preferred: Option<&str>) -> Result<String, String> {
             if let Some(hit) = DOMAINS.iter().find(|d| d.to_lowercase() == pl) {
                 return Ok(hit.to_string());
             }
-            return Err(format!("tempinbox: 域名不可用: {}", pl));
+            return Err(format!("tempinbox: 域名不可用: {pl}"));
         }
     }
     let mut rng = rand::thread_rng();
@@ -56,7 +56,7 @@ pub fn generate_email(domain: Option<&str>) -> Result<EmailInfo, String> {
             // 用户指定了域名，生成随机用户名后拼接
             let dom = pick_domain(Some(d))?;
             let user = generate_random_user();
-            let target = format!("{}@{}", user, dom);
+            let target = format!("{user}@{dom}");
             let url = format!("{}/email/{}", BASE, urlencoding::encode(&target));
             let resp = ti_headers(http_client().get(url))
                 .send()
@@ -70,7 +70,7 @@ pub fn generate_email(domain: Option<&str>) -> Result<EmailInfo, String> {
             body.trim().trim_matches('"').to_string()
         } else {
             // 随机邮箱
-            let url = format!("{}/email/Random", BASE);
+            let url = format!("{BASE}/email/Random");
             let resp = ti_headers(http_client().get(url))
                 .send()
                 .await
@@ -103,7 +103,7 @@ pub fn get_emails(email: &str) -> Result<Vec<Email>, String> {
         return Err("tempinbox: 邮箱地址为空".into());
     }
     let enc = urlencoding::encode(em);
-    let url = format!("{}/messages/{}", BASE, enc);
+    let url = format!("{BASE}/messages/{enc}");
     block_on(async {
         let resp = ti_headers(http_client().get(url))
             .send()

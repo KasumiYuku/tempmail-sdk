@@ -30,7 +30,7 @@ fn fnv_hash(s: &str) -> String {
             ),
         );
     }
-    format!("{:x}", hash)
+    format!("{hash:x}")
 }
 
 /// 从 data-k 值中提取 secret: reverse + base64 decode
@@ -38,8 +38,8 @@ fn extract_secret(data_k: &str) -> Result<String, String> {
     let reversed: String = data_k.chars().rev().collect();
     let decoded = base64::engine::general_purpose::STANDARD
         .decode(&reversed)
-        .map_err(|e| format!("dropmail-me: base64 解码 secret 失败: {}", e))?;
-    String::from_utf8(decoded).map_err(|e| format!("dropmail-me: secret 非 UTF-8: {}", e))
+        .map_err(|e| format!("dropmail-me: base64 解码 secret 失败: {e}"))?;
+    String::from_utf8(decoded).map_err(|e| format!("dropmail-me: secret 非 UTF-8: {e}"))
 }
 
 /// 生成随机部分：YYYYMMDD + 16位随机字母数字
@@ -50,14 +50,14 @@ fn random_part() -> String {
     let rand_str: String = (0..16)
         .map(|_| chars[rng.gen_range(0..chars.len())] as char)
         .collect();
-    format!("{}{}", date_str, rand_str)
+    format!("{date_str}{rand_str}")
 }
 
 /// 从页面提取 data-k 并生成 auth token
 fn generate_token() -> Result<String, String> {
     block_on(async {
         let resp = http_client()
-            .get(format!("{}/en/", BASE_URL))
+            .get(format!("{BASE_URL}/en/"))
             .header("User-Agent", get_current_ua())
             .header(
                 "Accept",
@@ -65,16 +65,16 @@ fn generate_token() -> Result<String, String> {
             )
             .send()
             .await
-            .map_err(|e| format!("dropmail-me: 获取页面失败: {}", e))?;
+            .map_err(|e| format!("dropmail-me: 获取页面失败: {e}"))?;
 
         let status = resp.status();
         let text = resp
             .text()
             .await
-            .map_err(|e| format!("dropmail-me: 读取页面响应失败: {}", e))?;
+            .map_err(|e| format!("dropmail-me: 读取页面响应失败: {e}"))?;
 
         if !status.is_success() {
-            return Err(format!("dropmail-me: 获取页面失败: {} {}", status, text));
+            return Err(format!("dropmail-me: 获取页面失败: {status} {text}"));
         }
 
         let re = Regex::new(r#"<meta\s+name="app-config"\s+data-k="([^"]+)""#).unwrap();
@@ -85,15 +85,15 @@ fn generate_token() -> Result<String, String> {
 
         let secret = extract_secret(data_k)?;
         let rnd = random_part();
-        let hash = fnv_hash(&format!("{}{}", rnd, secret));
-        Ok(format!("website_{}_{}", rnd, hash))
+        let hash = fnv_hash(&format!("{rnd}{secret}"));
+        Ok(format!("website_{rnd}_{hash}"))
     })
 }
 
 /// 执行 GraphQL 请求
 fn graphql_request(auth_token: &str, query: &str) -> Result<Value, String> {
     block_on(async {
-        let api_url = format!("{}/api/graphql/{}", BASE_URL, auth_token);
+        let api_url = format!("{BASE_URL}/api/graphql/{auth_token}");
         let body = serde_json::json!({"query": query});
 
         let resp = http_client()
@@ -103,23 +103,22 @@ fn graphql_request(auth_token: &str, query: &str) -> Result<Value, String> {
             .json(&body)
             .send()
             .await
-            .map_err(|e| format!("dropmail-me: GraphQL 请求失败: {}", e))?;
+            .map_err(|e| format!("dropmail-me: GraphQL 请求失败: {e}"))?;
 
         let status = resp.status();
         let text = resp
             .text()
             .await
-            .map_err(|e| format!("dropmail-me: 读取 GraphQL 响应失败: {}", e))?;
+            .map_err(|e| format!("dropmail-me: 读取 GraphQL 响应失败: {e}"))?;
 
         if !status.is_success() {
             return Err(format!(
-                "dropmail-me: GraphQL 请求失败: {} {}",
-                status, text
+                "dropmail-me: GraphQL 请求失败: {status} {text}"
             ));
         }
 
         let data: Value = serde_json::from_str(&text)
-            .map_err(|e| format!("dropmail-me: 解析 GraphQL 响应失败: {}", e))?;
+            .map_err(|e| format!("dropmail-me: 解析 GraphQL 响应失败: {e}"))?;
         Ok(data)
     })
 }
@@ -134,7 +133,7 @@ pub fn generate_email(_duration: u32, _domain: Option<&str>) -> Result<EmailInfo
     let session = &data["data"]["introduceSession"];
     let session_id = session["id"]
         .as_str()
-        .ok_or_else(|| format!("dropmail-me: 创建会话失败，响应: {}", data))?;
+        .ok_or_else(|| format!("dropmail-me: 创建会话失败，响应: {data}"))?;
 
     let addresses = session["addresses"]
         .as_array()
@@ -167,7 +166,7 @@ pub fn generate_email(_duration: u32, _domain: Option<&str>) -> Result<EmailInfo
 /// 获取邮件列表
 pub fn get_emails(token: &str, email: &str) -> Result<Vec<Email>, String> {
     let session: Value =
-        serde_json::from_str(token).map_err(|e| format!("dropmail-me: 解析 token 失败: {}", e))?;
+        serde_json::from_str(token).map_err(|e| format!("dropmail-me: 解析 token 失败: {e}"))?;
 
     let session_id = session["session_id"]
         .as_str()
@@ -177,8 +176,7 @@ pub fn get_emails(token: &str, email: &str) -> Result<Vec<Email>, String> {
         .ok_or("dropmail-me: token 中缺少 auth_token 字段")?;
 
     let query = format!(
-        r#"{{ session(id:"{}") {{ mails {{ id headerFrom headerSubject text html receivedAt }} }} }}"#,
-        session_id
+        r#"{{ session(id:"{session_id}") {{ mails {{ id headerFrom headerSubject text html receivedAt }} }} }}"#
     );
     let data = graphql_request(auth_token, &query)?;
 

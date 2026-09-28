@@ -136,7 +136,7 @@ pub fn generate_email() -> Result<EmailInfo, String> {
             .header("Accept", "application/json")
             .send()
             .await
-            .map_err(|e| format!("apihz: 创建邮箱请求失败: {}", e))?;
+            .map_err(|e| format!("apihz: 创建邮箱请求失败: {e}"))?;
 
         if !resp.status().is_success() {
             return Err(format!("apihz: 创建邮箱失败 HTTP {}", resp.status()));
@@ -145,7 +145,7 @@ pub fn generate_email() -> Result<EmailInfo, String> {
         let data: Value = resp
             .json()
             .await
-            .map_err(|e| format!("apihz: 解析创建响应失败: {}", e))?;
+            .map_err(|e| format!("apihz: 解析创建响应失败: {e}"))?;
 
         let code = data.get("code").and_then(|v| v.as_i64()).unwrap_or(0);
         let mail = data
@@ -160,7 +160,7 @@ pub fn generate_email() -> Result<EmailInfo, String> {
                 .and_then(|v| v.as_str())
                 .map(|s| s.to_string())
                 .unwrap_or_else(|| data.to_string());
-            return Err(format!("apihz: 创建邮箱失败 {}", msg));
+            return Err(format!("apihz: 创建邮箱失败 {msg}"));
         }
 
         /* 优先使用响应回传的 pwd（与请求一致），确保读信密码正确 */
@@ -210,7 +210,7 @@ pub fn get_emails(token: &str, email: &str) -> Result<Vec<Email>, String> {
             .header("Accept", "application/json")
             .send()
             .await
-            .map_err(|e| format!("apihz: 获取邮件请求失败: {}", e))?;
+            .map_err(|e| format!("apihz: 获取邮件请求失败: {e}"))?;
 
         if !resp.status().is_success() {
             return Err(format!("apihz: 获取邮件失败 HTTP {}", resp.status()));
@@ -219,7 +219,7 @@ pub fn get_emails(token: &str, email: &str) -> Result<Vec<Email>, String> {
         let data: Value = resp
             .json()
             .await
-            .map_err(|e| format!("apihz: 解析邮件响应失败: {}", e))?;
+            .map_err(|e| format!("apihz: 解析邮件响应失败: {e}"))?;
 
         let code = data.get("code").and_then(|v| v.as_i64()).unwrap_or(0);
         let list = match data.get("data").and_then(|v| v.as_array()) {

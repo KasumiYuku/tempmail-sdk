@@ -22,7 +22,7 @@ pub fn generate_email() -> Result<EmailInfo, String> {
             .header("Content-Length", "0")
             .send()
             .await
-            .map_err(|e| format!("ta-easy request failed: {}", e))?;
+            .map_err(|e| format!("ta-easy request failed: {e}"))?;
 
         if !resp.status().is_success() {
             return Err(format!("ta-easy generate failed: {}", resp.status()));
@@ -31,10 +31,10 @@ pub fn generate_email() -> Result<EmailInfo, String> {
         let data: Value = resp
             .json()
             .await
-            .map_err(|e| format!("parse failed: {}", e))?;
+            .map_err(|e| format!("parse failed: {e}"))?;
         if data["status"].as_str() != Some("success") {
             let msg = data["message"].as_str().unwrap_or("create failed");
-            return Err(format!("ta-easy: {}", msg));
+            return Err(format!("ta-easy: {msg}"));
         }
         let addr = data["address"].as_str().unwrap_or("");
         let token = data["token"].as_str().unwrap_or("");
@@ -69,7 +69,7 @@ pub fn get_emails(email: &str, token: &str) -> Result<Vec<Email>, String> {
             .json(&serde_json::json!({ "token": token, "email": email }))
             .send()
             .await
-            .map_err(|e| format!("ta-easy inbox request failed: {}", e))?;
+            .map_err(|e| format!("ta-easy inbox request failed: {e}"))?;
 
         if !resp.status().is_success() {
             return Err(format!("ta-easy inbox failed: {}", resp.status()));
@@ -78,10 +78,10 @@ pub fn get_emails(email: &str, token: &str) -> Result<Vec<Email>, String> {
         let data: Value = resp
             .json()
             .await
-            .map_err(|e| format!("parse failed: {}", e))?;
+            .map_err(|e| format!("parse failed: {e}"))?;
         if data["status"].as_str() != Some("success") {
             let msg = data["message"].as_str().unwrap_or("inbox failed");
-            return Err(format!("ta-easy: {}", msg));
+            return Err(format!("ta-easy: {msg}"));
         }
         let arr = data["data"].as_array().cloned().unwrap_or_default();
         Ok(arr.iter().map(|raw| normalize_email(raw, &email)).collect())

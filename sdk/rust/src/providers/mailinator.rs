@@ -35,13 +35,13 @@ async fn request_json(url: String) -> Result<Value, String> {
     let resp = default_headers(http_client().get(url))
         .send()
         .await
-        .map_err(|e| format!("mailinator request failed: {}", e))?;
+        .map_err(|e| format!("mailinator request failed: {e}"))?;
     if !resp.status().is_success() {
         return Err(format!("mailinator http {}", resp.status()));
     }
     resp.json::<Value>()
         .await
-        .map_err(|e| format!("parse failed: {}", e))
+        .map_err(|e| format!("parse failed: {e}"))
 }
 
 fn parse_messages(data: &Value) -> Vec<Value> {
@@ -81,7 +81,7 @@ fn attachment_url(value: Option<&Value>) -> Option<String> {
     if url.starts_with("http://") || url.starts_with("https://") {
         Some(url.to_string())
     } else {
-        Some(format!("{}{}", BASE_URL, url))
+        Some(format!("{BASE_URL}{url}"))
     }
 }
 
@@ -163,7 +163,7 @@ pub fn generate_email() -> Result<EmailInfo, String> {
     let local = random_string(12);
     Ok(EmailInfo {
         channel: Channel::Mailinator,
-        email: format!("{}@mailinator.com", local),
+        email: format!("{local}@mailinator.com"),
         token: None,
         expires_at: None,
         created_at: None,

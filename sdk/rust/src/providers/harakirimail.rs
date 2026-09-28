@@ -22,12 +22,12 @@ fn random_name() -> String {
 
 pub fn generate_email() -> Result<EmailInfo, String> {
     let name = random_name();
-    let email = format!("{}@harakirimail.com", name);
+    let email = format!("{name}@harakirimail.com");
 
     // 可选：调用收件箱接口验证地址可用
     block_on(async {
         let resp = http_client()
-            .get(format!("{}/api/v1/inbox/{}", BASE, name))
+            .get(format!("{BASE}/api/v1/inbox/{name}"))
             .header("Accept", "application/json, text/plain, */*")
             .header("Accept-Language", "zh-CN,zh;q=0.9,en;q=0.8")
             .header("User-Agent", get_current_ua())
@@ -52,7 +52,7 @@ fn fetch_body(id: &str) -> (String, String) {
     if id.is_empty() {
         return (String::new(), String::new());
     }
-    let url = format!("{}/api/v1/email/{}", BASE, id);
+    let url = format!("{BASE}/api/v1/email/{id}");
     block_on(async {
         let resp = http_client()
             .get(&url)
@@ -92,7 +92,7 @@ pub fn get_emails(email: &str) -> Result<Vec<Email>, String> {
     // 从邮箱地址提取收件箱名
     let name = em.rsplit_once('@').map(|(a, _)| a).unwrap_or(em);
 
-    let url = format!("{}/api/v1/inbox/{}", BASE, name);
+    let url = format!("{BASE}/api/v1/inbox/{name}");
     block_on(async {
         let resp = http_client()
             .get(&url)

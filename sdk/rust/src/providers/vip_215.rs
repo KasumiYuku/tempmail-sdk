@@ -240,12 +240,12 @@ fn ws_loop(jwt: String, recipient: String, arc: Arc<Mutex<Vip215Box>>) {
     let ws_ticket = match fetch_ws_ticket(&client, ua, &jwt) {
         Ok(t) => t,
         Err(e) => {
-            log::warn!("vip-215 ws-ticket failed: {}", e);
+            log::warn!("vip-215 ws-ticket failed: {e}");
             return;
         }
     };
     let enc = urlencoding::encode(&ws_ticket);
-    let ws_url = format!("wss://vip.215.im/v1/ws?token={}", enc);
+    let ws_url = format!("wss://vip.215.im/v1/ws?token={enc}");
     let request = match tungstenite::http::Request::builder()
         .uri(&ws_url)
         .header("Host", "vip.215.im")
@@ -255,14 +255,14 @@ fn ws_loop(jwt: String, recipient: String, arc: Arc<Mutex<Vip215Box>>) {
     {
         Ok(r) => r,
         Err(e) => {
-            log::warn!("vip-215 ws request build failed: {}", e);
+            log::warn!("vip-215 ws request build failed: {e}");
             return;
         }
     };
     let mut socket = match tungstenite::connect(request) {
         Ok((s, _)) => s,
         Err(e) => {
-            log::warn!("vip-215 ws connect failed: {}", e);
+            log::warn!("vip-215 ws connect failed: {e}");
             return;
         }
     };
@@ -271,7 +271,7 @@ fn ws_loop(jwt: String, recipient: String, arc: Arc<Mutex<Vip215Box>>) {
         let msg = match socket.read() {
             Ok(m) => m,
             Err(e) => {
-                log::debug!("vip-215 ws read end: {}", e);
+                log::debug!("vip-215 ws read end: {e}");
                 break;
             }
         };
@@ -390,12 +390,12 @@ pub fn generate_email() -> Result<EmailInfo, String> {
         let resp = req
             .send()
             .await
-            .map_err(|e| format!("vip-215 create inbox: {}", e))?;
+            .map_err(|e| format!("vip-215 create inbox: {e}"))?;
 
         if !resp.status().is_success() {
             let status = resp.status();
             let t = resp.text().await.unwrap_or_default();
-            return Err(format!("vip-215 create inbox HTTP {} {}", status, t));
+            return Err(format!("vip-215 create inbox HTTP {status} {t}"));
         }
         let _cookie_hdr = merge_set_cookies(&cookie_hdr, resp.headers());
 

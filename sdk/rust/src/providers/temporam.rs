@@ -13,19 +13,19 @@ const ORIGIN: &str = "https://temporam.com";
 fn fetch_json(path: &str) -> Result<Value, String> {
     block_on(async {
         let resp = http_client()
-            .get(format!("{}{}", ORIGIN, path))
+            .get(format!("{ORIGIN}{path}"))
             .header("Accept", "application/json")
             .header("Accept-Encoding", "gzip, deflate, br")
             .header("User-Agent", get_current_ua())
             .send()
             .await
-            .map_err(|e| format!("temporam request failed: {}", e))?;
+            .map_err(|e| format!("temporam request failed: {e}"))?;
         if !resp.status().is_success() {
             return Err(format!("temporam http {}", resp.status()));
         }
         resp.json::<Value>()
             .await
-            .map_err(|e| format!("temporam parse response: {}", e))
+            .map_err(|e| format!("temporam parse response: {e}"))
     })
 }
 
@@ -63,7 +63,7 @@ fn pick_domain(domains: &[String], preferred: Option<&str>) -> Result<String, St
             if let Some(hit) = domains.iter().find(|item| item.as_str() == wanted) {
                 return Ok(hit.clone());
             }
-            return Err(format!("temporam: unsupported domain {}", wanted));
+            return Err(format!("temporam: unsupported domain {wanted}"));
         }
     }
     let mut rng = rand::thread_rng();

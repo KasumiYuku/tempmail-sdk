@@ -21,7 +21,7 @@ pub fn generate_email() -> Result<EmailInfo, String> {
     let local = random_string(12);
     Ok(EmailInfo {
         channel: Channel::SpamNetpiratesNet,
-        email: format!("{}@{}", local, DOMAIN),
+        email: format!("{local}@{DOMAIN}"),
         token: None,
         expires_at: None,
         created_at: None,

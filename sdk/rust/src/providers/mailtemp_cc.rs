@@ -36,15 +36,15 @@ const DOMAIN: &str = "neocea.com";
 pub fn generate_email() -> Result<EmailInfo, String> {
     block_on(async {
         let resp = http_client()
-            .post(format!("{}/api.php", BASE_URL))
+            .post(format!("{BASE_URL}/api.php"))
             .header("Content-Type", "application/x-www-form-urlencoded")
             .header("Accept", "*/*")
-            .header("Referer", format!("{}/", BASE_URL))
+            .header("Referer", format!("{BASE_URL}/"))
             .header("Origin", BASE_URL)
             .body("action=inbox")
             .send()
             .await
-            .map_err(|e| format!("mailtemp-cc: 创建邮箱请求失败: {}", e))?;
+            .map_err(|e| format!("mailtemp-cc: 创建邮箱请求失败: {e}"))?;
 
         if !resp.status().is_success() {
             return Err(format!("mailtemp-cc: 创建邮箱返回 HTTP {}", resp.status()));
@@ -53,7 +53,7 @@ pub fn generate_email() -> Result<EmailInfo, String> {
         let raw_text = resp
             .text()
             .await
-            .map_err(|e| format!("mailtemp-cc: 读取创建邮箱响应失败: {}", e))?;
+            .map_err(|e| format!("mailtemp-cc: 读取创建邮箱响应失败: {e}"))?;
 
         // API 返回的是 JSON 字符串格式（带双引号），如 "vindictiverate"
         // 需要去掉首尾的双引号和空白字符
@@ -63,7 +63,7 @@ pub fn generate_email() -> Result<EmailInfo, String> {
             return Err("mailtemp-cc: 返回的用户名为空".into());
         }
 
-        let address = format!("{}@{}", username, DOMAIN);
+        let address = format!("{username}@{DOMAIN}");
 
         Ok(EmailInfo {
             channel: Channel::MailtempCc,
@@ -91,18 +91,18 @@ pub fn get_emails(token: &str, email: &str) -> Result<Vec<Email>, String> {
 
     block_on(async {
         // 第一步: 获取邮件摘要列表
-        let fetch_body = format!("action=fetch&inbox={}&last_id=0", username);
+        let fetch_body = format!("action=fetch&inbox={username}&last_id=0");
 
         let resp = http_client()
-            .post(format!("{}/api.php", BASE_URL))
+            .post(format!("{BASE_URL}/api.php"))
             .header("Content-Type", "application/x-www-form-urlencoded")
             .header("Accept", "*/*")
-            .header("Referer", format!("{}/", BASE_URL))
+            .header("Referer", format!("{BASE_URL}/"))
             .header("Origin", BASE_URL)
             .body(fetch_body)
             .send()
             .await
-            .map_err(|e| format!("mailtemp-cc: 获取邮件列表请求失败: {}", e))?;
+            .map_err(|e| format!("mailtemp-cc: 获取邮件列表请求失败: {e}"))?;
 
         if !resp.status().is_success() {
             return Err(format!(
@@ -114,7 +114,7 @@ pub fn get_emails(token: &str, email: &str) -> Result<Vec<Email>, String> {
         let data: Value = resp
             .json()
             .await
-            .map_err(|e| format!("mailtemp-cc: 解析邮件列表响应失败: {}", e))?;
+            .map_err(|e| format!("mailtemp-cc: 解析邮件列表响应失败: {e}"))?;
 
         // 返回值是 JSON 数组
         let items = match data.as_array() {
@@ -145,13 +145,13 @@ pub fn get_emails(token: &str, email: &str) -> Result<Vec<Email>, String> {
                 None => continue,
             };
 
-            let view_body = format!("action=view&id={}&inbox={}", mail_id, username);
+            let view_body = format!("action=view&id={mail_id}&inbox={username}");
 
             let detail_resp = http_client()
-                .post(format!("{}/api.php", BASE_URL))
+                .post(format!("{BASE_URL}/api.php"))
                 .header("Content-Type", "application/x-www-form-urlencoded")
                 .header("Accept", "*/*")
-                .header("Referer", format!("{}/", BASE_URL))
+                .header("Referer", format!("{BASE_URL}/"))
                 .header("Origin", BASE_URL)
                 .body(view_body)
                 .send()

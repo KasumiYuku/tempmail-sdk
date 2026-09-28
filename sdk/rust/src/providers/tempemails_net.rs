@@ -70,7 +70,7 @@ fn parse_cookie_header(hdr: &str) -> BTreeMap<String, String> {
 /// 将 Cookie 映射转换回 Cookie 头字符串
 fn cookie_header_from_map(m: &BTreeMap<String, String>) -> String {
     m.iter()
-        .map(|(k, v)| format!("{}={}", k, v))
+        .map(|(k, v)| format!("{k}={v}"))
         .collect::<Vec<_>>()
         .join("; ")
 }
@@ -97,7 +97,7 @@ fn merge_set_cookies(hdr: &str, headers: &wreq::header::HeaderMap) -> String {
 
 /// 编码会话信息为 token 字符串
 fn encode_sess(s: &TempemailsNetSess) -> Result<String, String> {
-    serde_json::to_string(s).map_err(|e| format!("tempemails-net: token 序列化失败: {}", e))
+    serde_json::to_string(s).map_err(|e| format!("tempemails-net: token 序列化失败: {e}"))
 }
 
 /// 从 token 字符串解码会话信息
@@ -134,7 +134,7 @@ fn ajax_headers(csrf: &str) -> Vec<(&'static str, String)> {
         ("Accept-Language", "en-US,en;q=0.9".to_string()),
         ("X-Requested-With", "XMLHttpRequest".to_string()),
         ("X-CSRF-TOKEN", csrf.to_string()),
-        ("Referer", format!("{}/", ORIGIN)),
+        ("Referer", format!("{ORIGIN}/")),
     ]
 }
 
@@ -146,14 +146,14 @@ pub fn generate_email() -> Result<EmailInfo, String> {
         let client = http_client_no_cookie_jar();
 
         // 第一步：GET / 获取 session Cookie 和 CSRF token
-        let mut req = client.get(format!("{}/", ORIGIN));
+        let mut req = client.get(format!("{ORIGIN}/"));
         for (k, v) in browser_headers() {
             req = req.header(k, v);
         }
         let resp = req
             .send()
             .await
-            .map_err(|e| format!("tempemails-net: 获取首页请求失败: {}", e))?;
+            .map_err(|e| format!("tempemails-net: 获取首页请求失败: {e}"))?;
 
         if !resp.status().is_success() {
             return Err(format!(
@@ -168,7 +168,7 @@ pub fn generate_email() -> Result<EmailInfo, String> {
         let html = resp
             .text()
             .await
-            .map_err(|e| format!("tempemails-net: 读取首页响应失败: {}", e))?;
+            .map_err(|e| format!("tempemails-net: 读取首页响应失败: {e}"))?;
 
         // 从 HTML 提取 CSRF token
         let csrf = CSRF_RE
@@ -177,7 +177,7 @@ pub fn generate_email() -> Result<EmailInfo, String> {
             .ok_or_else(|| "tempemails-net: 未找到 CSRF token".to_string())?;
 
         // 第二步：POST /get_messages 获取自动分配的邮箱地址
-        let mut req = client.post(format!("{}/get_messages", ORIGIN));
+        let mut req = client.post(format!("{ORIGIN}/get_messages"));
         for (k, v) in ajax_headers(&csrf) {
             req = req.header(k, v);
         }
@@ -185,7 +185,7 @@ pub fn generate_email() -> Result<EmailInfo, String> {
         let resp = req
             .send()
             .await
-            .map_err(|e| format!("tempemails-net: 获取邮箱请求失败: {}", e))?;
+            .map_err(|e| format!("tempemails-net: 获取邮箱请求失败: {e}"))?;
 
         if !resp.status().is_success() {
             return Err(format!(
@@ -200,7 +200,7 @@ pub fn generate_email() -> Result<EmailInfo, String> {
         let body: Value = resp
             .json()
             .await
-            .map_err(|e| format!("tempemails-net: 解析邮箱响应失败: {}", e))?;
+            .map_err(|e| format!("tempemails-net: 解析邮箱响应失败: {e}"))?;
 
         // 检查 status 字段
         let status_ok = body
@@ -219,7 +219,7 @@ pub fn generate_email() -> Result<EmailInfo, String> {
             .ok_or_else(|| "tempemails-net: 响应中未找到 mailbox 字段".to_string())?;
 
         if mailbox.is_empty() || !mailbox.contains('@') {
-            return Err(format!("tempemails-net: 返回的邮箱地址无效: {}", mailbox));
+            return Err(format!("tempemails-net: 返回的邮箱地址无效: {mailbox}"));
         }
 
         let tok = encode_sess(&TempemailsNetSess {
@@ -251,7 +251,7 @@ pub fn get_emails(token: &str, email: &str) -> Result<Vec<Email>, String> {
         let client = http_client_no_cookie_jar();
 
         // POST /get_messages 获取邮件列表
-        let mut req = client.post(format!("{}/get_messages", ORIGIN));
+        let mut req = client.post(format!("{ORIGIN}/get_messages"));
         for (k, v) in ajax_headers(&sess.csrf) {
             req = req.header(k, v);
         }
@@ -259,7 +259,7 @@ pub fn get_emails(token: &str, email: &str) -> Result<Vec<Email>, String> {
         let resp = req
             .send()
             .await
-            .map_err(|e| format!("tempemails-net: 获取邮件列表请求失败: {}", e))?;
+            .map_err(|e| format!("tempemails-net: 获取邮件列表请求失败: {e}"))?;
 
         if !resp.status().is_success() {
             return Err(format!(
@@ -271,7 +271,7 @@ pub fn get_emails(token: &str, email: &str) -> Result<Vec<Email>, String> {
         let body: Value = resp
             .json()
             .await
-            .map_err(|e| format!("tempemails-net: 解析邮件列表响应失败: {}", e))?;
+            .map_err(|e| format!("tempemails-net: 解析邮件列表响应失败: {e}"))?;
 
         // 提取 messages 数组
         let messages = match body.get("messages").and_then(|v| v.as_array()) {
@@ -310,7 +310,7 @@ pub fn get_emails(token: &str, email: &str) -> Result<Vec<Email>, String> {
             // GET /view/{id} 获取邮件 HTML 正文
             let mut html_body = String::new();
             if !id.is_empty() {
-                let view_url = format!("{}/view/{}", ORIGIN, id);
+                let view_url = format!("{ORIGIN}/view/{id}");
                 let mut reqv = client.get(&view_url);
                 for (k, v) in browser_headers() {
                     reqv = reqv.header(k, v);

@@ -34,10 +34,10 @@ fn default_headers(b: wreq::RequestBuilder) -> wreq::RequestBuilder {
 
 fn get_domains() -> Result<Vec<String>, String> {
     block_on(async {
-        let resp = default_headers(http_client().get(format!("{}/domains?page=1", BASE_URL)))
+        let resp = default_headers(http_client().get(format!("{BASE_URL}/domains?page=1")))
             .send()
             .await
-            .map_err(|e| format!("duckmail domains failed: {}", e))?;
+            .map_err(|e| format!("duckmail domains failed: {e}"))?;
         if !resp.status().is_success() {
             return Err(format!("duckmail domains failed: {}", resp.status()));
         }
@@ -45,7 +45,7 @@ fn get_domains() -> Result<Vec<String>, String> {
         let data: Value = resp
             .json()
             .await
-            .map_err(|e| format!("parse failed: {}", e))?;
+            .map_err(|e| format!("parse failed: {e}"))?;
         let members = if let Some(arr) = data.as_array() {
             arr.clone()
         } else {
@@ -68,25 +68,24 @@ fn create_account(address: &str, password: &str) -> Result<Value, String> {
     let address = address.to_string();
     let password = password.to_string();
     block_on(async move {
-        let resp = default_headers(http_client().post(format!("{}/accounts", BASE_URL)))
+        let resp = default_headers(http_client().post(format!("{BASE_URL}/accounts")))
             .header("Content-Type", "application/ld+json")
             .json(&json!({"address": address, "password": password}))
             .send()
             .await
-            .map_err(|e| format!("duckmail create account failed: {}", e))?;
+            .map_err(|e| format!("duckmail create account failed: {e}"))?;
 
         let status = resp.status();
         if !status.is_success() {
             let text = resp.text().await.unwrap_or_default();
             return Err(format!(
-                "duckmail create account failed: {} {}",
-                status, text
+                "duckmail create account failed: {status} {text}"
             ));
         }
 
         resp.json::<Value>()
             .await
-            .map_err(|e| format!("parse failed: {}", e))
+            .map_err(|e| format!("parse failed: {e}"))
     })
 }
 
@@ -94,23 +93,23 @@ fn get_token(address: &str, password: &str) -> Result<String, String> {
     let address = address.to_string();
     let password = password.to_string();
     block_on(async move {
-        let resp = default_headers(http_client().post(format!("{}/token", BASE_URL)))
+        let resp = default_headers(http_client().post(format!("{BASE_URL}/token")))
             .header("Content-Type", "application/json")
             .json(&json!({"address": address, "password": password}))
             .send()
             .await
-            .map_err(|e| format!("duckmail get token failed: {}", e))?;
+            .map_err(|e| format!("duckmail get token failed: {e}"))?;
 
         let status = resp.status();
         if !status.is_success() {
             let text = resp.text().await.unwrap_or_default();
-            return Err(format!("duckmail get token failed: {} {}", status, text));
+            return Err(format!("duckmail get token failed: {status} {text}"));
         }
 
         let data: Value = resp
             .json()
             .await
-            .map_err(|e| format!("parse failed: {}", e))?;
+            .map_err(|e| format!("parse failed: {e}"))?;
         data.get("token")
             .and_then(|v| v.as_str())
             .map(|s| s.to_string())
@@ -168,7 +167,7 @@ fn flatten_message(msg: &Value, recipient_email: &str) -> Value {
                             if s.starts_with("http://") || s.starts_with("https://") {
                                 s.to_string()
                             } else {
-                                format!("{}{}", BASE_URL, s)
+                                format!("{BASE_URL}{s}")
                             }
                         });
                     Some(json!({
@@ -204,7 +203,7 @@ pub fn generate_email() -> Result<EmailInfo, String> {
     let mut rng = rand::thread_rng();
     let domain = &domains[rng.gen_range(0..domains.len())];
     let username = random_string(12);
-    let address = format!("{}@{}", username, domain);
+    let address = format!("{username}@{domain}");
     let password = random_string(16);
 
     let account = create_account(&address, &password)?;
@@ -226,11 +225,11 @@ pub fn get_emails(token: &str, email: &str) -> Result<Vec<Email>, String> {
     let token = token.to_string();
     let email = email.to_string();
     block_on(async move {
-        let resp = default_headers(http_client().get(format!("{}/messages?page=1", BASE_URL)))
-            .header("Authorization", format!("Bearer {}", token))
+        let resp = default_headers(http_client().get(format!("{BASE_URL}/messages?page=1")))
+            .header("Authorization", format!("Bearer {token}"))
             .send()
             .await
-            .map_err(|e| format!("duckmail request failed: {}", e))?;
+            .map_err(|e| format!("duckmail request failed: {e}"))?;
 
         if !resp.status().is_success() {
             return Err(format!("duckmail get emails failed: {}", resp.status()));
@@ -239,7 +238,7 @@ pub fn get_emails(token: &str, email: &str) -> Result<Vec<Email>, String> {
         let data: Value = resp
             .json()
             .await
-            .map_err(|e| format!("parse failed: {}", e))?;
+            .map_err(|e| format!("parse failed: {e}"))?;
         let messages = if let Some(arr) = data.as_array() {
             arr.clone()
         } else {
@@ -260,9 +259,9 @@ pub fn get_emails(token: &str, email: &str) -> Result<Vec<Email>, String> {
                 None
             } else {
                 let detail_resp = default_headers(
-                    http_client().get(format!("{}/messages/{}", BASE_URL, message_id)),
+                    http_client().get(format!("{BASE_URL}/messages/{message_id}")),
                 )
-                .header("Authorization", format!("Bearer {}", token))
+                .header("Authorization", format!("Bearer {token}"))
                 .send()
                 .await
                 .ok()

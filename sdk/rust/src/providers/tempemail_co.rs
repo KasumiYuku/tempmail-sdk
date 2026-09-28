@@ -69,7 +69,7 @@ fn parse_cookie_header(hdr: &str) -> BTreeMap<String, String> {
 /// 将 Cookie 映射转换回 Cookie 头字符串
 fn cookie_header_from_map(m: &BTreeMap<String, String>) -> String {
     m.iter()
-        .map(|(k, v)| format!("{}={}", k, v))
+        .map(|(k, v)| format!("{k}={v}"))
         .collect::<Vec<_>>()
         .join("; ")
 }
@@ -95,7 +95,7 @@ fn merge_set_cookies(hdr: &str, headers: &wreq::header::HeaderMap) -> String {
 
 /// 编码会话信息为 token 字符串
 fn encode_sess(s: &TempemailCoSess) -> Result<String, String> {
-    serde_json::to_string(s).map_err(|e| format!("tempemail-co: token 序列化失败: {}", e))
+    serde_json::to_string(s).map_err(|e| format!("tempemail-co: token 序列化失败: {e}"))
 }
 
 /// 从 token 字符串解码会话信息
@@ -148,14 +148,14 @@ pub fn generate_email() -> Result<EmailInfo, String> {
         let client = http_client_no_cookie_jar();
 
         // GET /mail/random 创建随机邮箱
-        let mut req = client.get(format!("{}/mail/random", ORIGIN));
+        let mut req = client.get(format!("{ORIGIN}/mail/random"));
         for (k, v) in browser_headers(ORIGIN) {
             req = req.header(k, v);
         }
         let resp = req
             .send()
             .await
-            .map_err(|e| format!("tempemail-co: 创建邮箱请求失败: {}", e))?;
+            .map_err(|e| format!("tempemail-co: 创建邮箱请求失败: {e}"))?;
 
         if !resp.status().is_success() {
             return Err(format!("tempemail-co: 创建邮箱返回 HTTP {}", resp.status()));
@@ -167,7 +167,7 @@ pub fn generate_email() -> Result<EmailInfo, String> {
         let body: Value = resp
             .json()
             .await
-            .map_err(|e| format!("tempemail-co: 解析创建邮箱响应失败: {}", e))?;
+            .map_err(|e| format!("tempemail-co: 解析创建邮箱响应失败: {e}"))?;
 
         // 检查 result 字段
         let result_ok = body
@@ -187,7 +187,7 @@ pub fn generate_email() -> Result<EmailInfo, String> {
             .ok_or_else(|| "tempemail-co: 响应中未找到 address 字段".to_string())?;
 
         if address.is_empty() || !address.contains('@') {
-            return Err(format!("tempemail-co: 返回的邮箱地址无效: {}", address));
+            return Err(format!("tempemail-co: 返回的邮箱地址无效: {address}"));
         }
 
         let tok = encode_sess(&TempemailCoSess {
@@ -217,7 +217,7 @@ pub fn get_emails(token: &str, email: &str) -> Result<Vec<Email>, String> {
 
     block_on(async {
         let client = http_client_no_cookie_jar();
-        let page_url = format!("{}/", ORIGIN);
+        let page_url = format!("{ORIGIN}/");
 
         // 第一步：GET /get-mails 获取邮件列表（HTML 包裹在 JSON 中）
         let list_url = format!(
@@ -232,7 +232,7 @@ pub fn get_emails(token: &str, email: &str) -> Result<Vec<Email>, String> {
         let resp = req
             .send()
             .await
-            .map_err(|e| format!("tempemail-co: 获取邮件列表请求失败: {}", e))?;
+            .map_err(|e| format!("tempemail-co: 获取邮件列表请求失败: {e}"))?;
 
         if !resp.status().is_success() {
             return Err(format!(
@@ -244,7 +244,7 @@ pub fn get_emails(token: &str, email: &str) -> Result<Vec<Email>, String> {
         let body: Value = resp
             .json()
             .await
-            .map_err(|e| format!("tempemail-co: 解析邮件列表响应失败: {}", e))?;
+            .map_err(|e| format!("tempemail-co: 解析邮件列表响应失败: {e}"))?;
 
         // 检查 count 字段，0 表示无邮件
         let count = body
@@ -271,7 +271,7 @@ pub fn get_emails(token: &str, email: &str) -> Result<Vec<Email>, String> {
         // 第二步：逐个获取邮件详情
         let mut result = Vec::with_capacity(mail_ids.len());
         for mail_id in &mail_ids {
-            let info_url = format!("{}/mail/info?id={}", ORIGIN, mail_id);
+            let info_url = format!("{ORIGIN}/mail/info?id={mail_id}");
             let mut reqd = client.get(&info_url);
             for (k, v) in json_headers(&page_url) {
                 reqd = reqd.header(k, v);

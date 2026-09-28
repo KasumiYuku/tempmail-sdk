@@ -17,10 +17,10 @@ pub fn generate_email() -> Result<EmailInfo, String> {
         let client = http_client();
 
         let resp = client
-            .post(format!("{}/api/generate", API_BASE))
+            .post(format!("{API_BASE}/api/generate"))
             .send()
             .await
-            .map_err(|e| format!("tempgo-email: 创建邮箱失败: {}", e))?;
+            .map_err(|e| format!("tempgo-email: 创建邮箱失败: {e}"))?;
 
         if !resp.status().is_success() {
             return Err(format!("tempgo-email: 创建邮箱失败 HTTP {}", resp.status()));
@@ -29,7 +29,7 @@ pub fn generate_email() -> Result<EmailInfo, String> {
         let body: Value = resp
             .json()
             .await
-            .map_err(|e| format!("tempgo-email: 解析响应失败: {}", e))?;
+            .map_err(|e| format!("tempgo-email: 解析响应失败: {e}"))?;
 
         let email = body["email"]
             .as_str()
@@ -63,12 +63,11 @@ pub fn get_emails(token: &str, email: &str) -> Result<Vec<Email>, String> {
 
         let resp = client
             .get(format!(
-                "{}/api/inbox?email={}&mailbox_id={}",
-                API_BASE, address, token
+                "{API_BASE}/api/inbox?email={address}&mailbox_id={token}"
             ))
             .send()
             .await
-            .map_err(|e| format!("tempgo-email: 获取邮件失败: {}", e))?;
+            .map_err(|e| format!("tempgo-email: 获取邮件失败: {e}"))?;
 
         if !resp.status().is_success() {
             return Err(format!("tempgo-email: 获取邮件失败 HTTP {}", resp.status()));
@@ -77,7 +76,7 @@ pub fn get_emails(token: &str, email: &str) -> Result<Vec<Email>, String> {
         let body: Value = resp
             .json()
             .await
-            .map_err(|e| format!("tempgo-email: 解析响应失败: {}", e))?;
+            .map_err(|e| format!("tempgo-email: 解析响应失败: {e}"))?;
 
         let messages = match body["messages"].as_array() {
             Some(arr) => arr.clone(),

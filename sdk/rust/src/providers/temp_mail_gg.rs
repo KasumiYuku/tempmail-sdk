@@ -576,8 +576,7 @@ pub fn get_emails(email: &str, token: &str) -> Result<Vec<Email>, String> {
     let (sess_email, sess_csrf, sess_snapshot) = decode_session(token)?;
     if !sess_email.eq_ignore_ascii_case(em) {
         return Err(format!(
-            "temp-mail-gg: 邮箱与凭据不匹配（{} != {}），请重新 Generate",
-            sess_email, em
+            "temp-mail-gg: 邮箱与凭据不匹配（{sess_email} != {em}），请重新 Generate"
         ));
     }
 
@@ -593,8 +592,7 @@ pub fn get_emails(email: &str, token: &str) -> Result<Vec<Email>, String> {
             let current = snapshot_email(&latest_snap);
             if !current.is_empty() && !current.eq_ignore_ascii_case(em) {
                 return Err(format!(
-                    "temp-mail-gg: 会话已被切换至 {}（与请求邮箱 {} 不一致），请重新 Generate",
-                    current, em
+                    "temp-mail-gg: 会话已被切换至 {current}（与请求邮箱 {em} 不一致），请重新 Generate"
                 ));
             }
         } else {

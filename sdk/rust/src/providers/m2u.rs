@@ -60,13 +60,13 @@ async fn request_json(method: &str, url: String, body: Option<Value>) -> Result<
     let resp = req
         .send()
         .await
-        .map_err(|e| format!("m2u request failed: {}", e))?;
+        .map_err(|e| format!("m2u request failed: {e}"))?;
     if !resp.status().is_success() {
         return Err(format!("m2u http {}", resp.status()));
     }
     resp.json::<Value>()
         .await
-        .map_err(|e| format!("m2u parse response: {}", e))
+        .map_err(|e| format!("m2u parse response: {e}"))
 }
 
 fn flatten_message(raw: &Value, recipient: &str) -> Value {
@@ -116,7 +116,7 @@ pub fn generate_email() -> Result<EmailInfo, String> {
     block_on(async {
         let data = request_json(
             "POST",
-            format!("{}/v1/mailboxes/auto", API_BASE),
+            format!("{API_BASE}/v1/mailboxes/auto"),
             Some(serde_json::json!({})),
         )
         .await?;
@@ -126,7 +126,7 @@ pub fn generate_email() -> Result<EmailInfo, String> {
         let token = any_string(mailbox.get("token").unwrap_or(&Value::Null));
         let view_token = any_string(mailbox.get("view_token").unwrap_or(&Value::Null));
         let email = if !local_part.is_empty() && !domain.is_empty() {
-            format!("{}@{}", local_part, domain)
+            format!("{local_part}@{domain}")
         } else {
             String::new()
         };

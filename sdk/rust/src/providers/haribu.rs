@@ -51,7 +51,7 @@ fn init_session() -> Result<(String, String), String> {
             .header("User-Agent", browser_ua())
             .send()
             .await
-            .map_err(|e| format!("haribu: 初始化会话失败: {}", e))?;
+            .map_err(|e| format!("haribu: 初始化会话失败: {e}"))?;
 
         let cookies = extract_cookies(resp.headers());
         if cookies.is_empty() {
@@ -61,7 +61,7 @@ fn init_session() -> Result<(String, String), String> {
         let html = resp
             .text()
             .await
-            .map_err(|e| format!("haribu: 读取首页失败: {}", e))?;
+            .map_err(|e| format!("haribu: 读取首页失败: {e}"))?;
 
         /* 从 HTML 中提取 <input id="eposta_adres" value="xxx@yevme.com"> */
         let re =
@@ -73,7 +73,7 @@ fn init_session() -> Result<(String, String), String> {
             .ok_or_else(|| "haribu: 未从 HTML 中提取到邮箱地址".to_string())?;
 
         if email.is_empty() || !email.contains('@') {
-            return Err(format!("haribu: 提取到的邮箱地址无效: {}", email));
+            return Err(format!("haribu: 提取到的邮箱地址无效: {email}"));
         }
 
         Ok((email, cookies))
@@ -101,16 +101,16 @@ pub fn get_emails(token: &str, email: &str) -> Result<Vec<Email>, String> {
 
     block_on(async {
         let resp = http_client_no_cookie_jar()
-            .get(format!("{}/en/api-kontrol/", BASE_URL))
+            .get(format!("{BASE_URL}/en/api-kontrol/"))
             .header("Accept", "application/json, text/plain, */*")
             .header("Accept-Language", "en-US,en;q=0.9")
             .header("User-Agent", browser_ua())
-            .header("Referer", format!("{}/", BASE_URL))
+            .header("Referer", format!("{BASE_URL}/"))
             .header("X-Requested-With", "XMLHttpRequest")
             .header("Cookie", token)
             .send()
             .await
-            .map_err(|e| format!("haribu: kontrol API 请求失败: {}", e))?;
+            .map_err(|e| format!("haribu: kontrol API 请求失败: {e}"))?;
 
         if !resp.status().is_success() {
             return Err(format!("haribu: kontrol API 返回 {}", resp.status()));
@@ -119,7 +119,7 @@ pub fn get_emails(token: &str, email: &str) -> Result<Vec<Email>, String> {
         let body = resp
             .text()
             .await
-            .map_err(|e| format!("haribu: 读取 kontrol 响应失败: {}", e))?;
+            .map_err(|e| format!("haribu: 读取 kontrol 响应失败: {e}"))?;
 
         /* 尝试解析为 JSON 数组或包含邮件列表的对象 */
         let data: Value = serde_json::from_str(&body).unwrap_or(Value::Null);

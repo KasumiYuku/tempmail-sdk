@@ -40,7 +40,7 @@ fn random_local(len: usize) -> String {
 
 fn fetch_suffixes() -> Result<Vec<String>, String> {
     block_on(async {
-        let resp = md_headers(http_client().get(format!("{}/api/suffixes.php", BASE)))
+        let resp = md_headers(http_client().get(format!("{BASE}/api/suffixes.php")))
             .send()
             .await
             .map_err(|e| e.to_string())?;
@@ -75,7 +75,7 @@ fn pick_suffix(suffixes: &[String], preferred: Option<&str>) -> Result<String, S
             if let Some(hit) = suffixes.iter().find(|d| d.to_lowercase() == pl) {
                 return Ok(hit.clone());
             }
-            return Err(format!("maildrop: domain not available: {}", pl));
+            return Err(format!("maildrop: domain not available: {pl}"));
         }
     }
     let mut rng = rand::thread_rng();
@@ -86,7 +86,7 @@ pub fn generate_email(domain: Option<&str>) -> Result<EmailInfo, String> {
     let suffixes = fetch_suffixes()?;
     let dom = pick_suffix(&suffixes, domain)?;
     let local = random_local(10);
-    let email = format!("{}@{}", local, dom);
+    let email = format!("{local}@{dom}");
     Ok(EmailInfo {
         channel: Channel::Maildrop,
         email: email.clone(),
@@ -140,7 +140,7 @@ pub fn get_emails(_token: &str, email: &str) -> Result<Vec<Email>, String> {
         return Err("maildrop: empty address".into());
     }
     let q = urlencoding::encode(addr);
-    let url = format!("{}/api/emails.php?addr={}&page=1&limit=20", BASE, q);
+    let url = format!("{BASE}/api/emails.php?addr={q}&page=1&limit=20");
     block_on(async {
         let resp = md_headers(http_client().get(url))
             .send()

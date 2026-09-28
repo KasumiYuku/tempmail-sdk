@@ -13,12 +13,12 @@ const API_BASE: &str = "https://api.tempmail.lol";
 pub fn generate_email() -> Result<EmailInfo, String> {
     block_on(async {
         let resp = http_client()
-            .get(format!("{}/generate", API_BASE))
+            .get(format!("{API_BASE}/generate"))
             .header("User-Agent", get_current_ua())
             .header("Accept", "application/json")
             .send()
             .await
-            .map_err(|e| format!("tempmail-lol-v2 request failed: {}", e))?;
+            .map_err(|e| format!("tempmail-lol-v2 request failed: {e}"))?;
 
         if !resp.status().is_success() {
             return Err(format!(
@@ -30,7 +30,7 @@ pub fn generate_email() -> Result<EmailInfo, String> {
         let data: Value = resp
             .json()
             .await
-            .map_err(|e| format!("parse failed: {}", e))?;
+            .map_err(|e| format!("parse failed: {e}"))?;
         let address = data["address"].as_str().unwrap_or("");
         let token = data["token"].as_str().unwrap_or("");
 
@@ -58,7 +58,7 @@ pub fn get_emails(token: &str, email: &str) -> Result<Vec<Email>, String> {
             .header("Accept", "application/json")
             .send()
             .await
-            .map_err(|e| format!("tempmail-lol-v2 request failed: {}", e))?;
+            .map_err(|e| format!("tempmail-lol-v2 request failed: {e}"))?;
 
         if !resp.status().is_success() {
             return Err(format!(
@@ -70,7 +70,7 @@ pub fn get_emails(token: &str, email: &str) -> Result<Vec<Email>, String> {
         let data: Value = resp
             .json()
             .await
-            .map_err(|e| format!("parse failed: {}", e))?;
+            .map_err(|e| format!("parse failed: {e}"))?;
         let list = data["email"].as_array().cloned().unwrap_or_default();
 
         let mut out = Vec::with_capacity(list.len());

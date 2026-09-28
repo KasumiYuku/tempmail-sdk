@@ -52,7 +52,7 @@ async fn pick_domain(client: &wreq::Client) -> Result<String, String> {
         .header("Referer", REFERER)
         .send()
         .await
-        .map_err(|e| format!("freecustom: 获取域名列表失败: {}", e))?;
+        .map_err(|e| format!("freecustom: 获取域名列表失败: {e}"))?;
 
     if !resp.status().is_success() {
         return Err(format!(
@@ -64,7 +64,7 @@ async fn pick_domain(client: &wreq::Client) -> Result<String, String> {
     let data: Value = resp
         .json()
         .await
-        .map_err(|e| format!("freecustom: 解析域名列表失败: {}", e))?;
+        .map_err(|e| format!("freecustom: 解析域名列表失败: {e}"))?;
 
     let list = match data.get("data").and_then(|v| v.as_array()) {
         Some(arr) if !arr.is_empty() => arr,
@@ -105,14 +105,14 @@ async fn pick_domain(client: &wreq::Client) -> Result<String, String> {
 /// POST /api/auth → { token }
 async fn fetch_auth_token(client: &wreq::Client) -> Result<String, String> {
     let resp = client
-        .post(format!("{}/api/auth", SITE_URL))
+        .post(format!("{SITE_URL}/api/auth"))
         .header("User-Agent", UA)
         .header("Accept", "application/json")
         .header("Content-Type", "application/json")
         .header("Referer", REFERER)
         .send()
         .await
-        .map_err(|e| format!("freecustom: 获取令牌失败: {}", e))?;
+        .map_err(|e| format!("freecustom: 获取令牌失败: {e}"))?;
 
     if !resp.status().is_success() {
         return Err(format!("freecustom: 获取令牌失败 HTTP {}", resp.status()));
@@ -121,7 +121,7 @@ async fn fetch_auth_token(client: &wreq::Client) -> Result<String, String> {
     let data: Value = resp
         .json()
         .await
-        .map_err(|e| format!("freecustom: 解析令牌响应失败: {}", e))?;
+        .map_err(|e| format!("freecustom: 解析令牌响应失败: {e}"))?;
 
     let token = data
         .get("token")
@@ -169,13 +169,12 @@ pub fn get_emails(email: &str) -> Result<Vec<Email>, String> {
 
     block_on(async {
         let jwt = fetch_auth_token(&client).await?;
-        let bearer = format!("Bearer {}", jwt);
+        let bearer = format!("Bearer {jwt}");
         let encoded = encode_mail(&addr);
 
         let list_resp = client
             .get(format!(
-                "{}/api/public-mailbox?fullMailboxId={}",
-                SITE_URL, encoded
+                "{SITE_URL}/api/public-mailbox?fullMailboxId={encoded}"
             ))
             .header("User-Agent", UA)
             .header("Accept", "application/json")
@@ -184,7 +183,7 @@ pub fn get_emails(email: &str) -> Result<Vec<Email>, String> {
             .header("x-fce-client", "web-client")
             .send()
             .await
-            .map_err(|e| format!("freecustom: 获取邮件失败: {}", e))?;
+            .map_err(|e| format!("freecustom: 获取邮件失败: {e}"))?;
 
         if !list_resp.status().is_success() {
             return Err(format!(
@@ -196,7 +195,7 @@ pub fn get_emails(email: &str) -> Result<Vec<Email>, String> {
         let list_data: Value = list_resp
             .json()
             .await
-            .map_err(|e| format!("freecustom: 解析邮件列表失败: {}", e))?;
+            .map_err(|e| format!("freecustom: 解析邮件列表失败: {e}"))?;
 
         let success = list_data
             .get("success")
@@ -221,8 +220,7 @@ pub fn get_emails(email: &str) -> Result<Vec<Email>, String> {
             let mut full = item.clone();
             let msg_resp = client
                 .get(format!(
-                    "{}/api/public-mailbox?fullMailboxId={}&messageId={}",
-                    SITE_URL, encoded, id
+                    "{SITE_URL}/api/public-mailbox?fullMailboxId={encoded}&messageId={id}"
                 ))
                 .header("User-Agent", UA)
                 .header("Accept", "application/json")

@@ -25,21 +25,21 @@ fn random_username() -> String {
 fn fetch_domains() -> Result<Vec<String>, String> {
     block_on(async {
         let resp = http_client()
-            .post(format!("{}/api/getDomains", BASE))
+            .post(format!("{BASE}/api/getDomains"))
             .header("Accept", "*/*")
             .header("Content-Type", "application/x-www-form-urlencoded")
-            .header("Referer", format!("{}/", BASE))
+            .header("Referer", format!("{BASE}/"))
             .header("User-Agent", get_current_ua())
             .send()
             .await
-            .map_err(|e| format!("anonymmail: {}", e))?;
+            .map_err(|e| format!("anonymmail: {e}"))?;
         if !resp.status().is_success() {
             return Err(format!("anonymmail: 获取域名失败 {}", resp.status()));
         }
         let data: Value = resp
             .json()
             .await
-            .map_err(|e| format!("anonymmail: {}", e))?;
+            .map_err(|e| format!("anonymmail: {e}"))?;
         let arr = data.as_array().ok_or("anonymmail: 域名响应非数组")?;
         let mut domains = Vec::new();
         for item in arr {
@@ -63,38 +63,38 @@ pub fn generate_email() -> Result<EmailInfo, String> {
     let mut rng = rand::thread_rng();
     let domain = &domains[rng.gen_range(0..domains.len())];
     let username = random_username();
-    let email = format!("{}@{}", username, domain);
+    let email = format!("{username}@{domain}");
 
     block_on(async {
         // 先 HEAD 获取 session cookie
         let head_resp = http_client()
-            .head(format!("{}/", BASE))
+            .head(format!("{BASE}/"))
             .header("User-Agent", get_current_ua())
             .send()
             .await
-            .map_err(|e| format!("anonymmail: HEAD 失败 {}", e))?;
+            .map_err(|e| format!("anonymmail: HEAD 失败 {e}"))?;
         // 忽略 HEAD 响应状态，只需要 cookie 被客户端保存
         let _ = head_resp;
 
         // POST /api/create 创建邮箱
         let body = format!("email={}", urlencoding::encode(&email));
         let resp = http_client()
-            .post(format!("{}/api/create", BASE))
+            .post(format!("{BASE}/api/create"))
             .header("Accept", "*/*")
             .header("Content-Type", "application/x-www-form-urlencoded")
-            .header("Referer", format!("{}/", BASE))
+            .header("Referer", format!("{BASE}/"))
             .header("User-Agent", get_current_ua())
             .body(body)
             .send()
             .await
-            .map_err(|e| format!("anonymmail: 创建邮箱失败 {}", e))?;
+            .map_err(|e| format!("anonymmail: 创建邮箱失败 {e}"))?;
         if !resp.status().is_success() {
             return Err(format!("anonymmail: 创建邮箱 HTTP {}", resp.status()));
         }
         let data: Value = resp
             .json()
             .await
-            .map_err(|e| format!("anonymmail: 解析响应失败 {}", e))?;
+            .map_err(|e| format!("anonymmail: 解析响应失败 {e}"))?;
         if data.get("success").and_then(|v| v.as_bool()) != Some(true) {
             return Err(format!(
                 "anonymmail: 创建失败 {}",
@@ -129,22 +129,22 @@ pub fn get_emails(email: &str) -> Result<Vec<Email>, String> {
     block_on(async {
         let body = format!("email={}", urlencoding::encode(em));
         let resp = http_client()
-            .post(format!("{}/api/get", BASE))
+            .post(format!("{BASE}/api/get"))
             .header("Accept", "*/*")
             .header("Content-Type", "application/x-www-form-urlencoded")
-            .header("Referer", format!("{}/", BASE))
+            .header("Referer", format!("{BASE}/"))
             .header("User-Agent", get_current_ua())
             .body(body)
             .send()
             .await
-            .map_err(|e| format!("anonymmail: {}", e))?;
+            .map_err(|e| format!("anonymmail: {e}"))?;
         if !resp.status().is_success() {
             return Err(format!("anonymmail: 获取邮件失败 {}", resp.status()));
         }
         let data: Value = resp
             .json()
             .await
-            .map_err(|e| format!("anonymmail: {}", e))?;
+            .map_err(|e| format!("anonymmail: {e}"))?;
         // 响应格式: {"email@domain":{"created_at":"...","emails":[...]}}
         let obj = data.as_object().ok_or("anonymmail: 响应非对象")?;
         let mut out = Vec::new();

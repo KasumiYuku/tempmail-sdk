@@ -30,17 +30,17 @@ fn mh_headers(b: wreq::RequestBuilder) -> wreq::RequestBuilder {
 /// 创建邮箱：请求随机地址接口并从 HTML 中解析出邮箱
 pub fn generate_email() -> Result<EmailInfo, String> {
     block_on(async {
-        let resp = mh_headers(http_client().get(format!("{}/api/random", BASE)))
+        let resp = mh_headers(http_client().get(format!("{BASE}/api/random")))
             .send()
             .await
-            .map_err(|e| format!("mailhole-de: 创建邮箱请求失败: {}", e))?;
+            .map_err(|e| format!("mailhole-de: 创建邮箱请求失败: {e}"))?;
         if !resp.status().is_success() {
             return Err(format!("mailhole-de: 创建邮箱返回 HTTP {}", resp.status()));
         }
         let body = resp
             .text()
             .await
-            .map_err(|e| format!("mailhole-de: 读取创建邮箱响应失败: {}", e))?;
+            .map_err(|e| format!("mailhole-de: 读取创建邮箱响应失败: {e}"))?;
 
         let email = EMAIL_RE
             .captures(&body)
@@ -70,14 +70,14 @@ pub fn get_emails(token: &str, email: &str) -> Result<Vec<Email>, String> {
         let resp = mh_headers(http_client().get(url))
             .send()
             .await
-            .map_err(|e| format!("mailhole-de: 获取邮件请求失败: {}", e))?;
+            .map_err(|e| format!("mailhole-de: 获取邮件请求失败: {e}"))?;
         if !resp.status().is_success() {
             return Err(format!("mailhole-de: 获取邮件返回 HTTP {}", resp.status()));
         }
         let data: Value = resp
             .json()
             .await
-            .map_err(|e| format!("mailhole-de: 解析邮件响应失败: {}", e))?;
+            .map_err(|e| format!("mailhole-de: 解析邮件响应失败: {e}"))?;
         let rows = data.as_array().cloned().unwrap_or_default();
         Ok(rows.iter().map(|raw| normalize_email(raw, addr)).collect())
     })

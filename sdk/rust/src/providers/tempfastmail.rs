@@ -29,7 +29,7 @@ fn flatten(raw: &Value, recipient: &str) -> Value {
 pub fn generate_email() -> Result<EmailInfo, String> {
     block_on(async {
         let resp = http_client()
-            .post(format!("{}/api/email-box", BASE_URL))
+            .post(format!("{BASE_URL}/api/email-box"))
             .header("Accept", "application/json")
             .header("User-Agent", "Mozilla/5.0")
             .send()
@@ -66,7 +66,7 @@ pub fn generate_email() -> Result<EmailInfo, String> {
 
 async fn get_json(path: String) -> Result<Value, String> {
     let resp = http_client()
-        .get(format!("{}{}", BASE_URL, path))
+        .get(format!("{BASE_URL}{path}"))
         .header("Accept", "application/json")
         .header("User-Agent", "Mozilla/5.0")
         .send()

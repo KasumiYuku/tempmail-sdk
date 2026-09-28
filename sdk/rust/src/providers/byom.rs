@@ -22,7 +22,7 @@ fn random_username() -> String {
 /// 创建邮箱，无需调用 API，直接生成随机地址
 pub fn generate_email() -> Result<EmailInfo, String> {
     let username = random_username();
-    let email = format!("{}@byom.de", username);
+    let email = format!("{username}@byom.de");
     Ok(EmailInfo {
         channel: Channel::Byom,
         email,
@@ -40,7 +40,7 @@ pub fn get_emails(email: &str) -> Result<Vec<Email>, String> {
     }
     // 从邮箱地址提取用户名部分
     let username = em.rsplit_once('@').map(|(a, _)| a).unwrap_or(em);
-    let url = format!("https://api.byom.de/mails/{}", username);
+    let url = format!("https://api.byom.de/mails/{username}");
 
     block_on(async {
         let resp = http_client()
@@ -49,11 +49,11 @@ pub fn get_emails(email: &str) -> Result<Vec<Email>, String> {
             .header("User-Agent", get_current_ua())
             .send()
             .await
-            .map_err(|e| format!("byom: {}", e))?;
+            .map_err(|e| format!("byom: {e}"))?;
         if !resp.status().is_success() {
             return Err(format!("byom: 获取邮件失败 {}", resp.status()));
         }
-        let data: Value = resp.json().await.map_err(|e| format!("byom: {}", e))?;
+        let data: Value = resp.json().await.map_err(|e| format!("byom: {e}"))?;
         let rows = data.as_array().cloned().unwrap_or_default();
         let mut out = Vec::new();
         for raw in rows {

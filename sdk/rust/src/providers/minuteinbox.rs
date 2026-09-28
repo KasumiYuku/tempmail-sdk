@@ -70,7 +70,7 @@ fn parse_cookie_header(hdr: &str) -> BTreeMap<String, String> {
 /// 将 Cookie 映射转换回 Cookie 头字符串
 fn cookie_header_from_map(m: &BTreeMap<String, String>) -> String {
     m.iter()
-        .map(|(k, v)| format!("{}={}", k, v))
+        .map(|(k, v)| format!("{k}={v}"))
         .collect::<Vec<_>>()
         .join("; ")
 }
@@ -96,7 +96,7 @@ fn merge_set_cookies(hdr: &str, headers: &wreq::header::HeaderMap) -> String {
 
 /// 编码会话信息为 token 字符串
 fn encode_sess(s: &MinuteinboxSess) -> Result<String, String> {
-    serde_json::to_string(s).map_err(|e| format!("minuteinbox: token 序列化失败: {}", e))
+    serde_json::to_string(s).map_err(|e| format!("minuteinbox: token 序列化失败: {e}"))
 }
 
 /// 从 token 字符串解码会话信息
@@ -150,14 +150,14 @@ pub fn generate_email() -> Result<EmailInfo, String> {
         let client = http_client_no_cookie_jar();
 
         // 第一步：GET 首页，获取 Cookie 和 CSRF 令牌
-        let mut req = client.get(format!("{}/", ORIGIN));
+        let mut req = client.get(format!("{ORIGIN}/"));
         for (k, v) in browser_headers(ORIGIN) {
             req = req.header(k, v);
         }
         let resp = req
             .send()
             .await
-            .map_err(|e| format!("minuteinbox: 获取首页失败: {}", e))?;
+            .map_err(|e| format!("minuteinbox: 获取首页失败: {e}"))?;
 
         if !resp.status().is_success() {
             return Err(format!("minuteinbox: 首页返回 HTTP {}", resp.status()));
@@ -168,7 +168,7 @@ pub fn generate_email() -> Result<EmailInfo, String> {
         let html = resp
             .text()
             .await
-            .map_err(|e| format!("minuteinbox: 读取首页响应失败: {}", e))?;
+            .map_err(|e| format!("minuteinbox: 读取首页响应失败: {e}"))?;
 
         // 从 HTML 中提取 CSRF 令牌
         let csrf = CSRF_RE
@@ -182,16 +182,16 @@ pub fn generate_email() -> Result<EmailInfo, String> {
         }
 
         // 第二步：GET /index/index?csrf_token={csrf} 获取邮箱地址
-        let create_url = format!("{}/index/index?csrf_token={}", ORIGIN, csrf);
+        let create_url = format!("{ORIGIN}/index/index?csrf_token={csrf}");
         let mut req2 = client.get(&create_url);
-        for (k, v) in json_headers(&format!("{}/", ORIGIN)) {
+        for (k, v) in json_headers(&format!("{ORIGIN}/")) {
             req2 = req2.header(k, v);
         }
         req2 = req2.header("Cookie", &cookie_hdr);
         let resp2 = req2
             .send()
             .await
-            .map_err(|e| format!("minuteinbox: 创建邮箱请求失败: {}", e))?;
+            .map_err(|e| format!("minuteinbox: 创建邮箱请求失败: {e}"))?;
 
         if !resp2.status().is_success() {
             return Err(format!("minuteinbox: 创建邮箱返回 HTTP {}", resp2.status()));
@@ -203,7 +203,7 @@ pub fn generate_email() -> Result<EmailInfo, String> {
         let body: Value = resp2
             .json()
             .await
-            .map_err(|e| format!("minuteinbox: 解析创建邮箱响应失败: {}", e))?;
+            .map_err(|e| format!("minuteinbox: 解析创建邮箱响应失败: {e}"))?;
 
         let address = body
             .get("email")
@@ -212,7 +212,7 @@ pub fn generate_email() -> Result<EmailInfo, String> {
             .ok_or_else(|| "minuteinbox: 响应中未找到 email 字段".to_string())?;
 
         if address.is_empty() || !address.contains('@') {
-            return Err(format!("minuteinbox: 返回的邮箱地址无效: {}", address));
+            return Err(format!("minuteinbox: 返回的邮箱地址无效: {address}"));
         }
 
         let tok = encode_sess(&MinuteinboxSess {
@@ -242,10 +242,10 @@ pub fn get_emails(token: &str, email: &str) -> Result<Vec<Email>, String> {
 
     block_on(async {
         let client = http_client_no_cookie_jar();
-        let page_url = format!("{}/", ORIGIN);
+        let page_url = format!("{ORIGIN}/");
 
         // 第一步：GET /index/refresh 获取邮件列表
-        let refresh_url = format!("{}/index/refresh", ORIGIN);
+        let refresh_url = format!("{ORIGIN}/index/refresh");
         let mut req = client.get(&refresh_url);
         for (k, v) in json_headers(&page_url) {
             req = req.header(k, v);
@@ -254,7 +254,7 @@ pub fn get_emails(token: &str, email: &str) -> Result<Vec<Email>, String> {
         let resp = req
             .send()
             .await
-            .map_err(|e| format!("minuteinbox: 获取邮件列表请求失败: {}", e))?;
+            .map_err(|e| format!("minuteinbox: 获取邮件列表请求失败: {e}"))?;
 
         if !resp.status().is_success() {
             return Err(format!(
@@ -266,7 +266,7 @@ pub fn get_emails(token: &str, email: &str) -> Result<Vec<Email>, String> {
         let body_text = resp
             .text()
             .await
-            .map_err(|e| format!("minuteinbox: 读取邮件列表响应失败: {}", e))?;
+            .map_err(|e| format!("minuteinbox: 读取邮件列表响应失败: {e}"))?;
 
         // 空收件箱返回数字 0
         let trimmed = body_text.trim();
@@ -275,7 +275,7 @@ pub fn get_emails(token: &str, email: &str) -> Result<Vec<Email>, String> {
         }
 
         let data: Value = serde_json::from_str(trimmed)
-            .map_err(|e| format!("minuteinbox: 解析邮件列表 JSON 失败: {}", e))?;
+            .map_err(|e| format!("minuteinbox: 解析邮件列表 JSON 失败: {e}"))?;
 
         let items = match data.as_array() {
             Some(arr) => arr,
@@ -315,7 +315,7 @@ pub fn get_emails(token: &str, email: &str) -> Result<Vec<Email>, String> {
                 .unwrap_or(false);
 
             // GET /email/id/{id} 获取完整 HTML 正文
-            let detail_url = format!("{}/email/id/{}", ORIGIN, mail_id);
+            let detail_url = format!("{ORIGIN}/email/id/{mail_id}");
             let mut reqd = client.get(&detail_url);
             for (k, v) in json_headers(&page_url) {
                 reqd = reqd.header(k, v);

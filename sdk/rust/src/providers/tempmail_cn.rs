@@ -294,7 +294,7 @@ fn ws_loop(email: String, local: String, host: String, arc: Arc<Mutex<TempmailCn
     })();
 
     if let Err(e) = result {
-        log::debug!("tempmail-cn ws loop end: {}", e);
+        log::debug!("tempmail-cn ws loop end: {e}");
     }
     if let Ok(mut inner) = arc.lock() {
         inner.started = false;
@@ -330,7 +330,7 @@ pub fn generate_email(domain: Option<&str>) -> Result<EmailInfo, String> {
     let shortid = request_shortid(&host)?;
     Ok(EmailInfo {
         channel: Channel::TempmailCn,
-        email: format!("{}@{}", shortid, host),
+        email: format!("{shortid}@{host}"),
         token: None,
         expires_at: None,
         created_at: None,
@@ -350,13 +350,13 @@ pub fn get_emails(email: &str) -> Result<Vec<Email>, String> {
                 "zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6",
             )
             .header("Accept", "application/json")
-            .header("Referer", format!("https://{}/", host))
+            .header("Referer", format!("https://{host}/"))
             .header("Cache-Control", "no-cache")
             .header("DNT", "1")
             .header("Pragma", "no-cache")
             .send()
             .await
-            .map_err(|e| format!("tempmail-cn get mails: {}", e))?;
+            .map_err(|e| format!("tempmail-cn get mails: {e}"))?;
         if !resp.status().is_success() {
             return Err(format!("tempmail-cn: get mails failed: {}", resp.status()));
         }

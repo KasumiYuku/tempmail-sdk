@@ -32,7 +32,7 @@ fn apply_headers(mut req: wreq::RequestBuilder) -> wreq::RequestBuilder {
         "application/x-www-form-urlencoded; charset=UTF-8",
     );
     req = req.header("Origin", BASE_URL);
-    req = req.header("Referer", format!("{}/", BASE_URL));
+    req = req.header("Referer", format!("{BASE_URL}/"));
     req = req.header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0");
     req = req.header("x-requested-with", "XMLHttpRequest");
     req
@@ -43,10 +43,10 @@ pub fn generate_email() -> Result<EmailInfo, String> {
     let name = random_local(10);
     let domain = DOMAINS[rand::thread_rng().gen_range(0..DOMAINS.len())];
 
-    let body = format!("data={}%40{}&type=refresh&arg=", name, domain);
+    let body = format!("data={name}%40{domain}&type=refresh&arg=");
 
     block_on(async {
-        let req = apply_headers(client.post(format!("{}/", BASE_URL)));
+        let req = apply_headers(client.post(format!("{BASE_URL}/")));
         let resp = req.body(body).send().await.map_err(|e| e.to_string())?;
         if !resp.status().is_success() {
             return Err(format!(
@@ -59,11 +59,10 @@ pub fn generate_email() -> Result<EmailInfo, String> {
         if status != 1 {
             let info = data["info"].as_str().unwrap_or("");
             return Err(format!(
-                "24mail-chacuo: 创建失败 status={} info={}",
-                status, info
+                "24mail-chacuo: 创建失败 status={status} info={info}"
             ));
         }
-        let email_addr = format!("{}@{}", name, domain);
+        let email_addr = format!("{name}@{domain}");
         Ok(EmailInfo {
             channel: Channel::TwentyfourmailChacuo,
             email: email_addr.clone(),
@@ -82,10 +81,10 @@ pub fn get_emails(email: &str) -> Result<Vec<Email>, String> {
         _ => (email, DOMAINS[0]),
     };
 
-    let body = format!("data={}%40{}&type=refresh&arg=", name, domain);
+    let body = format!("data={name}%40{domain}&type=refresh&arg=");
 
     block_on(async {
-        let req = apply_headers(client.post(format!("{}/", BASE_URL)));
+        let req = apply_headers(client.post(format!("{BASE_URL}/")));
         let resp = req.body(body).send().await.map_err(|e| e.to_string())?;
         if !resp.status().is_success() {
             return Err(format!(

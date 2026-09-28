@@ -49,7 +49,7 @@ fn fetch_message(email: &str, message_id: &str) -> Result<Value, String> {
 
 pub fn generate_email() -> Result<EmailInfo, String> {
     block_on(async {
-        let resp = headers(http_client().get(format!("{}/new", API_BASE)))
+        let resp = headers(http_client().get(format!("{API_BASE}/new")))
             .send()
             .await
             .map_err(|e| e.to_string())?;

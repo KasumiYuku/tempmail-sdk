@@ -57,7 +57,7 @@ fn parse_packed_token(packed: &str) -> (String, String) {
 fn fetch_domains() -> Result<Vec<String>, String> {
     block_on(async {
         let resp = http_client()
-            .get(format!("{}/domains/public", BASE_URL))
+            .get(format!("{BASE_URL}/domains/public"))
             .header("User-Agent", get_current_ua())
             .header("Accept", "*/*")
             .header("Referer", REFERER)
@@ -65,7 +65,7 @@ fn fetch_domains() -> Result<Vec<String>, String> {
             .header("DNT", "1")
             .send()
             .await
-            .map_err(|e| format!("chatgpt-org-uk domains request failed: {}", e))?;
+            .map_err(|e| format!("chatgpt-org-uk domains request failed: {e}"))?;
 
         if !resp.status().is_success() {
             return Err(format!("chatgpt-org-uk domains failed: {}", resp.status()));
@@ -74,7 +74,7 @@ fn fetch_domains() -> Result<Vec<String>, String> {
         let data: Value = resp
             .json()
             .await
-            .map_err(|e| format!("parse failed: {}", e))?;
+            .map_err(|e| format!("parse failed: {e}"))?;
         if !data["success"].as_bool().unwrap_or(false) {
             return Err("chatgpt-org-uk: 域名响应格式无效".into());
         }
@@ -116,7 +116,7 @@ fn create_inbox(email: &str) -> Result<(String, String), String> {
     let email = email.to_string();
     block_on(async {
         let resp = http_client()
-            .post(format!("{}/inbox-token", BASE_URL))
+            .post(format!("{BASE_URL}/inbox-token"))
             .header("User-Agent", get_current_ua())
             .header("Accept", "*/*")
             .header("Referer", REFERER)
@@ -126,7 +126,7 @@ fn create_inbox(email: &str) -> Result<(String, String), String> {
             .json(&serde_json::json!({ "email": email }))
             .send()
             .await
-            .map_err(|e| format!("chatgpt-org-uk inbox-token request failed: {}", e))?;
+            .map_err(|e| format!("chatgpt-org-uk inbox-token request failed: {e}"))?;
 
         if !resp.status().is_success() {
             return Err(format!(
@@ -139,7 +139,7 @@ fn create_inbox(email: &str) -> Result<(String, String), String> {
         let data: Value = resp
             .json()
             .await
-            .map_err(|e| format!("parse failed: {}", e))?;
+            .map_err(|e| format!("parse failed: {e}"))?;
         if !data["success"].as_bool().unwrap_or(false) {
             return Err("chatgpt-org-uk: inbox-token 响应无效".into());
         }
@@ -191,11 +191,11 @@ fn fetch_emails(inbox: &str, email: &str, gm_sid: &str) -> Result<Vec<Email>, St
             .header("Referer", REFERER)
             .header("Origin", ORIGIN)
             .header("DNT", "1")
-            .header("Cookie", format!("gm_sid={}", gm_sid))
+            .header("Cookie", format!("gm_sid={gm_sid}"))
             .header("x-inbox-token", inbox)
             .send()
             .await
-            .map_err(|e| format!("chatgpt-org-uk request failed: {}", e))?;
+            .map_err(|e| format!("chatgpt-org-uk request failed: {e}"))?;
 
         if !resp.status().is_success() {
             return Err(format!(
@@ -207,7 +207,7 @@ fn fetch_emails(inbox: &str, email: &str, gm_sid: &str) -> Result<Vec<Email>, St
         let data: Value = resp
             .json()
             .await
-            .map_err(|e| format!("parse failed: {}", e))?;
+            .map_err(|e| format!("parse failed: {e}"))?;
         if !data["success"].as_bool().unwrap_or(false) {
             return Ok(Vec::new());
         }

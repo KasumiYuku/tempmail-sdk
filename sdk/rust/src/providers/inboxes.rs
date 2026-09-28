@@ -40,7 +40,7 @@ fn random_local() -> String {
 }
 
 fn get_domains() -> Result<Vec<String>, String> {
-    let data = fetch_json(format!("{}/domain", API_BASE))?;
+    let data = fetch_json(format!("{API_BASE}/domain"))?;
     let domains: Vec<String> = data
         .get("domains")
         .and_then(|x| x.as_array())

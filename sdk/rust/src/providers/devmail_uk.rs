@@ -38,7 +38,7 @@ fn fetch_json(url: String) -> Result<Value, String> {
 }
 
 pub fn generate_email() -> Result<EmailInfo, String> {
-    let data = fetch_json(format!("{}/new", API_BASE))?;
+    let data = fetch_json(format!("{API_BASE}/new"))?;
     let mut email = data
         .get("email")
         .and_then(|v| v.as_str())
@@ -49,7 +49,7 @@ pub fn generate_email() -> Result<EmailInfo, String> {
         if let Some(mailbox) = data.get("mailbox").and_then(|v| v.as_str()) {
             let mailbox = mailbox.trim();
             if !mailbox.is_empty() {
-                email = format!("{}@devmail.uk", mailbox);
+                email = format!("{mailbox}@devmail.uk");
             }
         }
     }

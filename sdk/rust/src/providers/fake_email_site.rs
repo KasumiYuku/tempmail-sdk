@@ -17,7 +17,7 @@ fn headers(b: wreq::RequestBuilder) -> wreq::RequestBuilder {
 /// 创建临时邮箱
 pub fn generate_email() -> Result<EmailInfo, String> {
     block_on(async {
-        let resp = headers(http_client().post(format!("{}/temporary-address", API_BASE)))
+        let resp = headers(http_client().post(format!("{API_BASE}/temporary-address")))
             .body(json!({}).to_string())
             .send()
             .await

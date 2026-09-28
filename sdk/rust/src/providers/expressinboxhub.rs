@@ -30,7 +30,7 @@ fn init_session() -> Result<(String, String), String> {
             .header("User-Agent", browser_ua())
             .send()
             .await
-            .map_err(|e| format!("expressinboxhub 初始化会话失败: {}", e))?;
+            .map_err(|e| format!("expressinboxhub 初始化会话失败: {e}"))?;
 
         /* 提取 set-cookie 头中的所有 cookie */
         let mut cookie_parts: Vec<String> = Vec::new();
@@ -44,7 +44,7 @@ fn init_session() -> Result<(String, String), String> {
         let html = resp
             .text()
             .await
-            .map_err(|e| format!("expressinboxhub 读取页面失败: {}", e))?;
+            .map_err(|e| format!("expressinboxhub 读取页面失败: {e}"))?;
 
         /* 从 HTML 中提取 <meta name="csrf-token" content="xxx"> */
         let re = Regex::new(r#"<meta\s+name="csrf-token"\s+content="([^"]+)""#).unwrap();
@@ -68,30 +68,29 @@ fn post_messages(csrf_token: &str, cookies: &str) -> Result<String, String> {
     let cookies = cookies.to_string();
     block_on(async move {
         let resp = http_client_no_cookie_jar()
-            .post(format!("{}/messages", BASE_URL))
+            .post(format!("{BASE_URL}/messages"))
             .header("User-Agent", browser_ua())
             .header("Content-Type", "application/json")
             .header("Accept", "application/json, text/plain, */*")
             .header("Origin", BASE_URL)
-            .header("Referer", format!("{}/", BASE_URL))
+            .header("Referer", format!("{BASE_URL}/"))
             .header("X-Requested-With", "XMLHttpRequest")
             .header("X-CSRF-TOKEN", &csrf_token)
             .header("Cookie", &cookies)
             .json(&serde_json::json!({ "_token": csrf_token }))
             .send()
             .await
-            .map_err(|e| format!("expressinboxhub /messages 请求失败: {}", e))?;
+            .map_err(|e| format!("expressinboxhub /messages 请求失败: {e}"))?;
 
         let status = resp.status();
         let text = resp
             .text()
             .await
-            .map_err(|e| format!("expressinboxhub /messages 读取失败: {}", e))?;
+            .map_err(|e| format!("expressinboxhub /messages 读取失败: {e}"))?;
 
         if !status.is_success() {
             return Err(format!(
-                "expressinboxhub /messages 失败: {} {}",
-                status, text
+                "expressinboxhub /messages 失败: {status} {text}"
             ));
         }
         Ok(text)
@@ -104,7 +103,7 @@ pub fn generate_email() -> Result<EmailInfo, String> {
     let text = post_messages(&csrf_token, &cookies)?;
 
     let data: Value =
-        serde_json::from_str(&text).map_err(|e| format!("expressinboxhub 解析响应失败: {}", e))?;
+        serde_json::from_str(&text).map_err(|e| format!("expressinboxhub 解析响应失败: {e}"))?;
 
     let mailbox = data["mailbox"].as_str().unwrap_or("").trim().to_string();
 
@@ -131,7 +130,7 @@ pub fn generate_email() -> Result<EmailInfo, String> {
 /// 获取邮件列表
 pub fn get_emails(token: &str, _email: &str) -> Result<Vec<Email>, String> {
     let session: Value = serde_json::from_str(token)
-        .map_err(|e| format!("expressinboxhub 解析 session token 失败: {}", e))?;
+        .map_err(|e| format!("expressinboxhub 解析 session token 失败: {e}"))?;
 
     let csrf_token = session["csrfToken"]
         .as_str()
@@ -142,7 +141,7 @@ pub fn get_emails(token: &str, _email: &str) -> Result<Vec<Email>, String> {
 
     let text = post_messages(csrf_token, cookies)?;
     let data: Value =
-        serde_json::from_str(&text).map_err(|e| format!("expressinboxhub 解析响应失败: {}", e))?;
+        serde_json::from_str(&text).map_err(|e| format!("expressinboxhub 解析响应失败: {e}"))?;
 
     let messages = data["messages"].as_array().cloned().unwrap_or_default();
 

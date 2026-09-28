@@ -50,7 +50,7 @@ fn parse_cookie_header(hdr: &str) -> BTreeMap<String, String> {
 /// 将 Cookie 映射转换回 Cookie 头字符串
 fn cookie_header_from_map(m: &BTreeMap<String, String>) -> String {
     m.iter()
-        .map(|(k, v)| format!("{}={}", k, v))
+        .map(|(k, v)| format!("{k}={v}"))
         .collect::<Vec<_>>()
         .join("; ")
 }
@@ -95,7 +95,7 @@ pub fn generate_email() -> Result<EmailInfo, String> {
             .header("Origin", BASE_URL)
             .send()
             .await
-            .map_err(|e| format!("tempemail-info: 获取首页失败: {}", e))?;
+            .map_err(|e| format!("tempemail-info: 获取首页失败: {e}"))?;
 
         if !resp.status().is_success() {
             return Err(format!("tempemail-info: 首页返回 HTTP {}", resp.status()));
@@ -110,7 +110,7 @@ pub fn generate_email() -> Result<EmailInfo, String> {
         let html = resp
             .text()
             .await
-            .map_err(|e| format!("tempemail-info: 读取首页响应失败: {}", e))?;
+            .map_err(|e| format!("tempemail-info: 读取首页响应失败: {e}"))?;
 
         // 从 HTML 中正则提取 base64 编码的邮箱地址
         let encoded = EMAIL_RE
@@ -121,7 +121,7 @@ pub fn generate_email() -> Result<EmailInfo, String> {
 
         let decoded = base64::engine::general_purpose::STANDARD
             .decode(encoded.as_bytes())
-            .map_err(|e| format!("tempemail-info: 邮箱地址 base64 解码失败: {}", e))?;
+            .map_err(|e| format!("tempemail-info: 邮箱地址 base64 解码失败: {e}"))?;
         let email = String::from_utf8_lossy(&decoded).trim().to_string();
         if email.is_empty() || !email.contains('@') {
             return Err("tempemail-info: 解码出的邮箱地址无效".into());
@@ -162,7 +162,7 @@ pub fn get_emails(token: &str, email: &str) -> Result<Vec<Email>, String> {
             .body("last_id=0")
             .send()
             .await
-            .map_err(|e| format!("tempemail-info: 获取邮件列表失败: {}", e))?;
+            .map_err(|e| format!("tempemail-info: 获取邮件列表失败: {e}"))?;
 
         if !resp.status().is_success() {
             return Err(format!(
@@ -174,12 +174,12 @@ pub fn get_emails(token: &str, email: &str) -> Result<Vec<Email>, String> {
         let body_text = resp
             .text()
             .await
-            .map_err(|e| format!("tempemail-info: 读取邮件列表响应失败: {}", e))?;
+            .map_err(|e| format!("tempemail-info: 读取邮件列表响应失败: {e}"))?;
 
         // checker.php 返回邮件对象数组，字段：id / name / from / subject / date / read
         // 其中 date 既是显示日期，又是 /view/{date} 正文接口的路径键
         let data: Value = serde_json::from_str(body_text.trim())
-            .map_err(|e| format!("tempemail-info: 解析邮件列表失败: {}", e))?;
+            .map_err(|e| format!("tempemail-info: 解析邮件列表失败: {e}"))?;
 
         let rows = match data.as_array() {
             Some(arr) if !arr.is_empty() => arr,
@@ -201,7 +201,7 @@ pub fn get_emails(token: &str, email: &str) -> Result<Vec<Email>, String> {
 
             // 构造发件人地址：有显示名则格式化为 "name <email>"
             let from_addr = if !name.is_empty() && name != from {
-                format!("{} <{}>", name, from)
+                format!("{name} <{from}>")
             } else {
                 from.to_string()
             };

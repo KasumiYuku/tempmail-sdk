@@ -28,12 +28,12 @@ pub fn generate_email(domain: Option<&str>, channel: Channel) -> Result<EmailInf
         .filter(|d| !d.is_empty())
         .unwrap_or(DEFAULT_DOMAIN);
     let local = random_local();
-    let email = format!("{}@{}", local, selected_domain);
+    let email = format!("{local}@{selected_domain}");
 
     // 调用列表接口验证地址可用
     block_on(async {
         let resp = http_client()
-            .get(format!("{}/?email={}&epin=", API_BASE, email))
+            .get(format!("{API_BASE}/?email={email}&epin="))
             .header("Accept", "application/json")
             .header("User-Agent", get_current_ua())
             .header("Referer", "https://tempmail.plus/")
@@ -59,7 +59,7 @@ fn fetch_body(mail_id: i64, email: &str) -> (String, String) {
     if mail_id == 0 {
         return (String::new(), String::new());
     }
-    let url = format!("{}/{}?email={}&epin=", API_BASE, mail_id, email);
+    let url = format!("{API_BASE}/{mail_id}?email={email}&epin=");
     block_on(async {
         let resp = http_client()
             .get(&url)
@@ -95,7 +95,7 @@ pub fn get_emails(email: &str) -> Result<Vec<Email>, String> {
         return Err("tempmail-plus: 邮箱地址为空".into());
     }
 
-    let url = format!("{}/?email={}&epin=", API_BASE, em);
+    let url = format!("{API_BASE}/?email={em}&epin=");
     block_on(async {
         let resp = http_client()
             .get(&url)

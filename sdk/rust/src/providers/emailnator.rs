@@ -27,7 +27,7 @@ fn init_session() -> Result<(String, String), String> {
             .header("User-Agent", browser_ua())
             .send()
             .await
-            .map_err(|e| format!("emailnator init session failed: {}", e))?;
+            .map_err(|e| format!("emailnator init session failed: {e}"))?;
 
         let mut xsrf_token = String::new();
         let mut cookie_parts: Vec<String> = Vec::new();
@@ -56,27 +56,27 @@ fn post_json(xsrf_token: &str, cookies: &str, path: &str, body: Value) -> Result
     let path = path.to_string();
     block_on(async move {
         let resp = http_client()
-            .post(format!("{}{}", BASE_URL, path))
+            .post(format!("{BASE_URL}{path}"))
             .header("User-Agent", browser_ua())
             .header("Content-Type", "application/json")
             .header("Accept", "application/json, text/plain, */*")
             .header("Origin", BASE_URL)
-            .header("Referer", format!("{}/", BASE_URL))
+            .header("Referer", format!("{BASE_URL}/"))
             .header("X-Requested-With", "XMLHttpRequest")
             .header("X-XSRF-TOKEN", xsrf_token)
             .header("Cookie", cookies)
             .json(&body)
             .send()
             .await
-            .map_err(|e| format!("emailnator {} failed: {}", path, e))?;
+            .map_err(|e| format!("emailnator {path} failed: {e}"))?;
 
         let status = resp.status();
         let text = resp
             .text()
             .await
-            .map_err(|e| format!("emailnator {} read failed: {}", path, e))?;
+            .map_err(|e| format!("emailnator {path} read failed: {e}"))?;
         if !status.is_success() {
-            return Err(format!("emailnator {} failed: {} {}", path, status, text));
+            return Err(format!("emailnator {path} failed: {status} {text}"));
         }
         Ok(text)
     })
@@ -90,7 +90,7 @@ pub fn generate_email() -> Result<EmailInfo, String> {
         "/generate-email",
         serde_json::json!({ "email": EMAIL_OPTIONS }),
     )?;
-    let data: Value = serde_json::from_str(&text).map_err(|e| format!("parse failed: {}", e))?;
+    let data: Value = serde_json::from_str(&text).map_err(|e| format!("parse failed: {e}"))?;
     let email_list = data["email"]
         .as_array()
         .ok_or("emailnator: empty email response")?;
@@ -117,7 +117,7 @@ pub fn generate_email() -> Result<EmailInfo, String> {
 
 pub fn get_emails(token: &str, email: &str) -> Result<Vec<Email>, String> {
     let session: Value =
-        serde_json::from_str(token).map_err(|e| format!("parse session token failed: {}", e))?;
+        serde_json::from_str(token).map_err(|e| format!("parse session token failed: {e}"))?;
 
     let xsrf_token = session["xsrfToken"].as_str().unwrap_or("");
     let cookies = session["cookies"].as_str().unwrap_or("");
@@ -128,7 +128,7 @@ pub fn get_emails(token: &str, email: &str) -> Result<Vec<Email>, String> {
         "/message-list",
         serde_json::json!({ "email": email }),
     )?;
-    let data: Value = serde_json::from_str(&text).map_err(|e| format!("parse failed: {}", e))?;
+    let data: Value = serde_json::from_str(&text).map_err(|e| format!("parse failed: {e}"))?;
     let message_data = data["messageData"].as_array().cloned().unwrap_or_default();
 
     let mut result = Vec::new();

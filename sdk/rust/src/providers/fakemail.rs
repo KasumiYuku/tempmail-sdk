@@ -46,7 +46,7 @@ fn merge_cookie(prev: &str, headers: &HeaderMap) -> String {
         }
     }
     jar.into_iter()
-        .map(|(k, v)| format!("{}={}", k, v))
+        .map(|(k, v)| format!("{k}={v}"))
         .collect::<Vec<_>>()
         .join("; ")
 }
@@ -58,7 +58,7 @@ fn clean_json(text: &str) -> &str {
 fn open_session() -> Result<(String, String), String> {
     block_on(async {
         let resp = http_client()
-            .get(format!("{}/", BASE_URL))
+            .get(format!("{BASE_URL}/"))
             .header("Accept", "text/html,application/xhtml+xml")
             .header("User-Agent", "Mozilla/5.0")
             .send()
@@ -90,7 +90,7 @@ fn create_address(csrf: &str, cookie: &str) -> Result<(GenerateResponse, String)
             ))
             .header("Accept", "application/json, text/javascript, */*; q=0.01")
             .header("X-Requested-With", "XMLHttpRequest")
-            .header("Referer", format!("{}/", BASE_URL))
+            .header("Referer", format!("{BASE_URL}/"))
             .header("Cookie", cookie)
             .header("User-Agent", "Mozilla/5.0")
             .send()
@@ -110,10 +110,10 @@ fn create_address(csrf: &str, cookie: &str) -> Result<(GenerateResponse, String)
 fn fetch_rows(cookie: &str) -> Result<Vec<Value>, String> {
     block_on(async {
         let resp = http_client()
-            .get(format!("{}/index/refresh", BASE_URL))
+            .get(format!("{BASE_URL}/index/refresh"))
             .header("Accept", "application/json, text/javascript, */*; q=0.01")
             .header("X-Requested-With", "XMLHttpRequest")
-            .header("Referer", format!("{}/", BASE_URL))
+            .header("Referer", format!("{BASE_URL}/"))
             .header("Cookie", cookie)
             .header("User-Agent", "Mozilla/5.0")
             .send()
@@ -130,10 +130,10 @@ fn fetch_rows(cookie: &str) -> Result<Vec<Value>, String> {
 fn fetch_detail(cookie: &str, id: &str) -> Result<Value, String> {
     block_on(async {
         let resp = http_client()
-            .post(format!("{}/index/email", BASE_URL))
+            .post(format!("{BASE_URL}/index/email"))
             .header("Accept", "application/json, text/javascript, */*; q=0.01")
             .header("X-Requested-With", "XMLHttpRequest")
-            .header("Referer", format!("{}/", BASE_URL))
+            .header("Referer", format!("{BASE_URL}/"))
             .header("Cookie", cookie)
             .header("Content-Type", "application/x-www-form-urlencoded")
             .header("User-Agent", "Mozilla/5.0")

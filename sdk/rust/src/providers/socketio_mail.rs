@@ -22,7 +22,7 @@ const INITIAL_SYNC_WAIT_MS: u64 = 80;
 const SOCKET_IO_VERSIONS: &[u32] = &[4, 3];
 
 fn socket_url(host: &str, eio: u32) -> String {
-    format!("wss://{}/socket.io/?EIO={}&transport=websocket", host, eio)
+    format!("wss://{host}/socket.io/?EIO={eio}&transport=websocket")
 }
 
 fn parse_event_packet(packet: &str) -> Option<(String, Value)> {
@@ -43,7 +43,7 @@ fn send_event(
     payload: &Value,
 ) -> Result<(), String> {
     let arr = json!([event, payload]);
-    let msg = format!("42{}", arr);
+    let msg = format!("42{arr}");
     ws.send(Message::Text(msg)).map_err(|e| e.to_string())
 }
 
@@ -75,7 +75,7 @@ fn flatten_mail(raw: &Value, recipient_email: &str) -> Value {
                 .or_else(|| raw.get("date"))
                 .and_then(|v| v.as_str())
                 .unwrap_or("");
-            format!("{}\n{}\n{}\n{}", from, subj, dt, recipient_email)
+            format!("{from}\n{subj}\n{dt}\n{recipient_email}")
         });
 
     let from = hdrs
@@ -153,7 +153,7 @@ impl SocketIoMailProvider {
                 .header("Cache-Control", "no-cache")
                 .header("DNT", "1")
                 .header("Pragma", "no-cache")
-                .header("Origin", format!("https://{}", host))
+                .header("Origin", format!("https://{host}"))
                 .body(())
                 .map_err(|e| e.to_string());
 
@@ -240,7 +240,7 @@ impl SocketIoMailProvider {
     pub fn generate_email(&self) -> Result<EmailInfo, String> {
         let host = &self.default_host;
         let shortid = self.request_shortid(host)?;
-        let email = format!("{}@{}", shortid, host);
+        let email = format!("{shortid}@{host}");
         self.ensure_mailbox(&email)?;
         Ok(EmailInfo {
             channel: self.channel.clone(),

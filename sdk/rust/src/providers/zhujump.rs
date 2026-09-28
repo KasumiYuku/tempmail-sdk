@@ -93,7 +93,7 @@ fn merge_set_cookies(hdr: &str, headers: &HeaderMap) -> String {
         }
     }
     m.into_iter()
-        .map(|(k, v)| format!("{}={}", k, v))
+        .map(|(k, v)| format!("{k}={v}"))
         .collect::<Vec<_>>()
         .join("; ")
 }
@@ -104,7 +104,7 @@ fn encode_token(cookie: &str, email_id: &str, base_url: &str) -> Result<String, 
         i: email_id.to_string(),
         b: Some(base_url.trim_end_matches('/').to_string()),
     })
-    .map_err(|e| format!("zhujump: token encode: {}", e))?;
+    .map_err(|e| format!("zhujump: token encode: {e}"))?;
     Ok(format!(
         "{}{}",
         TOKEN_PREFIX,
@@ -150,7 +150,7 @@ pub fn generate_email_for_instance(
         let mut cookie = String::new();
 
         let register_resp = json_headers(
-            client.post(format!("{}/api/auth/register", base_url)),
+            client.post(format!("{base_url}/api/auth/register")),
             &base_url,
             None,
         )
@@ -165,7 +165,7 @@ pub fn generate_email_for_instance(
         )
         .send()
         .await
-        .map_err(|e| format!("zhujump register: {}", e))?;
+        .map_err(|e| format!("zhujump register: {e}"))?;
         if !register_resp.status().is_success() {
             return Err(format!("zhujump register: {}", register_resp.status()));
         }
@@ -173,13 +173,13 @@ pub fn generate_email_for_instance(
         let _ = register_resp.text().await;
 
         let csrf_resp = json_headers(
-            client.get(format!("{}/api/auth/csrf", base_url)),
+            client.get(format!("{base_url}/api/auth/csrf")),
             &base_url,
             Some(&cookie),
         )
         .send()
         .await
-        .map_err(|e| format!("zhujump csrf: {}", e))?;
+        .map_err(|e| format!("zhujump csrf: {e}"))?;
         if !csrf_resp.status().is_success() {
             return Err(format!("zhujump csrf: {}", csrf_resp.status()));
         }
@@ -187,7 +187,7 @@ pub fn generate_email_for_instance(
         let csrf_json: Value = csrf_resp
             .json()
             .await
-            .map_err(|e| format!("zhujump csrf: {}", e))?;
+            .map_err(|e| format!("zhujump csrf: {e}"))?;
         let csrf = csrf_json
             .get("csrfToken")
             .and_then(|v| v.as_str())
@@ -206,7 +206,7 @@ pub fn generate_email_for_instance(
             urlencoding::encode(&login_referer(&base_url)),
         );
         let login_resp = json_headers(
-            client.post(format!("{}/api/auth/callback/credentials?", base_url)),
+            client.post(format!("{base_url}/api/auth/callback/credentials?")),
             &base_url,
             Some(&cookie),
         )
@@ -215,7 +215,7 @@ pub fn generate_email_for_instance(
         .body(login_body)
         .send()
         .await
-        .map_err(|e| format!("zhujump login: {}", e))?;
+        .map_err(|e| format!("zhujump login: {e}"))?;
         if !login_resp.status().is_success() {
             return Err(format!("zhujump login: {}", login_resp.status()));
         }
@@ -223,20 +223,20 @@ pub fn generate_email_for_instance(
         let _ = login_resp.text().await;
 
         let session_resp = json_headers(
-            client.get(format!("{}/api/auth/session", base_url)),
+            client.get(format!("{base_url}/api/auth/session")),
             &base_url,
             Some(&cookie),
         )
         .send()
         .await
-        .map_err(|e| format!("zhujump session: {}", e))?;
+        .map_err(|e| format!("zhujump session: {e}"))?;
         if !session_resp.status().is_success() {
             return Err(format!("zhujump session: {}", session_resp.status()));
         }
         let session_json: Value = session_resp
             .json()
             .await
-            .map_err(|e| format!("zhujump session: {}", e))?;
+            .map_err(|e| format!("zhujump session: {e}"))?;
         let current_username = session_json
             .get("user")
             .and_then(|v| v.get("username"))
@@ -259,7 +259,7 @@ pub fn generate_email_for_instance(
         }
 
         let generate_resp = json_headers(
-            client.post(format!("{}/api/emails/generate", base_url)),
+            client.post(format!("{base_url}/api/emails/generate")),
             &base_url,
             Some(&cookie),
         )
@@ -267,14 +267,14 @@ pub fn generate_email_for_instance(
         .body(generate_body.to_string())
         .send()
         .await
-        .map_err(|e| format!("zhujump generate: {}", e))?;
+        .map_err(|e| format!("zhujump generate: {e}"))?;
         if !generate_resp.status().is_success() {
             return Err(format!("zhujump generate: {}", generate_resp.status()));
         }
         let generate_json: Value = generate_resp
             .json()
             .await
-            .map_err(|e| format!("zhujump generate: {}", e))?;
+            .map_err(|e| format!("zhujump generate: {e}"))?;
         let email = generate_json
             .get("email")
             .and_then(|v| v.as_str())
@@ -326,14 +326,14 @@ pub fn get_emails(token: &str, email: &str) -> Result<Vec<Email>, String> {
         )
         .send()
         .await
-        .map_err(|e| format!("zhujump get emails: {}", e))?;
+        .map_err(|e| format!("zhujump get emails: {e}"))?;
         if !resp.status().is_success() {
             return Err(format!("zhujump get emails: {}", resp.status()));
         }
         let data: Value = resp
             .json()
             .await
-            .map_err(|e| format!("zhujump get emails: {}", e))?;
+            .map_err(|e| format!("zhujump get emails: {e}"))?;
         let rows = data
             .get("messages")
             .and_then(|v| v.as_array())

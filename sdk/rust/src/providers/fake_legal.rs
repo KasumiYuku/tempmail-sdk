@@ -40,7 +40,7 @@ fn random_username(len: usize) -> String {
 
 fn fetch_domains() -> Result<Vec<String>, String> {
     block_on(async {
-        let resp = fl_headers(http_client().get(format!("{}/api/domains", BASE)))
+        let resp = fl_headers(http_client().get(format!("{BASE}/api/domains")))
             .send()
             .await
             .map_err(|e| e.to_string())?;
@@ -75,7 +75,7 @@ fn pick_domain(domains: &[String], preferred: Option<&str>) -> Result<String, St
             if let Some(hit) = domains.iter().find(|d| d.to_lowercase() == pl) {
                 return Ok(hit.clone());
             }
-            return Err(format!("fake-legal: domain not available: {}", pl));
+            return Err(format!("fake-legal: domain not available: {pl}"));
         }
     }
     let mut rng = rand::thread_rng();
@@ -89,7 +89,7 @@ pub fn generate_email(domain: Option<&str>) -> Result<EmailInfo, String> {
         let resp = if d == "imgui.de" || d == "pulsewebmenu.de" {
             let username = random_username(12);
             let body = json!({ "username": username, "domain": d });
-            fl_headers(http_client().post(format!("{}/api/inbox/custom", BASE)))
+            fl_headers(http_client().post(format!("{BASE}/api/inbox/custom")))
                 .header("Content-Type", "application/json")
                 .body(body.to_string())
                 .send()
@@ -97,7 +97,7 @@ pub fn generate_email(domain: Option<&str>) -> Result<EmailInfo, String> {
                 .map_err(|e| e.to_string())?
         } else {
             let q = urlencoding::encode(&d);
-            let url = format!("{}/api/inbox/new?domain={}", BASE, q);
+            let url = format!("{BASE}/api/inbox/new?domain={q}");
             fl_headers(http_client().get(url))
                 .send()
                 .await
@@ -135,7 +135,7 @@ pub fn get_emails(email: &str) -> Result<Vec<Email>, String> {
         return Err("fake-legal: empty email".into());
     }
     let enc = urlencoding::encode(em);
-    let url = format!("{}/api/inbox/{}", BASE, enc);
+    let url = format!("{BASE}/api/inbox/{enc}");
     block_on(async {
         let resp = fl_headers(http_client().get(url))
             .send()

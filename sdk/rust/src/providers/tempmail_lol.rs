@@ -13,7 +13,7 @@ pub fn generate_email(domain: Option<&str>) -> Result<EmailInfo, String> {
     let domain = domain.map(|s| s.to_string());
     block_on(async {
         let resp = http_client()
-            .post(format!("{}/inbox/create", BASE_URL))
+            .post(format!("{BASE_URL}/inbox/create"))
             .header("Content-Type", "application/json")
             .header("User-Agent", get_current_ua())
             .header("Origin", "https://tempmail.lol")
@@ -21,7 +21,7 @@ pub fn generate_email(domain: Option<&str>) -> Result<EmailInfo, String> {
             .json(&serde_json::json!({"domain": domain, "captcha": null}))
             .send()
             .await
-            .map_err(|e| format!("tempmail-lol request failed: {}", e))?;
+            .map_err(|e| format!("tempmail-lol request failed: {e}"))?;
 
         if !resp.status().is_success() {
             return Err(format!("tempmail-lol generate failed: {}", resp.status()));
@@ -30,7 +30,7 @@ pub fn generate_email(domain: Option<&str>) -> Result<EmailInfo, String> {
         let data: Value = resp
             .json()
             .await
-            .map_err(|e| format!("parse failed: {}", e))?;
+            .map_err(|e| format!("parse failed: {e}"))?;
         let address = data["address"].as_str().unwrap_or("");
         let token = data["token"].as_str().unwrap_or("");
         if address.is_empty() || token.is_empty() {
@@ -62,7 +62,7 @@ pub fn get_emails(token: &str, email: &str) -> Result<Vec<Email>, String> {
             .header("DNT", "1")
             .send()
             .await
-            .map_err(|e| format!("tempmail-lol request failed: {}", e))?;
+            .map_err(|e| format!("tempmail-lol request failed: {e}"))?;
 
         if !resp.status().is_success() {
             return Err(format!("tempmail-lol get emails failed: {}", resp.status()));
@@ -71,7 +71,7 @@ pub fn get_emails(token: &str, email: &str) -> Result<Vec<Email>, String> {
         let data: Value = resp
             .json()
             .await
-            .map_err(|e| format!("parse failed: {}", e))?;
+            .map_err(|e| format!("parse failed: {e}"))?;
         Ok(data["emails"]
             .as_array()
             .map(|arr| arr.iter().map(|raw| normalize_email(raw, &email)).collect())

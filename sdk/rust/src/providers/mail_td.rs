@@ -123,10 +123,10 @@ fn headers(b: wreq::RequestBuilder) -> wreq::RequestBuilder {
 
 /// 获取一个可用域名（pro_only=false）
 async fn fetch_domain() -> Result<String, String> {
-    let resp = headers(http_client().get(format!("{}/domains", API_BASE)))
+    let resp = headers(http_client().get(format!("{API_BASE}/domains")))
         .send()
         .await
-        .map_err(|e| format!("mail-td: 获取域名列表请求失败: {}", e))?;
+        .map_err(|e| format!("mail-td: 获取域名列表请求失败: {e}"))?;
 
     if !resp.status().is_success() {
         return Err(format!("mail-td: 获取域名列表返回 HTTP {}", resp.status()));
@@ -135,7 +135,7 @@ async fn fetch_domain() -> Result<String, String> {
     let data: Value = resp
         .json()
         .await
-        .map_err(|e| format!("mail-td: 解析域名列表响应失败: {}", e))?;
+        .map_err(|e| format!("mail-td: 解析域名列表响应失败: {e}"))?;
 
     let domains = data
         .get("domains")
@@ -163,7 +163,7 @@ pub fn generate_email() -> Result<EmailInfo, String> {
     block_on(async {
         let domain = fetch_domain().await?;
         let username = random_string(12);
-        let address = format!("{}@{}", username, domain);
+        let address = format!("{username}@{domain}");
 
         // 密码及其 SHA-256 十六进制作为 auth_key
         let password = random_string(16);
@@ -194,17 +194,17 @@ pub fn generate_email() -> Result<EmailInfo, String> {
                 "pow": pow,
             });
 
-            let resp = headers(http_client().post(format!("{}/accounts", API_BASE)))
+            let resp = headers(http_client().post(format!("{API_BASE}/accounts")))
                 .body(body.to_string())
                 .send()
                 .await
-                .map_err(|e| format!("mail-td: 创建账户请求失败: {}", e))?;
+                .map_err(|e| format!("mail-td: 创建账户请求失败: {e}"))?;
 
             let status = resp.status();
             let data: Value = resp
                 .json()
                 .await
-                .map_err(|e| format!("mail-td: 解析创建账户响应失败: {}", e))?;
+                .map_err(|e| format!("mail-td: 解析创建账户响应失败: {e}"))?;
 
             // 需要提升难度重试
             if data.get("status").and_then(|v| v.as_str()) == Some("retry") {
@@ -244,7 +244,7 @@ pub fn generate_email() -> Result<EmailInfo, String> {
                     jwt: jwt.to_string(),
                     id,
                 })
-                .map_err(|e| format!("mail-td: 序列化 token 失败: {}", e))?;
+                .map_err(|e| format!("mail-td: 序列化 token 失败: {e}"))?;
 
                 return Ok(EmailInfo {
                     channel: Channel::MailTd,
@@ -255,7 +255,7 @@ pub fn generate_email() -> Result<EmailInfo, String> {
                 });
             }
 
-            return Err(format!("mail-td: 创建账户失败, HTTP {}", status));
+            return Err(format!("mail-td: 创建账户失败, HTTP {status}"));
         }
 
         Err("mail-td: Proof-of-Work 重试次数耗尽".into())
@@ -287,7 +287,7 @@ pub fn get_emails(token: &str, email: &str) -> Result<Vec<Email>, String> {
             .header("Authorization", format!("Bearer {}", parsed.jwt))
             .send()
             .await
-            .map_err(|e| format!("mail-td: 获取邮件列表请求失败: {}", e))?;
+            .map_err(|e| format!("mail-td: 获取邮件列表请求失败: {e}"))?;
 
         if resp.status().as_u16() == 404 {
             return Ok(Vec::new());
@@ -300,7 +300,7 @@ pub fn get_emails(token: &str, email: &str) -> Result<Vec<Email>, String> {
         let data: Value = resp
             .json()
             .await
-            .map_err(|e| format!("mail-td: 解析邮件列表响应失败: {}", e))?;
+            .map_err(|e| format!("mail-td: 解析邮件列表响应失败: {e}"))?;
 
         // 响应格式: {"messages":[...],"page":1}
         let items = if let Some(arr) = data.get("messages").and_then(|v| v.as_array()) {

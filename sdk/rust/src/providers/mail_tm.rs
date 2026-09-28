@@ -22,17 +22,17 @@ fn random_string(len: usize) -> String {
 fn get_domains() -> Result<Vec<String>, String> {
     block_on(async {
         let resp = http_client()
-            .get(format!("{}/domains", BASE_URL))
+            .get(format!("{BASE_URL}/domains"))
             .header("Accept", "application/json")
             .header("User-Agent", get_current_ua())
             .send()
             .await
-            .map_err(|e| format!("mail-tm domains failed: {}", e))?;
+            .map_err(|e| format!("mail-tm domains failed: {e}"))?;
 
         let data: Value = resp
             .json()
             .await
-            .map_err(|e| format!("parse failed: {}", e))?;
+            .map_err(|e| format!("parse failed: {e}"))?;
         let members = if data.is_array() {
             data
         } else {
@@ -107,39 +107,39 @@ pub fn generate_email() -> Result<EmailInfo, String> {
     let mut rng = rand::thread_rng();
     let domain = &domains[rng.gen_range(0..domains.len())];
     let username = random_string(12);
-    let address = format!("{}@{}", username, domain);
+    let address = format!("{username}@{domain}");
     let password = random_string(16);
 
     block_on(async {
         /* 创建账号 */
         let resp = http_client()
-            .post(format!("{}/accounts", BASE_URL))
+            .post(format!("{BASE_URL}/accounts"))
             .header("Content-Type", "application/ld+json")
             .header("User-Agent", get_current_ua())
             .json(&serde_json::json!({"address": &address, "password": &password}))
             .send()
             .await
-            .map_err(|e| format!("mail-tm create account failed: {}", e))?;
+            .map_err(|e| format!("mail-tm create account failed: {e}"))?;
 
         if !resp.status().is_success() {
             let text = resp.text().await.unwrap_or_default();
-            return Err(format!("mail-tm create account failed: {}", text));
+            return Err(format!("mail-tm create account failed: {text}"));
         }
 
         let account: Value = resp
             .json()
             .await
-            .map_err(|e| format!("parse failed: {}", e))?;
+            .map_err(|e| format!("parse failed: {e}"))?;
 
         /* 获取 token */
         let resp = http_client()
-            .post(format!("{}/token", BASE_URL))
+            .post(format!("{BASE_URL}/token"))
             .header("Content-Type", "application/json")
             .header("User-Agent", get_current_ua())
             .json(&serde_json::json!({"address": &address, "password": &password}))
             .send()
             .await
-            .map_err(|e| format!("mail-tm get token failed: {}", e))?;
+            .map_err(|e| format!("mail-tm get token failed: {e}"))?;
 
         if !resp.status().is_success() {
             return Err(format!("mail-tm get token failed: {}", resp.status()));
@@ -148,7 +148,7 @@ pub fn generate_email() -> Result<EmailInfo, String> {
         let token_data: Value = resp
             .json()
             .await
-            .map_err(|e| format!("parse failed: {}", e))?;
+            .map_err(|e| format!("parse failed: {e}"))?;
 
         Ok(EmailInfo {
             channel: Channel::MailTm,
@@ -165,13 +165,13 @@ pub fn get_emails(token: &str, email: &str) -> Result<Vec<Email>, String> {
     let email = email.to_string();
     block_on(async {
         let resp = http_client()
-            .get(format!("{}/messages", BASE_URL))
+            .get(format!("{BASE_URL}/messages"))
             .header("Accept", "application/json")
             .header("User-Agent", get_current_ua())
-            .header("Authorization", format!("Bearer {}", token))
+            .header("Authorization", format!("Bearer {token}"))
             .send()
             .await
-            .map_err(|e| format!("mail-tm request failed: {}", e))?;
+            .map_err(|e| format!("mail-tm request failed: {e}"))?;
 
         if !resp.status().is_success() {
             return Err(format!("mail-tm get emails failed: {}", resp.status()));
@@ -180,7 +180,7 @@ pub fn get_emails(token: &str, email: &str) -> Result<Vec<Email>, String> {
         let data: Value = resp
             .json()
             .await
-            .map_err(|e| format!("parse failed: {}", e))?;
+            .map_err(|e| format!("parse failed: {e}"))?;
         let messages = if data.is_array() {
             data.as_array().cloned().unwrap_or_default()
         } else {
@@ -200,7 +200,7 @@ pub fn get_emails(token: &str, email: &str) -> Result<Vec<Email>, String> {
                 ))
                 .header("Accept", "application/json")
                 .header("User-Agent", get_current_ua())
-                .header("Authorization", format!("Bearer {}", token))
+                .header("Authorization", format!("Bearer {token}"))
                 .send()
                 .await
                 .ok()

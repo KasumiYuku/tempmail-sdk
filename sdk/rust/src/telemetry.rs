@@ -102,7 +102,7 @@ fn flush_telemetry_queue() {
         Err(_) => return,
     };
 
-    let ua = format!("tempmail-sdk-rust/{}", ver);
+    let ua = format!("tempmail-sdk-rust/{ver}");
     thread::spawn(move || {
         crate::block_on(async move {
             let client = match telemetry_client() {

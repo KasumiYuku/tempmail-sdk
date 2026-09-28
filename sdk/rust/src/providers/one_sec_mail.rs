@@ -29,7 +29,7 @@ fn extract_cookie(headers: &wreq::header::HeaderMap) -> String {
 pub fn generate_email() -> Result<EmailInfo, String> {
     block_on(async {
         let resp = http_client_no_cookie_jar()
-            .get(format!("{}generate", BASE_URL))
+            .get(format!("{BASE_URL}generate"))
             .header("Accept", "application/json")
             .header("User-Agent", "Mozilla/5.0")
             .send()
@@ -64,7 +64,7 @@ pub fn get_emails(token: &str, email: &str) -> Result<Vec<Email>, String> {
     }
     block_on(async {
         let resp = http_client_no_cookie_jar()
-            .get(format!("{}emails?address={}", BASE_URL, address))
+            .get(format!("{BASE_URL}emails?address={address}"))
             .header("Accept", "application/json")
             .header("Cookie", token)
             .header("User-Agent", "Mozilla/5.0")

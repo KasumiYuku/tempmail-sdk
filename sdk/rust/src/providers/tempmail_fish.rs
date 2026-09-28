@@ -47,7 +47,7 @@ fn flatten_message(raw: &Value, recipient: &str) -> Value {
 pub fn generate_email() -> Result<EmailInfo, String> {
     block_on(async {
         let resp = http_client()
-            .post(format!("{}/emails/new-email", API_BASE))
+            .post(format!("{API_BASE}/emails/new-email"))
             .header("Content-Type", "application/json")
             .header("Accept", "application/json")
             .send()

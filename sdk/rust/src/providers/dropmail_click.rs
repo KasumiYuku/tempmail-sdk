@@ -29,12 +29,12 @@ pub fn generate_email() -> Result<EmailInfo, String> {
 
     block_on(async {
         let resp = client
-            .post(format!("{}/api/v1/public/mailbox", BASE_URL))
+            .post(format!("{BASE_URL}/api/v1/public/mailbox"))
             .header("User-Agent", get_current_ua())
             .header("Accept", "application/json")
             .send()
             .await
-            .map_err(|e| format!("dropmail-click: 创建邮箱请求失败: {}", e))?;
+            .map_err(|e| format!("dropmail-click: 创建邮箱请求失败: {e}"))?;
 
         if !resp.status().is_success() {
             return Err(format!(
@@ -46,7 +46,7 @@ pub fn generate_email() -> Result<EmailInfo, String> {
         let data: Value = resp
             .json()
             .await
-            .map_err(|e| format!("dropmail-click: 解析创建响应失败: {}", e))?;
+            .map_err(|e| format!("dropmail-click: 解析创建响应失败: {e}"))?;
 
         let address = data
             .get("address")
@@ -91,7 +91,7 @@ pub fn get_emails(token: &str, email: &str) -> Result<Vec<Email>, String> {
             .header("Accept", "application/json")
             .send()
             .await
-            .map_err(|e| format!("dropmail-click: 获取邮件请求失败: {}", e))?;
+            .map_err(|e| format!("dropmail-click: 获取邮件请求失败: {e}"))?;
 
         if !resp.status().is_success() {
             return Err(format!(
@@ -103,7 +103,7 @@ pub fn get_emails(token: &str, email: &str) -> Result<Vec<Email>, String> {
         let data: Value = resp
             .json()
             .await
-            .map_err(|e| format!("dropmail-click: 解析邮件响应失败: {}", e))?;
+            .map_err(|e| format!("dropmail-click: 解析邮件响应失败: {e}"))?;
 
         let list = match data.get("messages").and_then(|v| v.as_array()) {
             Some(arr) if !arr.is_empty() => arr,

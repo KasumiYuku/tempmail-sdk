@@ -48,7 +48,7 @@ fn fetch_message(token: &str, message_id: &str) -> Result<Value, String> {
 
 pub fn generate_email() -> Result<EmailInfo, String> {
     block_on(async {
-        let resp = headers(http_client().post(format!("{}/inbox", API_BASE)), None)
+        let resp = headers(http_client().post(format!("{API_BASE}/inbox")), None)
             .send()
             .await
             .map_err(|e| e.to_string())?;
@@ -92,7 +92,7 @@ pub fn get_emails(token: &str, email: &str) -> Result<Vec<Email>, String> {
     }
     block_on(async {
         let resp = headers(
-            http_client().get(format!("{}/inbox", API_BASE)),
+            http_client().get(format!("{API_BASE}/inbox")),
             Some(session_token),
         )
         .send()

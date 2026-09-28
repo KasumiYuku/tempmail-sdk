@@ -161,7 +161,7 @@ fn parse_cookie_header(hdr: &str) -> BTreeMap<String, String> {
 
 fn cookie_header_from_map(m: &BTreeMap<String, String>) -> String {
     m.iter()
-        .map(|(k, v)| format!("{}={}", k, v))
+        .map(|(k, v)| format!("{k}={v}"))
         .collect::<Vec<_>>()
         .join("; ")
 }
@@ -300,7 +300,7 @@ pub fn generate_email(domain: Option<&str>) -> Result<EmailInfo, String> {
         for (k, v) in page_headers(&base) {
             req = req.header(k, v);
         }
-        let resp = req.send().await.map_err(|e| format!("moakt home: {}", e))?;
+        let resp = req.send().await.map_err(|e| format!("moakt home: {e}"))?;
         if !resp.status().is_success() {
             return Err(format!("moakt home: {}", resp.status()));
         }
@@ -313,7 +313,7 @@ pub fn generate_email(domain: Option<&str>) -> Result<EmailInfo, String> {
         } else {
             let domains = parse_server_domains(&page);
             if !domains.contains(&mail_domain) {
-                return Err(format!("moakt: unsupported domain {}", mail_domain));
+                return Err(format!("moakt: unsupported domain {mail_domain}"));
             }
             format!(
                 "setemail=&username={}&domain={}&preferred_domain=",
@@ -326,7 +326,7 @@ pub fn generate_email(domain: Option<&str>) -> Result<EmailInfo, String> {
         let no_redirect_client = wreq::Client::builder()
             .redirect(wreq::redirect::Policy::none())
             .build()
-            .map_err(|e| format!("moakt client: {}", e))?;
+            .map_err(|e| format!("moakt client: {e}"))?;
         let mut req_post = no_redirect_client.post(&inbox);
         for (k, v) in page_headers(&base) {
             req_post = req_post.header(k, v);
@@ -338,7 +338,7 @@ pub fn generate_email(domain: Option<&str>) -> Result<EmailInfo, String> {
         let resp_post = req_post
             .send()
             .await
-            .map_err(|e| format!("moakt inbox post: {}", e))?;
+            .map_err(|e| format!("moakt inbox post: {e}"))?;
         cookie_hdr = merge_set_cookies(&cookie_hdr, resp_post.headers());
 
         if !parse_cookie_header(&cookie_hdr).contains_key("tm_session") {
@@ -354,7 +354,7 @@ pub fn generate_email(domain: Option<&str>) -> Result<EmailInfo, String> {
         let resp3 = req3
             .send()
             .await
-            .map_err(|e| format!("moakt inbox: {}", e))?;
+            .map_err(|e| format!("moakt inbox: {e}"))?;
         if !resp3.status().is_success() {
             return Err(format!("moakt inbox: {}", resp3.status()));
         }
@@ -402,7 +402,7 @@ pub fn get_emails(token: &str, email: &str) -> Result<Vec<Email>, String> {
         let resp = req
             .send()
             .await
-            .map_err(|e| format!("moakt inbox: {}", e))?;
+            .map_err(|e| format!("moakt inbox: {e}"))?;
         if !resp.status().is_success() {
             return Err(format!("moakt inbox: {}", resp.status()));
         }

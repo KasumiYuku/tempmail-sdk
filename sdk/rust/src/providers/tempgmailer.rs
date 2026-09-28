@@ -28,7 +28,7 @@ fn init_session() -> Result<(String, String), String> {
             .header("User-Agent", browser_ua())
             .send()
             .await
-            .map_err(|e| format!("tempgmailer init session failed: {}", e))?;
+            .map_err(|e| format!("tempgmailer init session failed: {e}"))?;
 
         // 提取 Set-Cookie 中的 session cookie
         let mut cookie_parts: Vec<String> = Vec::new();
@@ -48,7 +48,7 @@ fn init_session() -> Result<(String, String), String> {
         let html = resp
             .text()
             .await
-            .map_err(|e| format!("tempgmailer read html failed: {}", e))?;
+            .map_err(|e| format!("tempgmailer read html failed: {e}"))?;
 
         let csrf_token = extract_csrf_token(&html)
             .ok_or_else(|| "tempgmailer: failed to extract csrf-token from HTML".to_string())?;
@@ -76,12 +76,12 @@ fn post_json(csrf_token: &str, cookies: &str, path: &str, body: Value) -> Result
     let path = path.to_string();
     block_on(async move {
         let resp = http_client()
-            .post(format!("{}{}", BASE_URL, path))
+            .post(format!("{BASE_URL}{path}"))
             .header("User-Agent", browser_ua())
             .header("Content-Type", "application/json")
             .header("Accept", "application/json, text/plain, */*")
             .header("Origin", BASE_URL)
-            .header("Referer", format!("{}/", BASE_URL))
+            .header("Referer", format!("{BASE_URL}/"))
             .header("X-Requested-With", "XMLHttpRequest")
             .header("X-CSRF-TOKEN", &csrf_token)
             .header("X-TempGmailer-Auth", "frontend")
@@ -89,15 +89,15 @@ fn post_json(csrf_token: &str, cookies: &str, path: &str, body: Value) -> Result
             .json(&body)
             .send()
             .await
-            .map_err(|e| format!("tempgmailer {} failed: {}", path, e))?;
+            .map_err(|e| format!("tempgmailer {path} failed: {e}"))?;
 
         let status = resp.status();
         let text = resp
             .text()
             .await
-            .map_err(|e| format!("tempgmailer {} read failed: {}", path, e))?;
+            .map_err(|e| format!("tempgmailer {path} read failed: {e}"))?;
         if !status.is_success() {
-            return Err(format!("tempgmailer {} failed: {} {}", path, status, text));
+            return Err(format!("tempgmailer {path} failed: {status} {text}"));
         }
         Ok(text)
     })
@@ -112,10 +112,10 @@ pub fn generate_email() -> Result<EmailInfo, String> {
         "/get-gmail",
         serde_json::json!({ "refresh": true, "adblock": 0 }),
     )?;
-    let data: Value = serde_json::from_str(&text).map_err(|e| format!("parse failed: {}", e))?;
+    let data: Value = serde_json::from_str(&text).map_err(|e| format!("parse failed: {e}"))?;
 
     if !data["success"].as_bool().unwrap_or(false) {
-        return Err(format!("tempgmailer: generate failed: {}", text));
+        return Err(format!("tempgmailer: generate failed: {text}"));
     }
 
     let email = data["data"]["email"]
@@ -142,7 +142,7 @@ pub fn generate_email() -> Result<EmailInfo, String> {
 /// 获取邮件列表
 pub fn get_emails(token: &str, email: &str) -> Result<Vec<Email>, String> {
     let session: Value =
-        serde_json::from_str(token).map_err(|e| format!("parse session token failed: {}", e))?;
+        serde_json::from_str(token).map_err(|e| format!("parse session token failed: {e}"))?;
 
     let csrf_token = session["csrfToken"].as_str().unwrap_or("");
     let cookies = session["cookies"].as_str().unwrap_or("");
@@ -153,10 +153,10 @@ pub fn get_emails(token: &str, email: &str) -> Result<Vec<Email>, String> {
         "/get-inbox",
         serde_json::json!({ "email": email, "adblock": 0 }),
     )?;
-    let data: Value = serde_json::from_str(&text).map_err(|e| format!("parse failed: {}", e))?;
+    let data: Value = serde_json::from_str(&text).map_err(|e| format!("parse failed: {e}"))?;
 
     if !data["success"].as_bool().unwrap_or(false) {
-        return Err(format!("tempgmailer: get inbox failed: {}", text));
+        return Err(format!("tempgmailer: get inbox failed: {text}"));
     }
 
     let messages = data["data"]["messages"]

@@ -444,7 +444,7 @@ async fn build_email(client: &wreq::Client, row: &Value, email: &str) -> Option<
     let from_email = str_of(row, &["from_email", "from"]);
     let from_name = str_of(row, &["from_name"]);
     let mut from = if !from_name.is_empty() && from_name != from_email {
-        format!("{} <{}>", from_name, from_email)
+        format!("{from_name} <{from_email}>")
     } else {
         from_name
     };
@@ -545,8 +545,7 @@ pub fn get_emails(email: &str, token: &str) -> Result<Vec<Email>, String> {
                 .map_err(|e| format!("tempmailto: 会话邮箱与请求不一致且拉起失败: {e}"))?;
             if !changed.eq_ignore_ascii_case(em) {
                 return Err(format!(
-                    "tempmailto: 会话邮箱无法拉回请求邮箱（{} != {}），请重新 Generate",
-                    changed, em
+                    "tempmailto: 会话邮箱无法拉回请求邮箱（{changed} != {em}），请重新 Generate"
                 ));
             }
             /* 重新 fetch 以获取目标邮箱的消息 */
@@ -591,9 +590,9 @@ mod strip_script_style_semantics {
     #[test]
     fn main_article_extract_behaves_like_backreference_pattern() {
         let page = r#"<div class="x">A<main><p>body &amp; text</p><span>inner</span></main><article>tail</article>B"#;
-        assert_eq!(extract_main_or_article(page), Some(&r#"<p>body &amp; text</p><span>inner</span>"#[..]));
+        assert_eq!(extract_main_or_article(page), Some(r#"<p>body &amp; text</p><span>inner</span>"#));
         let article_only = "<article><b>only</b></article>";
-        assert_eq!(extract_main_or_article(article_only), Some(&"<b>only</b>"[..]));
+        assert_eq!(extract_main_or_article(article_only), Some("<b>only</b>"));
         assert_eq!(extract_main_or_article("<section>no</section>"), None);
     }
 }

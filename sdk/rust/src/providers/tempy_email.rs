@@ -29,13 +29,13 @@ async fn request_json(method: &str, url: String, body: Option<Value>) -> Result<
     let resp = req
         .send()
         .await
-        .map_err(|e| format!("tempy-email request failed: {}", e))?;
+        .map_err(|e| format!("tempy-email request failed: {e}"))?;
     if !resp.status().is_success() {
         return Err(format!("tempy-email http {}", resp.status()));
     }
     resp.json::<Value>()
         .await
-        .map_err(|e| format!("tempy-email parse response: {}", e))
+        .map_err(|e| format!("tempy-email parse response: {e}"))
 }
 
 fn flatten_message(raw: &Value, recipient: &str) -> Value {
@@ -98,7 +98,7 @@ pub fn generate_email(domain: Option<&str>) -> Result<EmailInfo, String> {
 
         let data = request_json(
             "POST",
-            format!("{}/mailbox", API_BASE),
+            format!("{API_BASE}/mailbox"),
             Some(Value::Object(body)),
         )
         .await?;

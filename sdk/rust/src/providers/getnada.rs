@@ -23,7 +23,7 @@ fn random_local() -> String {
 fn pick_domain(preferred: Option<&str>) -> Result<String, String> {
     block_on(async {
         let resp = http_client()
-            .get(format!("{}/public/domains", API_BASE))
+            .get(format!("{API_BASE}/public/domains"))
             .header("Accept", "application/json")
             .send()
             .await
@@ -46,7 +46,7 @@ fn pick_domain(preferred: Option<&str>) -> Result<String, String> {
             if let Some(found) = domains.iter().find(|domain| **domain == wanted) {
                 return Ok(found.clone());
             }
-            return Err(format!("getnada: domain not available: {}", wanted));
+            return Err(format!("getnada: domain not available: {wanted}"));
         }
         for domain in &domains {
             if domain == "getnada.net" {
@@ -101,7 +101,7 @@ pub fn generate_email(domain: Option<&str>) -> Result<EmailInfo, String> {
     let requested = format!("{}@{}", random_local(), selected_domain);
     block_on(async {
         let resp = http_client()
-            .post(format!("{}/inbox/open", API_BASE))
+            .post(format!("{API_BASE}/inbox/open"))
             .header("Accept", "application/json")
             .header("Content-Type", "application/json")
             .json(&json!({ "email": requested }))

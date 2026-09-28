@@ -67,7 +67,7 @@ fn extract_csrf(html: &str) -> Option<String> {
 /// 获取首页并返回 (cookies, csrf_token)
 async fn fetch_session() -> Result<(String, String), String> {
     let resp = http_client_no_cookie_jar()
-        .get(format!("{}/", BASE_URL))
+        .get(format!("{BASE_URL}/"))
         .header(
             "Accept",
             "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
@@ -76,7 +76,7 @@ async fn fetch_session() -> Result<(String, String), String> {
         .header("User-Agent", browser_ua())
         .send()
         .await
-        .map_err(|e| format!("mailgolem: 获取首页失败: {}", e))?;
+        .map_err(|e| format!("mailgolem: 获取首页失败: {e}"))?;
 
     if !resp.status().is_success() {
         return Err(format!("mailgolem: 获取首页返回 HTTP {}", resp.status()));
@@ -90,7 +90,7 @@ async fn fetch_session() -> Result<(String, String), String> {
     let html = resp
         .text()
         .await
-        .map_err(|e| format!("mailgolem: 读取首页响应失败: {}", e))?;
+        .map_err(|e| format!("mailgolem: 读取首页响应失败: {e}"))?;
 
     let csrf = extract_csrf(&html)
         .ok_or_else(|| "mailgolem: 未从 HTML 中提取到 CSRF token".to_string())?;
@@ -110,18 +110,18 @@ pub fn generate_email() -> Result<EmailInfo, String> {
 
         /* 第二步：获取随机邮箱地址 */
         let resp = http_client_no_cookie_jar()
-            .get(format!("{}/random-email-address", BASE_URL))
+            .get(format!("{BASE_URL}/random-email-address"))
             .header(
                 "Accept",
                 "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
             )
             .header("Accept-Language", "en-US,en;q=0.9")
             .header("User-Agent", browser_ua())
-            .header("Referer", format!("{}/", BASE_URL))
+            .header("Referer", format!("{BASE_URL}/"))
             .header("Cookie", &cookies)
             .send()
             .await
-            .map_err(|e| format!("mailgolem: 获取随机邮箱失败: {}", e))?;
+            .map_err(|e| format!("mailgolem: 获取随机邮箱失败: {e}"))?;
 
         if !resp.status().is_success() {
             return Err(format!(
@@ -133,12 +133,12 @@ pub fn generate_email() -> Result<EmailInfo, String> {
         let email = resp
             .text()
             .await
-            .map_err(|e| format!("mailgolem: 读取邮箱地址响应失败: {}", e))?
+            .map_err(|e| format!("mailgolem: 读取邮箱地址响应失败: {e}"))?
             .trim()
             .to_string();
 
         if email.is_empty() || !email.contains('@') {
-            return Err(format!("mailgolem: 返回的邮箱地址无效: {}", email));
+            return Err(format!("mailgolem: 返回的邮箱地址无效: {email}"));
         }
 
         Ok(EmailInfo {
@@ -178,12 +178,12 @@ pub fn get_emails(_token: &str, email: &str) -> Result<Vec<Email>, String> {
             .header("Accept", "application/json, text/javascript, */*; q=0.01")
             .header("Accept-Language", "en-US,en;q=0.9")
             .header("User-Agent", browser_ua())
-            .header("Referer", format!("{}/", BASE_URL))
+            .header("Referer", format!("{BASE_URL}/"))
             .header("Cookie", &cookies)
             .body(format!("_token={}", urlencoding::encode(&csrf)))
             .send()
             .await
-            .map_err(|e| format!("mailgolem: 获取邮件列表失败: {}", e))?;
+            .map_err(|e| format!("mailgolem: 获取邮件列表失败: {e}"))?;
 
         if !resp.status().is_success() {
             return Err(format!(
@@ -195,7 +195,7 @@ pub fn get_emails(_token: &str, email: &str) -> Result<Vec<Email>, String> {
         let data: Value = resp
             .json()
             .await
-            .map_err(|e| format!("mailgolem: 解析邮件列表响应失败: {}", e))?;
+            .map_err(|e| format!("mailgolem: 解析邮件列表响应失败: {e}"))?;
 
         /* 响应为 JSON 数组: [{id, from, subject}, ...] 或空数组 [] */
         let arr = match data.as_array() {

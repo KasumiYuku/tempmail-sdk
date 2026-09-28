@@ -56,7 +56,7 @@ fn fetch_message(mailbox_id: &str, message_id: &str) -> Result<Value, String> {
 
 pub fn generate_email() -> Result<EmailInfo, String> {
     block_on(async {
-        let resp = headers(http_client().post(format!("{}/mailboxes", API_BASE)))
+        let resp = headers(http_client().post(format!("{API_BASE}/mailboxes")))
             .send()
             .await
             .map_err(|e| e.to_string())?;

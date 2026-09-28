@@ -88,7 +88,7 @@ fn broadcast_log(time: &str, level: &str, msg: &str) {
         json_escape(level),
         json_escape(msg)
     );
-    let frame = format!("data: {}\n\n", payload);
+    let frame = format!("data: {payload}\n\n");
 
     let mut clients = match sse_clients().lock() {
         Ok(g) => g,
@@ -291,13 +291,13 @@ pub fn start_webui(host: Option<&str>, port: Option<u16>) -> std::io::Result<u16
                     std::thread::spawn(move || handle_connection(s));
                 }
                 Err(e) => {
-                    log::warn!("WebUI 接受连接失败: {}", e);
+                    log::warn!("WebUI 接受连接失败: {e}");
                 }
             }
         }
     });
 
-    log::info!("WebUI 已启动: http://{}:{}", host, actual_port);
+    log::info!("WebUI 已启动: http://{host}:{actual_port}");
     Ok(actual_port)
 }
 
@@ -331,7 +331,7 @@ pub fn start_webui_if_enabled() -> Option<u16> {
     match start_webui(host.as_deref(), port) {
         Ok(p) => Some(p),
         Err(e) => {
-            log::warn!("WebUI 启动失败: {}", e);
+            log::warn!("WebUI 启动失败: {e}");
             None
         }
     }

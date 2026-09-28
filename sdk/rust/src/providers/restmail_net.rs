@@ -28,7 +28,7 @@ fn random_username() -> String {
 /// 无需请求服务端，随机生成 username 即可使用
 pub fn generate_email() -> Result<EmailInfo, String> {
     let username = random_username();
-    let email = format!("{}@restmail.net", username);
+    let email = format!("{username}@restmail.net");
     Ok(EmailInfo {
         channel: Channel::RestmailNet,
         email,
@@ -52,7 +52,7 @@ pub fn get_emails(email: &str) -> Result<Vec<Email>, String> {
         return Err("restmail-net: 无法提取用户名".into());
     }
 
-    let url = format!("{}/mail/{}", BASE_URL, username);
+    let url = format!("{BASE_URL}/mail/{username}");
     block_on(async {
         let resp = http_client()
             .get(&url)

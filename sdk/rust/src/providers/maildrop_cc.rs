@@ -65,7 +65,7 @@ async fn do_graphql(query: String) -> Result<Value, String> {
         .json(&json!({ "query": query }))
         .send()
         .await
-        .map_err(|e| format!("maildrop-cc: GraphQL 请求失败: {}", e))?;
+        .map_err(|e| format!("maildrop-cc: GraphQL 请求失败: {e}"))?;
 
     if !resp.status().is_success() {
         return Err(format!("maildrop-cc graphql: {}", resp.status()));
@@ -73,7 +73,7 @@ async fn do_graphql(query: String) -> Result<Value, String> {
 
     resp.json()
         .await
-        .map_err(|e| format!("maildrop-cc: 解析 GraphQL 响应失败: {}", e))
+        .map_err(|e| format!("maildrop-cc: 解析 GraphQL 响应失败: {e}"))
 }
 
 /// 创建临时邮箱

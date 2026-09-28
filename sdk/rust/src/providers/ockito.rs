@@ -25,8 +25,8 @@ async fn request_json(
     body: Option<Value>,
 ) -> Result<(u16, Value), String> {
     let builder = match method {
-        "POST" => http_client().post(format!("{}{}", BASE_URL, path)),
-        _ => http_client().get(format!("{}{}", BASE_URL, path)),
+        "POST" => http_client().post(format!("{BASE_URL}{path}")),
+        _ => http_client().get(format!("{BASE_URL}{path}")),
     };
     let mut req = builder.header("Accept", "application/json");
     if let Some(hs) = headers {
@@ -40,17 +40,17 @@ async fn request_json(
     let resp = req
         .send()
         .await
-        .map_err(|e| format!("ockito request failed: {}", e))?;
+        .map_err(|e| format!("ockito request failed: {e}"))?;
     let status = resp.status().as_u16();
     let text = resp
         .text()
         .await
-        .map_err(|e| format!("ockito read response: {}", e))?;
+        .map_err(|e| format!("ockito read response: {e}"))?;
     let json = if text.trim().is_empty() {
         Value::Object(Default::default())
     } else {
         serde_json::from_str(&text)
-            .map_err(|_| format!("ockito invalid JSON: {} HTTP {}", path, status))?
+            .map_err(|_| format!("ockito invalid JSON: {path} HTTP {status}"))?
     };
     Ok((status, json))
 }
@@ -83,14 +83,14 @@ async fn refresh_access_token(refresh_token: &str) -> Result<String, String> {
         "POST",
         "/grefresh",
         Some(vec![
-            ("Authorization", format!("Bearer {}", refresh_token)),
+            ("Authorization", format!("Bearer {refresh_token}")),
             ("X-PASSTHROUGH", "Y".to_string()),
         ]),
         None,
     )
     .await?;
     if !(200..300).contains(&status) {
-        return Err(format!("ockito grefresh http {}", status));
+        return Err(format!("ockito grefresh http {status}"));
     }
     let access_token = any_string(&data["access_token"]);
     if access_token.is_empty() {
@@ -107,7 +107,7 @@ async fn fetch_bearer_json(
     let (status, data) = request_json(
         "GET",
         path,
-        Some(vec![("Authorization", format!("Bearer {}", access_token))]),
+        Some(vec![("Authorization", format!("Bearer {access_token}"))]),
         None,
     )
     .await?;
@@ -116,14 +116,14 @@ async fn fetch_bearer_json(
         let (_, retry) = request_json(
             "GET",
             path,
-            Some(vec![("Authorization", format!("Bearer {}", access_token))]),
+            Some(vec![("Authorization", format!("Bearer {access_token}"))]),
             None,
         )
         .await?;
         return Ok(retry);
     }
     if !(200..300).contains(&status) {
-        return Err(format!("ockito http {}", status));
+        return Err(format!("ockito http {status}"));
     }
     Ok(data)
 }
@@ -181,7 +181,7 @@ pub fn generate_email() -> Result<EmailInfo, String> {
         let (status, login) =
             request_json("POST", "/gtoken", None, Some(serde_json::json!({}))).await?;
         if !(200..300).contains(&status) {
-            return Err(format!("ockito gtoken http {}", status));
+            return Err(format!("ockito gtoken http {status}"));
         }
         let access_token = any_string(&login["access_token"]);
         let refresh_token = any_string(&login["refresh_token"]);
@@ -192,12 +192,12 @@ pub fn generate_email() -> Result<EmailInfo, String> {
         let (status, email_json) = request_json(
             "GET",
             "/email",
-            Some(vec![("Authorization", format!("Bearer {}", access_token))]),
+            Some(vec![("Authorization", format!("Bearer {access_token}"))]),
             None,
         )
         .await?;
         if !(200..300).contains(&status) {
-            return Err(format!("ockito email http {}", status));
+            return Err(format!("ockito email http {status}"));
         }
         let email_value = &email_json["email"];
         let mut email = if let Some(s) = email_value.as_str() {

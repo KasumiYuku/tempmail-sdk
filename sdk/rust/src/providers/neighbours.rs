@@ -13,7 +13,7 @@ const API_BASE: &str = "https://neighbours.sh/api/v1";
 fn request_json(path: &str, allow_not_found: bool) -> Result<Option<Value>, String> {
     block_on(async {
         let resp = http_client()
-            .get(format!("{}{}", API_BASE, path))
+            .get(format!("{API_BASE}{path}"))
             .header("Accept", "application/json")
             .header(
                 "User-Agent",
@@ -21,7 +21,7 @@ fn request_json(path: &str, allow_not_found: bool) -> Result<Option<Value>, Stri
             )
             .send()
             .await
-            .map_err(|e| format!("neighbours request failed: {}", e))?;
+            .map_err(|e| format!("neighbours request failed: {e}"))?;
 
         if allow_not_found && resp.status().as_u16() == 404 {
             return Ok(None);
@@ -108,7 +108,7 @@ fn pick_domain(domains: &[String], preferred: Option<&str>) -> Result<String, St
             if let Some(hit) = domains.iter().find(|item| item.as_str() == wanted) {
                 return Ok(hit.clone());
             }
-            return Err(format!("neighbours: unsupported domain {}", wanted));
+            return Err(format!("neighbours: unsupported domain {wanted}"));
         }
     }
     Ok(domains[random_int(domains.len())].clone())

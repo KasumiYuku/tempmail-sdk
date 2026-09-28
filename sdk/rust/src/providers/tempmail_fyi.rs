@@ -61,7 +61,7 @@ fn parse_cookie_header(hdr: &str) -> BTreeMap<String, String> {
 /// 将 Cookie 映射转换回 Cookie 头字符串
 fn cookie_header_from_map(m: &BTreeMap<String, String>) -> String {
     m.iter()
-        .map(|(k, v)| format!("{}={}", k, v))
+        .map(|(k, v)| format!("{k}={v}"))
         .collect::<Vec<_>>()
         .join("; ")
 }
@@ -87,7 +87,7 @@ fn merge_set_cookies(hdr: &str, headers: &wreq::header::HeaderMap) -> String {
 
 /// 编码会话信息为 token 字符串
 fn encode_sess(s: &TempmailFyiSess) -> Result<String, String> {
-    serde_json::to_string(s).map_err(|e| format!("tempmail-fyi: token 序列化失败: {}", e))
+    serde_json::to_string(s).map_err(|e| format!("tempmail-fyi: token 序列化失败: {e}"))
 }
 
 /// 从 token 字符串解码会话信息
@@ -121,7 +121,7 @@ pub fn generate_email() -> Result<EmailInfo, String> {
             .header("Accept-Language", "en-US,en;q=0.9,zh-CN;q=0.8,zh;q=0.7")
             .send()
             .await
-            .map_err(|e| format!("tempmail-fyi: 获取首页失败: {}", e))?;
+            .map_err(|e| format!("tempmail-fyi: 获取首页失败: {e}"))?;
 
         if !resp.status().is_success() {
             return Err(format!("tempmail-fyi: 首页返回 HTTP {}", resp.status()));
@@ -131,7 +131,7 @@ pub fn generate_email() -> Result<EmailInfo, String> {
         let html = resp
             .text()
             .await
-            .map_err(|e| format!("tempmail-fyi: 读取首页响应失败: {}", e))?;
+            .map_err(|e| format!("tempmail-fyi: 读取首页响应失败: {e}"))?;
 
         let csrf = CSRF_RE
             .captures(&html)
@@ -154,7 +154,7 @@ pub fn generate_email() -> Result<EmailInfo, String> {
             .body("{}")
             .send()
             .await
-            .map_err(|e| format!("tempmail-fyi: 创建邮箱失败: {}", e))?;
+            .map_err(|e| format!("tempmail-fyi: 创建邮箱失败: {e}"))?;
 
         if !resp2.status().is_success() {
             return Err(format!(
@@ -167,7 +167,7 @@ pub fn generate_email() -> Result<EmailInfo, String> {
         let data: Value = resp2
             .json()
             .await
-            .map_err(|e| format!("tempmail-fyi: 解析创建邮箱响应失败: {}", e))?;
+            .map_err(|e| format!("tempmail-fyi: 解析创建邮箱响应失败: {e}"))?;
 
         if !data
             .get("success")
@@ -176,7 +176,7 @@ pub fn generate_email() -> Result<EmailInfo, String> {
         {
             let err = data.get("error").and_then(|v| v.as_str()).unwrap_or("");
             if !err.is_empty() {
-                return Err(format!("tempmail-fyi: 创建邮箱失败: {}", err));
+                return Err(format!("tempmail-fyi: 创建邮箱失败: {err}"));
             }
             return Err("tempmail-fyi: 创建邮箱失败（success=false）".into());
         }
@@ -187,7 +187,7 @@ pub fn generate_email() -> Result<EmailInfo, String> {
             .map(|s| s.trim().to_string())
             .unwrap_or_default();
         if email.is_empty() || !email.contains('@') {
-            return Err(format!("tempmail-fyi: 获取到的邮箱地址无效: {}", email));
+            return Err(format!("tempmail-fyi: 获取到的邮箱地址无效: {email}"));
         }
 
         let expires_at = data
@@ -237,7 +237,7 @@ pub fn get_emails(token: &str, email: &str) -> Result<Vec<Email>, String> {
             .body(req_body)
             .send()
             .await
-            .map_err(|e| format!("tempmail-fyi: 获取邮件列表失败: {}", e))?;
+            .map_err(|e| format!("tempmail-fyi: 获取邮件列表失败: {e}"))?;
 
         if !resp.status().is_success() {
             return Err(format!(
@@ -249,7 +249,7 @@ pub fn get_emails(token: &str, email: &str) -> Result<Vec<Email>, String> {
         let data: Value = resp
             .json()
             .await
-            .map_err(|e| format!("tempmail-fyi: 解析邮件列表失败: {}", e))?;
+            .map_err(|e| format!("tempmail-fyi: 解析邮件列表失败: {e}"))?;
 
         if !data
             .get("success")
@@ -258,7 +258,7 @@ pub fn get_emails(token: &str, email: &str) -> Result<Vec<Email>, String> {
         {
             let err = data.get("error").and_then(|v| v.as_str()).unwrap_or("");
             if !err.is_empty() {
-                return Err(format!("tempmail-fyi: 获取邮件列表失败: {}", err));
+                return Err(format!("tempmail-fyi: 获取邮件列表失败: {err}"));
             }
             return Err("tempmail-fyi: 获取邮件列表失败（success=false）".into());
         }

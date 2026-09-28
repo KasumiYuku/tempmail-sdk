@@ -53,7 +53,7 @@ fn flatten(raw: &Value, recipient: &str) -> Value {
 }
 
 pub fn generate_email() -> Result<EmailInfo, String> {
-    let data = fetch_json(format!("{}/mailbox/new", API_BASE))?;
+    let data = fetch_json(format!("{API_BASE}/mailbox/new"))?;
     let email = data
         .get("address")
         .and_then(|x| x.as_str())

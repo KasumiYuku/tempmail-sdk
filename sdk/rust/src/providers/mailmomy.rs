@@ -39,7 +39,7 @@ fn encode_mail(email: &str) -> String {
 /// 接口失败或返回空时回退到默认 mailmomy.com
 async fn pick_domain(client: &Client) -> String {
     let resp = client
-        .get(format!("{}/api/domains/active", BASE_URL))
+        .get(format!("{BASE_URL}/api/domains/active"))
         .header("User-Agent", get_current_ua())
         .header("Accept", "application/json")
         .send()
@@ -111,7 +111,7 @@ pub fn get_emails(email: &str) -> Result<Vec<Email>, String> {
             .header("Accept", "application/json")
             .send()
             .await
-            .map_err(|e| format!("mailmomy: 获取邮件请求失败: {}", e))?;
+            .map_err(|e| format!("mailmomy: 获取邮件请求失败: {e}"))?;
 
         if !resp.status().is_success() {
             return Err(format!("mailmomy: 获取邮件失败 HTTP {}", resp.status()));
@@ -120,7 +120,7 @@ pub fn get_emails(email: &str) -> Result<Vec<Email>, String> {
         let data: Value = resp
             .json()
             .await
-            .map_err(|e| format!("mailmomy: 解析邮件响应失败: {}", e))?;
+            .map_err(|e| format!("mailmomy: 解析邮件响应失败: {e}"))?;
 
         let list = match data.get("emails").and_then(|v| v.as_array()) {
             Some(arr) if !arr.is_empty() => arr,

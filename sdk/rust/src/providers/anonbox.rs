@@ -269,11 +269,11 @@ pub fn generate_email() -> Result<EmailInfo, String> {
             .header("Accept", "text/html,application/xhtml+xml")
             .send()
             .await
-            .map_err(|e| format!("anonbox: {}", e))?;
+            .map_err(|e| format!("anonbox: {e}"))?;
         if !resp.status().is_success() {
             return Err(format!("anonbox: generate HTTP {}", resp.status()));
         }
-        let html = resp.text().await.map_err(|e| format!("anonbox: {}", e))?;
+        let html = resp.text().await.map_err(|e| format!("anonbox: {e}"))?;
         let (email, token, exp) = parse_en_page(&html)?;
         Ok(EmailInfo {
             channel: Channel::Anonbox,
@@ -302,14 +302,14 @@ pub fn get_emails(token: &str, email: &str) -> Result<Vec<Email>, String> {
             .header("Accept", "text/plain,*/*")
             .send()
             .await
-            .map_err(|e| format!("anonbox: {}", e))?;
+            .map_err(|e| format!("anonbox: {e}"))?;
         if resp.status().as_u16() == 404 {
             return Ok(vec![]);
         }
         if !resp.status().is_success() {
             return Err(format!("anonbox: get emails HTTP {}", resp.status()));
         }
-        let raw = resp.text().await.map_err(|e| format!("anonbox: {}", e))?;
+        let raw = resp.text().await.map_err(|e| format!("anonbox: {e}"))?;
         let t = raw.trim();
         if t.is_empty() {
             return Ok(vec![]);
@@ -322,7 +322,7 @@ pub fn get_emails(token: &str, email: &str) -> Result<Vec<Email>, String> {
                 if i == 0 {
                     trimmed.to_string()
                 } else {
-                    format!("From {}", trimmed)
+                    format!("From {trimmed}")
                 }
             })
             .filter(|s| !s.is_empty())

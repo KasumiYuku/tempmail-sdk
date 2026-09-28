@@ -25,7 +25,7 @@ fn flatten(raw: &Value, recipient: &str) -> Value {
 pub fn generate_email() -> Result<EmailInfo, String> {
     block_on(async {
         let resp = http_client()
-            .post(format!("{}/mailbox/create", API_BASE))
+            .post(format!("{API_BASE}/mailbox/create"))
             .header("Accept", "application/json")
             .header("Content-Type", "application/json")
             .header("User-Agent", "Mozilla/5.0")

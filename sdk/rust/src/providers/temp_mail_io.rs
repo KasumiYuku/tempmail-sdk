@@ -56,7 +56,7 @@ pub fn generate_email() -> Result<EmailInfo, String> {
     block_on(async {
         let cors_header = fetch_cors_header().await;
         let resp = apply_api_headers(
-            http_client().post(format!("{}/email/new", BASE_URL)),
+            http_client().post(format!("{BASE_URL}/email/new")),
             &cors_header,
         )
         .json(&serde_json::json!({
@@ -100,7 +100,7 @@ pub fn get_emails(email: &str) -> Result<Vec<Email>, String> {
     block_on(async {
         let cors_header = fetch_cors_header().await;
         let resp = apply_api_headers(
-            http_client().get(format!("{}/email/{}/messages", BASE_URL, email)),
+            http_client().get(format!("{BASE_URL}/email/{email}/messages")),
             &cors_header,
         )
         .send()

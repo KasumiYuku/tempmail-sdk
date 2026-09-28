@@ -38,20 +38,20 @@ fn encode_mail(email: &str) -> String {
 pub fn generate_email() -> Result<EmailInfo, String> {
     let client = http_client();
     let name = random_local(10);
-    let email = format!("{}@nimail.cn", name);
+    let email = format!("{name}@nimail.cn");
     let body = format!("mail={}", encode_mail(&email));
 
     block_on(async {
         let resp = client
-            .post(format!("{}/api/applymail", BASE_URL))
+            .post(format!("{BASE_URL}/api/applymail"))
             .header("User-Agent", get_current_ua())
             .header("Content-Type", "application/x-www-form-urlencoded")
             .header("Origin", BASE_URL)
-            .header("Referer", format!("{}/", BASE_URL))
+            .header("Referer", format!("{BASE_URL}/"))
             .body(body)
             .send()
             .await
-            .map_err(|e| format!("nimail: 创建邮箱请求失败: {}", e))?;
+            .map_err(|e| format!("nimail: 创建邮箱请求失败: {e}"))?;
 
         if !resp.status().is_success() {
             return Err(format!("nimail: 创建邮箱失败 HTTP {}", resp.status()));
@@ -60,7 +60,7 @@ pub fn generate_email() -> Result<EmailInfo, String> {
         let data: Value = resp
             .json()
             .await
-            .map_err(|e| format!("nimail: 解析创建响应失败: {}", e))?;
+            .map_err(|e| format!("nimail: 解析创建响应失败: {e}"))?;
 
         let success = data.get("success").and_then(|v| v.as_str()).unwrap_or("");
         let user = data
@@ -91,15 +91,15 @@ pub fn get_emails(email: &str) -> Result<Vec<Email>, String> {
 
     block_on(async {
         let resp = client
-            .post(format!("{}/api/getmails", BASE_URL))
+            .post(format!("{BASE_URL}/api/getmails"))
             .header("User-Agent", get_current_ua())
             .header("Content-Type", "application/x-www-form-urlencoded")
             .header("Origin", BASE_URL)
-            .header("Referer", format!("{}/", BASE_URL))
+            .header("Referer", format!("{BASE_URL}/"))
             .body(body)
             .send()
             .await
-            .map_err(|e| format!("nimail: 获取邮件请求失败: {}", e))?;
+            .map_err(|e| format!("nimail: 获取邮件请求失败: {e}"))?;
 
         if !resp.status().is_success() {
             return Err(format!("nimail: 获取邮件失败 HTTP {}", resp.status()));
@@ -108,7 +108,7 @@ pub fn get_emails(email: &str) -> Result<Vec<Email>, String> {
         let data: Value = resp
             .json()
             .await
-            .map_err(|e| format!("nimail: 解析邮件响应失败: {}", e))?;
+            .map_err(|e| format!("nimail: 解析邮件响应失败: {e}"))?;
 
         let success = data.get("success").and_then(|v| v.as_str()).unwrap_or("");
         if success != "true" {

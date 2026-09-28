@@ -37,7 +37,7 @@ fn fetch_json(url: String) -> Result<Value, String> {
 }
 
 pub fn generate_email() -> Result<EmailInfo, String> {
-    let data = fetch_json(format!("{}/generate-email", API_BASE))?;
+    let data = fetch_json(format!("{API_BASE}/generate-email"))?;
     let payload = data.get("data").cloned().unwrap_or(Value::Null);
     let mut email = payload
         .get("email")

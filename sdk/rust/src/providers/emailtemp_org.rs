@@ -61,7 +61,7 @@ fn parse_cookie_header(hdr: &str) -> BTreeMap<String, String> {
 /// 将 Cookie 映射转换回 Cookie 头字符串
 fn cookie_header_from_map(m: &BTreeMap<String, String>) -> String {
     m.iter()
-        .map(|(k, v)| format!("{}={}", k, v))
+        .map(|(k, v)| format!("{k}={v}"))
         .collect::<Vec<_>>()
         .join("; ")
 }
@@ -87,7 +87,7 @@ fn merge_set_cookies(hdr: &str, headers: &wreq::header::HeaderMap) -> String {
 
 /// 编码会话信息为 token 字符串
 fn encode_sess(s: &EmailtempOrgSess) -> Result<String, String> {
-    serde_json::to_string(s).map_err(|e| format!("emailtemp-org: token 序列化失败: {}", e))
+    serde_json::to_string(s).map_err(|e| format!("emailtemp-org: token 序列化失败: {e}"))
 }
 
 /// 从 token 字符串解码会话信息
@@ -125,7 +125,7 @@ async fn post_messages(
         .body(messages_form(csrf))
         .send()
         .await
-        .map_err(|e| format!("emailtemp-org: 请求 /messages 失败: {}", e))?;
+        .map_err(|e| format!("emailtemp-org: 请求 /messages 失败: {e}"))?;
 
     if !resp.status().is_success() {
         return Err(format!("emailtemp-org messages: {}", resp.status()));
@@ -135,9 +135,9 @@ async fn post_messages(
     let text = resp
         .text()
         .await
-        .map_err(|e| format!("emailtemp-org: 读取 /messages 响应失败: {}", e))?;
+        .map_err(|e| format!("emailtemp-org: 读取 /messages 响应失败: {e}"))?;
     let data: Value = serde_json::from_str(text.trim())
-        .map_err(|e| format!("emailtemp-org: 解析 /messages 响应失败: {}", e))?;
+        .map_err(|e| format!("emailtemp-org: 解析 /messages 响应失败: {e}"))?;
     Ok((data, merged))
 }
 
@@ -159,7 +159,7 @@ pub fn generate_email() -> Result<EmailInfo, String> {
             .header("Accept-Language", "en-US,en;q=0.9,zh-CN;q=0.8,zh;q=0.7")
             .send()
             .await
-            .map_err(|e| format!("emailtemp-org: 获取首页失败: {}", e))?;
+            .map_err(|e| format!("emailtemp-org: 获取首页失败: {e}"))?;
 
         if !resp.status().is_success() {
             return Err(format!("emailtemp-org: 首页返回 HTTP {}", resp.status()));
@@ -169,7 +169,7 @@ pub fn generate_email() -> Result<EmailInfo, String> {
         let html = resp
             .text()
             .await
-            .map_err(|e| format!("emailtemp-org: 读取首页响应失败: {}", e))?;
+            .map_err(|e| format!("emailtemp-org: 读取首页响应失败: {e}"))?;
 
         let csrf = CSRF_RE
             .captures(&html)
@@ -236,7 +236,7 @@ pub fn get_emails(token: &str, email: &str) -> Result<Vec<Email>, String> {
             let from_email = json_str(msg.get("from_email"));
             let from_name = json_str(msg.get("from"));
             let from_addr = if !from_name.is_empty() && from_name != from_email {
-                format!("{} <{}>", from_name, from_email)
+                format!("{from_name} <{from_email}>")
             } else {
                 from_email
             };

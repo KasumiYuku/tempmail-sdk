@@ -46,7 +46,7 @@ pub fn generate_email() -> Result<EmailInfo, String> {
             )
             .send()
             .await
-            .map_err(|e| format!("xkx-me: 获取首页失败: {}", e))?;
+            .map_err(|e| format!("xkx-me: 获取首页失败: {e}"))?;
 
         if !resp.status().is_success() {
             return Err(format!("xkx-me: 获取首页失败 HTTP {}", resp.status()));
@@ -58,7 +58,7 @@ pub fn generate_email() -> Result<EmailInfo, String> {
 
         // 创建邮箱
         let create_resp = client
-            .post(format!("{}/mailbox/create/random", BASE_URL))
+            .post(format!("{BASE_URL}/mailbox/create/random"))
             .header("Content-Type", "application/x-www-form-urlencoded")
             .header("Cookie", &cookies)
             .header(
@@ -68,7 +68,7 @@ pub fn generate_email() -> Result<EmailInfo, String> {
             .body(format!("_token={}", urlencoding::encode(&csrf)))
             .send()
             .await
-            .map_err(|e| format!("xkx-me: 创建邮箱失败: {}", e))?;
+            .map_err(|e| format!("xkx-me: 创建邮箱失败: {e}"))?;
 
         // 从 Location 或 body 中提取邮箱地址
         let location = create_resp
@@ -125,7 +125,7 @@ pub fn get_emails(token: &str, email: &str) -> Result<Vec<Email>, String> {
             )
             .send()
             .await
-            .map_err(|e| format!("xkx-me: 获取邮件失败: {}", e))?;
+            .map_err(|e| format!("xkx-me: 获取邮件失败: {e}"))?;
 
         if resp.status().as_u16() == 404 {
             return Ok(Vec::new());

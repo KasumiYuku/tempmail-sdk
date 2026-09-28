@@ -28,15 +28,15 @@ pub fn generate_email() -> Result<EmailInfo, String> {
         let body = serde_json::json!({});
 
         let resp = http_client()
-            .post(format!("{}/api/inbox", BASE_URL))
+            .post(format!("{BASE_URL}/api/inbox"))
             .header("Content-Type", "application/json")
             .header("Accept", "application/json")
-            .header("Referer", format!("{}/", BASE_URL))
+            .header("Referer", format!("{BASE_URL}/"))
             .header("Origin", BASE_URL)
             .json(&body)
             .send()
             .await
-            .map_err(|e| format!("disposablemail-app: 创建邮箱请求失败: {}", e))?;
+            .map_err(|e| format!("disposablemail-app: 创建邮箱请求失败: {e}"))?;
 
         if !resp.status().is_success() {
             return Err(format!(
@@ -48,7 +48,7 @@ pub fn generate_email() -> Result<EmailInfo, String> {
         let data: Value = resp
             .json()
             .await
-            .map_err(|e| format!("disposablemail-app: 解析创建邮箱响应失败: {}", e))?;
+            .map_err(|e| format!("disposablemail-app: 解析创建邮箱响应失败: {e}"))?;
 
         let address = data
             .get("address")
@@ -57,8 +57,7 @@ pub fn generate_email() -> Result<EmailInfo, String> {
 
         if address.is_empty() || !address.contains('@') {
             return Err(format!(
-                "disposablemail-app: 返回的邮箱地址无效: {}",
-                address
+                "disposablemail-app: 返回的邮箱地址无效: {address}"
             ));
         }
 
@@ -103,12 +102,12 @@ pub fn get_emails(token: &str, email: &str) -> Result<Vec<Email>, String> {
 
     block_on(async {
         let resp = http_client()
-            .get(format!("{}/api/inbox/emails?token={}", BASE_URL, token))
+            .get(format!("{BASE_URL}/api/inbox/emails?token={token}"))
             .header("Accept", "application/json")
-            .header("Referer", format!("{}/", BASE_URL))
+            .header("Referer", format!("{BASE_URL}/"))
             .send()
             .await
-            .map_err(|e| format!("disposablemail-app: 获取邮件列表请求失败: {}", e))?;
+            .map_err(|e| format!("disposablemail-app: 获取邮件列表请求失败: {e}"))?;
 
         if !resp.status().is_success() {
             return Err(format!(
@@ -120,7 +119,7 @@ pub fn get_emails(token: &str, email: &str) -> Result<Vec<Email>, String> {
         let data: Value = resp
             .json()
             .await
-            .map_err(|e| format!("disposablemail-app: 解析邮件列表响应失败: {}", e))?;
+            .map_err(|e| format!("disposablemail-app: 解析邮件列表响应失败: {e}"))?;
 
         let emails = match data.get("emails").and_then(|v| v.as_array()) {
             Some(arr) => arr,

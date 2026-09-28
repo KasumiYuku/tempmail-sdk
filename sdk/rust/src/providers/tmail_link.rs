@@ -71,14 +71,14 @@ pub fn generate_email() -> Result<EmailInfo, String> {
         let client = http_client_no_cookie_jar();
 
         // 第一步：GET 首页，正则提取邮箱地址
-        let mut req = client.get(format!("{}/", ORIGIN));
+        let mut req = client.get(format!("{ORIGIN}/"));
         for (k, v) in browser_headers() {
             req = req.header(k, v);
         }
         let resp = req
             .send()
             .await
-            .map_err(|e| format!("tmail-link: 获取首页失败: {}", e))?;
+            .map_err(|e| format!("tmail-link: 获取首页失败: {e}"))?;
 
         if !resp.status().is_success() {
             return Err(format!("tmail-link: 首页返回 HTTP {}", resp.status()));
@@ -87,7 +87,7 @@ pub fn generate_email() -> Result<EmailInfo, String> {
         let html = resp
             .text()
             .await
-            .map_err(|e| format!("tmail-link: 读取首页响应失败: {}", e))?;
+            .map_err(|e| format!("tmail-link: 读取首页响应失败: {e}"))?;
 
         let address = EMAIL_RE
             .captures(&html)
@@ -97,16 +97,16 @@ pub fn generate_email() -> Result<EmailInfo, String> {
             .ok_or_else(|| "tmail-link: 未能从首页提取邮箱地址".to_string())?;
 
         // 第二步：GET /inbox/{email}/ 获取 csrftoken
-        let inbox_url = format!("{}/inbox/{}/", ORIGIN, address);
+        let inbox_url = format!("{ORIGIN}/inbox/{address}/");
         let mut req2 = client.get(&inbox_url);
         for (k, v) in browser_headers() {
             req2 = req2.header(k, v);
         }
-        req2 = req2.header("Referer", format!("{}/", ORIGIN));
+        req2 = req2.header("Referer", format!("{ORIGIN}/"));
         let resp2 = req2
             .send()
             .await
-            .map_err(|e| format!("tmail-link: 访问收件箱失败: {}", e))?;
+            .map_err(|e| format!("tmail-link: 访问收件箱失败: {e}"))?;
 
         if !resp2.status().is_success() {
             return Err(format!(
@@ -141,8 +141,8 @@ pub fn get_emails(token: &str, email: &str) -> Result<Vec<Email>, String> {
 
     block_on(async {
         let client = http_client_no_cookie_jar();
-        let inbox_url = format!("{}/inbox/{}/", ORIGIN, em);
-        let body = format!("format=json&csrfmiddlewaretoken={}", token);
+        let inbox_url = format!("{ORIGIN}/inbox/{em}/");
+        let body = format!("format=json&csrfmiddlewaretoken={token}");
 
         let mut req = client.post(&inbox_url);
         for (k, v) in browser_headers() {
@@ -152,13 +152,13 @@ pub fn get_emails(token: &str, email: &str) -> Result<Vec<Email>, String> {
         req = req.header("X-Requested-With", "XMLHttpRequest");
         req = req.header("Origin", ORIGIN);
         req = req.header("Referer", &inbox_url);
-        req = req.header("Cookie", format!("csrftoken={}", token));
+        req = req.header("Cookie", format!("csrftoken={token}"));
 
         let resp = req
             .body(body)
             .send()
             .await
-            .map_err(|e| format!("tmail-link: 获取邮件请求失败: {}", e))?;
+            .map_err(|e| format!("tmail-link: 获取邮件请求失败: {e}"))?;
 
         if !resp.status().is_success() {
             return Err(format!("tmail-link: 获取邮件返回 HTTP {}", resp.status()));
@@ -167,7 +167,7 @@ pub fn get_emails(token: &str, email: &str) -> Result<Vec<Email>, String> {
         let data: serde_json::Value = resp
             .json()
             .await
-            .map_err(|e| format!("tmail-link: 解析邮件 JSON 失败: {}", e))?;
+            .map_err(|e| format!("tmail-link: 解析邮件 JSON 失败: {e}"))?;
 
         let messages = match data["messages"].as_array() {
             Some(arr) if !arr.is_empty() => arr,

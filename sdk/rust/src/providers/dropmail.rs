@@ -96,14 +96,14 @@ async fn post_json_token_api(url: &str, body: Value) -> Result<Value, String> {
         .json(&body)
         .send()
         .await
-        .map_err(|e| format!("dropmail token request failed: {}", e))?;
+        .map_err(|e| format!("dropmail token request failed: {e}"))?;
 
     if !resp.status().is_success() {
         return Err(format!("dropmail token HTTP {}", resp.status()));
     }
     resp.json()
         .await
-        .map_err(|e| format!("dropmail token parse: {}", e))
+        .map_err(|e| format!("dropmail token parse: {e}"))
 }
 
 async fn fetch_af_generate() -> Result<String, String> {
@@ -205,7 +205,7 @@ fn graphql_request(query: &str, variables: Option<&Value>) -> Result<Value, Stri
             .form(&params)
             .send()
             .await
-            .map_err(|e| format!("dropmail request failed: {}", e))?;
+            .map_err(|e| format!("dropmail request failed: {e}"))?;
 
         if !resp.status().is_success() {
             return Err(format!("dropmail request failed: {}", resp.status()));
@@ -214,7 +214,7 @@ fn graphql_request(query: &str, variables: Option<&Value>) -> Result<Value, Stri
         let data: Value = resp
             .json()
             .await
-            .map_err(|e| format!("parse failed: {}", e))?;
+            .map_err(|e| format!("parse failed: {e}"))?;
         if let Some(errors) = data["errors"].as_array() {
             if !errors.is_empty() {
                 return Err(format!(

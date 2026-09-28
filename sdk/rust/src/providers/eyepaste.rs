@@ -22,7 +22,7 @@ fn random_username() -> String {
 /// 创建邮箱，无需调用 API，直接生成随机地址
 pub fn generate_email() -> Result<EmailInfo, String> {
     let username = random_username();
-    let email = format!("{}@eyepaste.com", username);
+    let email = format!("{username}@eyepaste.com");
     Ok(EmailInfo {
         channel: Channel::Eyepaste,
         email,
@@ -34,8 +34,8 @@ pub fn generate_email() -> Result<EmailInfo, String> {
 
 /// 提取 XML 标签内的文本内容
 fn extract_tag<'a>(xml: &'a str, tag: &str) -> Option<&'a str> {
-    let open = format!("<{}", tag);
-    let close = format!("</{}>", tag);
+    let open = format!("<{tag}");
+    let close = format!("</{tag}>");
     let start = xml.find(&open)?;
     // 跳过开始标签（可能有属性）
     let after_open = &xml[start + open.len()..];
@@ -121,14 +121,14 @@ pub fn get_emails(email: &str) -> Result<Vec<Email>, String> {
             .header("User-Agent", get_current_ua())
             .send()
             .await
-            .map_err(|e| format!("eyepaste: {}", e))?;
+            .map_err(|e| format!("eyepaste: {e}"))?;
         if resp.status().as_u16() == 404 {
             return Ok(vec![]);
         }
         if !resp.status().is_success() {
             return Err(format!("eyepaste: 获取邮件失败 {}", resp.status()));
         }
-        let xml = resp.text().await.map_err(|e| format!("eyepaste: {}", e))?;
+        let xml = resp.text().await.map_err(|e| format!("eyepaste: {e}"))?;
 
         // 解析 RSS XML，提取所有 <item> 元素
         let mut out = Vec::new();

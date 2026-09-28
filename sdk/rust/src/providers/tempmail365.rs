@@ -43,7 +43,7 @@ fn tm365_headers(b: wreq::RequestBuilder) -> wreq::RequestBuilder {
 /// 从 API 获取可用域名列表
 fn fetch_domains() -> Result<Vec<String>, String> {
     block_on(async {
-        let url = format!("{}?action=get_config", BASE);
+        let url = format!("{BASE}?action=get_config");
         let resp = tm365_headers(http_client().get(url))
             .send()
             .await
@@ -80,7 +80,7 @@ fn pick_domain(domains: &[String], preferred: Option<&str>) -> Result<String, St
             if let Some(hit) = domains.iter().find(|d| d.to_lowercase() == pl) {
                 return Ok(hit.clone());
             }
-            return Err(format!("tempmail365: 域名不可用: {}", pl));
+            return Err(format!("tempmail365: 域名不可用: {pl}"));
         }
     }
     let mut rng = rand::thread_rng();
@@ -103,7 +103,7 @@ pub fn generate_email(domain: Option<&str>) -> Result<EmailInfo, String> {
         .unwrap_or_else(|_| FALLBACK_DOMAINS.iter().map(|s| s.to_string()).collect());
     let d = pick_domain(&domains, domain)?;
     let user = random_username();
-    let addr = format!("{}@{}", user, d);
+    let addr = format!("{user}@{d}");
 
     block_on(async {
         // 调用 create_email 接口
@@ -122,7 +122,7 @@ pub fn generate_email(domain: Option<&str>) -> Result<EmailInfo, String> {
         }
         let data: Value = resp.json().await.map_err(|e| e.to_string())?;
         if data.get("success").and_then(|x| x.as_bool()) != Some(true) {
-            return Err(format!("tempmail365: 创建邮箱失败: {}", data));
+            return Err(format!("tempmail365: 创建邮箱失败: {data}"));
         }
         Ok(EmailInfo {
             channel: Channel::Tempmail365,

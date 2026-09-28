@@ -69,7 +69,7 @@ where
         match f() {
             Ok(result) => {
                 if attempt > 0 {
-                    log::info!("第 {} 次尝试成功", attempts);
+                    log::info!("第 {attempts} 次尝试成功");
                 }
                 return Ok((result, attempts));
             }
@@ -80,7 +80,7 @@ where
                     if attempt >= cfg.max_retries && cfg.max_retries > 0 {
                         log::error!("重试 {} 次后仍失败: {}", cfg.max_retries, e);
                     } else if !should_retry(&e) {
-                        log::debug!("不可重试的错误: {}", e);
+                        log::debug!("不可重试的错误: {e}");
                     }
                     return Err((e, attempts));
                 }

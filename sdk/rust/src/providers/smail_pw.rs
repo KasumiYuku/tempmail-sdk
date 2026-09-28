@@ -261,7 +261,7 @@ pub fn generate_email() -> Result<EmailInfo, String> {
         let resp = req
             .send()
             .await
-            .map_err(|e| format!("smail.pw generate: {}", e))?;
+            .map_err(|e| format!("smail.pw generate: {e}"))?;
         if !resp.status().is_success() {
             return Err(format!("smail.pw generate HTTP {}", resp.status()));
         }
@@ -299,7 +299,7 @@ pub fn get_emails(token: &str, email: &str) -> Result<Vec<Email>, String> {
         let resp = req
             .send()
             .await
-            .map_err(|e| format!("smail.pw poll: {}", e))?;
+            .map_err(|e| format!("smail.pw poll: {e}"))?;
         if !resp.status().is_success() {
             return Err(format!("smail.pw poll HTTP {}", resp.status()));
         }

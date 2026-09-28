@@ -35,7 +35,7 @@ pub fn generate_email() -> Result<EmailInfo, String> {
     block_on(async {
         let resp = mffac_headers(
             http_client()
-                .post(format!("{}/mailboxes", BASE))
+                .post(format!("{BASE}/mailboxes"))
                 .body(r#"{"expiresInHours":24}"#.to_string()),
             true,
         )
@@ -61,7 +61,7 @@ pub fn generate_email() -> Result<EmailInfo, String> {
         if addr.is_empty() || id.is_empty() {
             return Err("mffac: bad mailbox".into());
         }
-        let email = format!("{}@mffac.com", addr);
+        let email = format!("{addr}@mffac.com");
         let expires_at = mb
             .get("expiresAt")
             .and_then(|v| v.as_i64().or_else(|| v.as_f64().map(|f| f as i64)));
@@ -134,7 +134,7 @@ async fn fetch_email_detail(id: &str) -> Result<Option<Value>, String> {
 pub fn get_emails(email: &str, _token: Option<&str>) -> Result<Vec<Email>, String> {
     let local = email.split('@').next().unwrap_or(email).trim();
     let enc = urlencoding::encode(local);
-    let url = format!("{}/mailboxes/{}/emails", BASE, enc);
+    let url = format!("{BASE}/mailboxes/{enc}/emails");
     block_on(async {
         let resp = mffac_headers(http_client().get(&url), false)
             .send()

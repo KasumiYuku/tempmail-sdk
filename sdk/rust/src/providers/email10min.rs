@@ -33,7 +33,7 @@ fn cookie_map(hdr: &str) -> BTreeMap<String, String> {
 
 fn cookie_hdr_from_map(m: &BTreeMap<String, String>) -> String {
     m.iter()
-        .map(|(k, v)| format!("{}={}", k, v))
+        .map(|(k, v)| format!("{k}={v}"))
         .collect::<Vec<_>>()
         .join("; ")
 }
@@ -151,7 +151,7 @@ fn ajax_headers() -> Vec<(&'static str, String)> {
         ("Accept-Language", "zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6".into()),
         ("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8".into()),
         ("Origin", BASE.into()),
-        ("Referer", format!("{}/zh", BASE)),
+        ("Referer", format!("{BASE}/zh")),
         ("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0".into()),
         ("X-Requested-With", "XMLHttpRequest".into()),
         ("sec-ch-ua", r#""Chromium";v="146", "Not-A.Brand";v="24", "Microsoft Edge";v="146""#.into()),
@@ -177,7 +177,7 @@ pub fn generate_email() -> Result<EmailInfo, String> {
     let client = http_client_no_cookie_jar();
     let hdrs = browser_headers();
     block_on(async {
-        let mut req = client.get(format!("{}/zh", BASE));
+        let mut req = client.get(format!("{BASE}/zh"));
         req = apply_headers(req, &hdrs);
         let resp = req.send().await.map_err(|e| e.to_string())?;
         if !resp.status().is_success() {
@@ -214,10 +214,10 @@ pub fn get_emails(token: &str, email: &str) -> Result<Vec<Email>, String> {
         .as_millis();
 
     block_on(async {
-        let mut req = client.post(format!("{}/messages?{}", BASE, ts));
+        let mut req = client.post(format!("{BASE}/messages?{ts}"));
         req = apply_headers(req, &hdrs);
         req = req.header("Cookie", &cookie);
-        req = req.body(format!("_token={}&captcha=", csrf));
+        req = req.body(format!("_token={csrf}&captcha="));
         let resp = req.send().await.map_err(|e| e.to_string())?;
         if !resp.status().is_success() {
             return Err(format!("email10min: 获取邮件失败 HTTP {}", resp.status()));

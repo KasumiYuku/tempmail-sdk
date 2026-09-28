@@ -12,7 +12,7 @@ const BASE_URL: &str = "https://api.tempmail.ing/api";
 pub fn generate_email(duration: u32) -> Result<EmailInfo, String> {
     block_on(async {
         let resp = http_client()
-            .post(format!("{}/generate", BASE_URL))
+            .post(format!("{BASE_URL}/generate"))
             .header("Content-Type", "application/json")
             .header("User-Agent", get_current_ua())
             .header("Referer", "https://tempmail.ing/")
@@ -20,7 +20,7 @@ pub fn generate_email(duration: u32) -> Result<EmailInfo, String> {
             .json(&serde_json::json!({"duration": duration}))
             .send()
             .await
-            .map_err(|e| format!("tempmail request failed: {}", e))?;
+            .map_err(|e| format!("tempmail request failed: {e}"))?;
 
         if !resp.status().is_success() {
             return Err(format!("tempmail generate failed: {}", resp.status()));
@@ -29,7 +29,7 @@ pub fn generate_email(duration: u32) -> Result<EmailInfo, String> {
         let data: Value = resp
             .json()
             .await
-            .map_err(|e| format!("parse failed: {}", e))?;
+            .map_err(|e| format!("parse failed: {e}"))?;
 
         if !data["success"].as_bool().unwrap_or(false) {
             return Err("Failed to generate email".into());
@@ -59,7 +59,7 @@ pub fn get_emails(email: &str) -> Result<Vec<Email>, String> {
             .header("DNT", "1")
             .send()
             .await
-            .map_err(|e| format!("tempmail request failed: {}", e))?;
+            .map_err(|e| format!("tempmail request failed: {e}"))?;
 
         if !resp.status().is_success() {
             return Err(format!("tempmail get emails failed: {}", resp.status()));
@@ -68,7 +68,7 @@ pub fn get_emails(email: &str) -> Result<Vec<Email>, String> {
         let data: Value = resp
             .json()
             .await
-            .map_err(|e| format!("parse failed: {}", e))?;
+            .map_err(|e| format!("parse failed: {e}"))?;
 
         if !data["success"].as_bool().unwrap_or(false) {
             return Err("Failed to get emails".into());

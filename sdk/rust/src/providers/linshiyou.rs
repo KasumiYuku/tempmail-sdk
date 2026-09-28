@@ -217,7 +217,7 @@ pub fn generate_email() -> Result<EmailInfo, String> {
             .header("sec-fetch-site", "same-origin")
             .send()
             .await
-            .map_err(|e| format!("linshiyou request failed: {}", e))?;
+            .map_err(|e| format!("linshiyou request failed: {e}"))?;
 
         if !resp.status().is_success() {
             return Err(format!("linshiyou generate failed: {}", resp.status()));
@@ -232,7 +232,7 @@ pub fn generate_email() -> Result<EmailInfo, String> {
             return Err("linshiyou: invalid email in response body".into());
         }
 
-        let token = format!("NEXUS_TOKEN={}; tmail-emails={}", nexus, email);
+        let token = format!("NEXUS_TOKEN={nexus}; tmail-emails={email}");
 
         Ok(EmailInfo {
             channel: Channel::Linshiyou,
@@ -273,7 +273,7 @@ pub fn get_emails(token: &str, email: &str) -> Result<Vec<Email>, String> {
             .header("sec-fetch-site", "same-origin")
             .send()
             .await
-            .map_err(|e| format!("linshiyou mail failed: {}", e))?;
+            .map_err(|e| format!("linshiyou mail failed: {e}"))?;
 
         if !resp.status().is_success() {
             return Err(format!("linshiyou get emails failed: {}", resp.status()));

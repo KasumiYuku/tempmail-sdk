@@ -156,7 +156,7 @@ pub fn filter_channels_by_domain(channels: &[Channel], target_domains: &[String]
                 return domains.iter().any(|cd| {
                     target_domains
                         .iter()
-                        .any(|td| *cd == td.as_str() || cd.ends_with(&format!(".{}", td)))
+                        .any(|td| *cd == td.as_str() || cd.ends_with(&format!(".{td}")))
                 });
             }
             false

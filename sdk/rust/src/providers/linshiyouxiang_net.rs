@@ -49,7 +49,7 @@ pub fn generate_email() -> Result<EmailInfo, String> {
             .header("Accept-Language", "zh-CN,zh;q=0.9,en;q=0.8")
             .send()
             .await
-            .map_err(|e| format!("linshiyouxiang-net: 请求首页失败: {}", e))?;
+            .map_err(|e| format!("linshiyouxiang-net: 请求首页失败: {e}"))?;
 
         if !resp.status().is_success() {
             return Err(format!(
@@ -61,7 +61,7 @@ pub fn generate_email() -> Result<EmailInfo, String> {
         let html = resp
             .text()
             .await
-            .map_err(|e| format!("linshiyouxiang-net: 读取首页失败: {}", e))?;
+            .map_err(|e| format!("linshiyouxiang-net: 读取首页失败: {e}"))?;
 
         // 提取邮箱地址
         let email = EMAIL_RE
@@ -112,7 +112,7 @@ pub fn get_emails(token: &str, email: &str) -> Result<Vec<Email>, String> {
             .body(req_body)
             .send()
             .await
-            .map_err(|e| format!("linshiyouxiang-net: 请求获取邮件失败: {}", e))?;
+            .map_err(|e| format!("linshiyouxiang-net: 请求获取邮件失败: {e}"))?;
 
         if !resp.status().is_success() {
             return Err(format!(
@@ -125,7 +125,7 @@ pub fn get_emails(token: &str, email: &str) -> Result<Vec<Email>, String> {
         let data: Value = resp
             .json()
             .await
-            .map_err(|e| format!("linshiyouxiang-net: 解析邮件列表失败: {}", e))?;
+            .map_err(|e| format!("linshiyouxiang-net: 解析邮件列表失败: {e}"))?;
 
         let emails = match data.get("emails").and_then(|v| v.as_array()) {
             Some(arr) if !arr.is_empty() => arr,

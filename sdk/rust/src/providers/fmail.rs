@@ -33,18 +33,18 @@ fn normalize_domain(domain: Option<&str>) -> Option<String> {
 
 async fn request_json(path: &str) -> Result<Value, String> {
     let resp = http_client()
-        .get(format!("{}{}", BASE_URL, path))
+        .get(format!("{BASE_URL}{path}"))
         .header("Accept", "application/json")
         .header("User-Agent", get_current_ua())
         .send()
         .await
-        .map_err(|e| format!("fmail request failed: {}", e))?;
+        .map_err(|e| format!("fmail request failed: {e}"))?;
     if !resp.status().is_success() {
         return Err(format!("fmail http {}", resp.status()));
     }
     resp.json::<Value>()
         .await
-        .map_err(|e| format!("fmail parse response: {}", e))
+        .map_err(|e| format!("fmail parse response: {e}"))
 }
 
 fn flatten_message(raw: &Value, recipient: &str) -> Value {
@@ -87,7 +87,7 @@ pub fn generate_email(domain: Option<&str>) -> Result<EmailInfo, String> {
                 .unwrap_or("")
                 .trim();
             if !username.is_empty() && !dom.is_empty() {
-                email = format!("{}@{}", username, dom);
+                email = format!("{username}@{dom}");
             }
         }
         if email.is_empty() || !email.contains('@') {

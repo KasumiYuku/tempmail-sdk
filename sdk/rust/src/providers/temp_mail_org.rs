@@ -50,10 +50,10 @@ fn flatten_message(detail: &Value, recipient: &str) -> Value {
 /// API: POST https://web2.temp-mail.org/mailbox → {"token":"...","mailbox":"..."}
 pub fn generate_email(_duration: u32, _domain: Option<&str>) -> Result<EmailInfo, String> {
     block_on(async {
-        let resp = common_headers(http_client().post(format!("{}/mailbox", BASE_URL)))
+        let resp = common_headers(http_client().post(format!("{BASE_URL}/mailbox")))
             .send()
             .await
-            .map_err(|e| format!("temp-mail-org: 创建邮箱请求失败: {}", e))?;
+            .map_err(|e| format!("temp-mail-org: 创建邮箱请求失败: {e}"))?;
 
         if !resp.status().is_success() {
             return Err(format!(
@@ -65,7 +65,7 @@ pub fn generate_email(_duration: u32, _domain: Option<&str>) -> Result<EmailInfo
         let data: Value = resp
             .json()
             .await
-            .map_err(|e| format!("temp-mail-org: 解析响应失败: {}", e))?;
+            .map_err(|e| format!("temp-mail-org: 解析响应失败: {e}"))?;
 
         let token = data
             .get("token")
@@ -103,11 +103,11 @@ pub fn get_emails(token: &str, email: &str) -> Result<Vec<Email>, String> {
 
     block_on(async {
         // 获取邮件列表
-        let resp = common_headers(http_client().get(format!("{}/messages", BASE_URL)))
-            .header("Authorization", format!("Bearer {}", token))
+        let resp = common_headers(http_client().get(format!("{BASE_URL}/messages")))
+            .header("Authorization", format!("Bearer {token}"))
             .send()
             .await
-            .map_err(|e| format!("temp-mail-org: 获取邮件列表失败: {}", e))?;
+            .map_err(|e| format!("temp-mail-org: 获取邮件列表失败: {e}"))?;
 
         if !resp.status().is_success() {
             return Err(format!(
@@ -119,7 +119,7 @@ pub fn get_emails(token: &str, email: &str) -> Result<Vec<Email>, String> {
         let data: Value = resp
             .json()
             .await
-            .map_err(|e| format!("temp-mail-org: 解析邮件列表失败: {}", e))?;
+            .map_err(|e| format!("temp-mail-org: 解析邮件列表失败: {e}"))?;
 
         let messages = data
             .get("messages")
@@ -140,8 +140,8 @@ pub fn get_emails(token: &str, email: &str) -> Result<Vec<Email>, String> {
             };
 
             let detail_resp =
-                common_headers(http_client().get(format!("{}/messages/{}", BASE_URL, msg_id)))
-                    .header("Authorization", format!("Bearer {}", token))
+                common_headers(http_client().get(format!("{BASE_URL}/messages/{msg_id}")))
+                    .header("Authorization", format!("Bearer {token}"))
                     .send()
                     .await;
 

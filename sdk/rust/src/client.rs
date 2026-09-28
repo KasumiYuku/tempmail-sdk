@@ -51,27 +51,27 @@ pub fn generate_email(options: &GenerateEmailOptions) -> Option<EmailInfo> {
 
     for ch in &try_order {
         if channels_tried >= max_channels {
-            log::warn!("已达最大尝试渠道数 {}，停止尝试", max_channels);
+            log::warn!("已达最大尝试渠道数 {max_channels}，停止尝试");
             break;
         }
         if start.elapsed().as_secs_f64() >= total_timeout_secs {
-            log::warn!("已超过整体超时 {:.0}s，停止尝试", total_timeout_secs);
+            log::warn!("已超过整体超时 {total_timeout_secs:.0}s，停止尝试");
             break;
         }
 
         if let Some(backend) = get_backend(ch) {
             if failed_backends.contains(backend) {
-                log::debug!("跳过渠道 {}（同组后端 {} 本次已失败）", ch, backend);
+                log::debug!("跳过渠道 {ch}（同组后端 {backend} 本次已失败）");
                 continue;
             }
             if !is_backend_open(backend) {
-                log::debug!("跳过渠道 {}（后端 {} 处于熔断冷却中）", ch, backend);
+                log::debug!("跳过渠道 {ch}（后端 {backend} 处于熔断冷却中）");
                 continue;
             }
         }
 
         channels_tried += 1;
-        log::info!("创建临时邮箱, 渠道: {}", ch);
+        log::info!("创建临时邮箱, 渠道: {ch}");
         let c = ch.clone();
         let d = dom.clone();
         match with_retry_with_attempts(
@@ -95,7 +95,7 @@ pub fn generate_email(options: &GenerateEmailOptions) -> Option<EmailInfo> {
             }
             Err((e, _)) => {
                 last_err = e.clone();
-                log::warn!("渠道 {} 不可用: {}，尝试下一个渠道", ch, e);
+                log::warn!("渠道 {ch} 不可用: {e}，尝试下一个渠道");
                 if let Some(backend) = get_backend(ch) {
                     failed_backends.insert(backend);
                     record_backend_failure(backend);
@@ -136,7 +136,7 @@ fn generate_email_once(
 ) -> Result<EmailInfo, String> {
     match crate::registry::spec_for(channel) {
         Some(spec) => (spec.generate)(duration, domain),
-        None => Err(format!("unsupported channel: {}", channel)),
+        None => Err(format!("unsupported channel: {channel}")),
     }
 }
 
@@ -169,7 +169,7 @@ pub fn get_emails(info: &EmailInfo, options: Option<&GetEmailsOptions>) -> GetEm
         };
     }
 
-    log::debug!("获取邮件, 渠道: {}, 邮箱: {}", channel, email);
+    log::debug!("获取邮件, 渠道: {channel}, 邮箱: {email}");
 
     let ch = channel.clone();
     let em = email.clone();
@@ -180,7 +180,7 @@ pub fn get_emails(info: &EmailInfo, options: Option<&GetEmailsOptions>) -> GetEm
             if !emails.is_empty() {
                 log::info!("获取到 {} 封邮件, 渠道: {}", emails.len(), channel);
             } else {
-                log::debug!("暂无邮件, 渠道: {}", channel);
+                log::debug!("暂无邮件, 渠道: {channel}");
             }
             report_telemetry("get_emails", &channel.to_string(), true, attempts, 0, "");
             GetEmailsResult {
@@ -191,7 +191,7 @@ pub fn get_emails(info: &EmailInfo, options: Option<&GetEmailsOptions>) -> GetEm
             }
         }
         Err((e, attempts)) => {
-            log::error!("获取邮件失败, 渠道: {}, 错误: {}", channel, e);
+            log::error!("获取邮件失败, 渠道: {channel}, 错误: {e}");
             report_telemetry("get_emails", &channel.to_string(), false, attempts, 0, &e);
             GetEmailsResult {
                 channel,
@@ -211,7 +211,7 @@ fn get_emails_once(
 ) -> Result<Vec<Email>, String> {
     match crate::registry::spec_for(channel) {
         Some(spec) => (spec.get_emails)(email, token),
-        None => Err(format!("unsupported channel: {}", channel)),
+        None => Err(format!("unsupported channel: {channel}")),
     }
 }
 

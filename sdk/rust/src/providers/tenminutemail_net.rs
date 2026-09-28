@@ -22,12 +22,12 @@ pub fn generate_email() -> Result<EmailInfo, String> {
     block_on(async {
         let client = http_client_no_cookie_jar();
         let resp = client
-            .get(format!("{}/address.api.php", BASE_URL))
+            .get(format!("{BASE_URL}/address.api.php"))
             .header("User-Agent", get_current_ua())
             .header("Accept", "application/json")
             .send()
             .await
-            .map_err(|e| format!("10minutemail.net 创建邮箱请求失败: {}", e))?;
+            .map_err(|e| format!("10minutemail.net 创建邮箱请求失败: {e}"))?;
 
         // 从响应头提取 PHPSESSID
         let cookie_str = extract_phpsessid(&resp)?;
@@ -36,17 +36,16 @@ pub fn generate_email() -> Result<EmailInfo, String> {
         let text = resp
             .text()
             .await
-            .map_err(|e| format!("10minutemail.net 读取响应失败: {}", e))?;
+            .map_err(|e| format!("10minutemail.net 读取响应失败: {e}"))?;
 
         if !status.is_success() {
             return Err(format!(
-                "10minutemail.net 创建邮箱失败: {} {}",
-                status, text
+                "10minutemail.net 创建邮箱失败: {status} {text}"
             ));
         }
 
         let data: Value = serde_json::from_str(&text)
-            .map_err(|e| format!("10minutemail.net 解析响应失败: {}", e))?;
+            .map_err(|e| format!("10minutemail.net 解析响应失败: {e}"))?;
 
         let address = data["mail_get_mail"]
             .as_str()
@@ -86,7 +85,7 @@ fn extract_phpsessid(resp: &wreq::Response) -> Result<String, String> {
 /// 获取邮件列表
 pub fn get_emails(token: &str, email: &str) -> Result<Vec<Email>, String> {
     let session: Value = serde_json::from_str(token)
-        .map_err(|e| format!("10minutemail.net 解析 token 失败: {}", e))?;
+        .map_err(|e| format!("10minutemail.net 解析 token 失败: {e}"))?;
 
     let cookie = session["cookie"]
         .as_str()
@@ -97,29 +96,28 @@ pub fn get_emails(token: &str, email: &str) -> Result<Vec<Email>, String> {
 
         // 获取邮件列表
         let resp = client
-            .get(format!("{}/address.api.php", BASE_URL))
+            .get(format!("{BASE_URL}/address.api.php"))
             .header("User-Agent", get_current_ua())
             .header("Accept", "application/json")
             .header("Cookie", cookie)
             .send()
             .await
-            .map_err(|e| format!("10minutemail.net 获取邮件列表请求失败: {}", e))?;
+            .map_err(|e| format!("10minutemail.net 获取邮件列表请求失败: {e}"))?;
 
         let status = resp.status();
         let text = resp
             .text()
             .await
-            .map_err(|e| format!("10minutemail.net 读取响应失败: {}", e))?;
+            .map_err(|e| format!("10minutemail.net 读取响应失败: {e}"))?;
 
         if !status.is_success() {
             return Err(format!(
-                "10minutemail.net 获取邮件列表失败: {} {}",
-                status, text
+                "10minutemail.net 获取邮件列表失败: {status} {text}"
             ));
         }
 
         let data: Value = serde_json::from_str(&text)
-            .map_err(|e| format!("10minutemail.net 解析邮件列表失败: {}", e))?;
+            .map_err(|e| format!("10minutemail.net 解析邮件列表失败: {e}"))?;
 
         let mail_list = match data["mail_list"].as_array() {
             Some(arr) => arr.clone(),
@@ -148,29 +146,28 @@ async fn fetch_mail_detail(cookie: &str, mail_id: &str, email: &str) -> Result<E
     let client = http_client_no_cookie_jar();
 
     let resp = client
-        .get(format!("{}/mail.api.php?mailid={}", BASE_URL, mail_id))
+        .get(format!("{BASE_URL}/mail.api.php?mailid={mail_id}"))
         .header("User-Agent", get_current_ua())
         .header("Accept", "application/json")
         .header("Cookie", cookie)
         .send()
         .await
-        .map_err(|e| format!("10minutemail.net 获取邮件详情失败: {}", e))?;
+        .map_err(|e| format!("10minutemail.net 获取邮件详情失败: {e}"))?;
 
     let status = resp.status();
     let text = resp
         .text()
         .await
-        .map_err(|e| format!("10minutemail.net 读取邮件详情失败: {}", e))?;
+        .map_err(|e| format!("10minutemail.net 读取邮件详情失败: {e}"))?;
 
     if !status.is_success() {
         return Err(format!(
-            "10minutemail.net 获取邮件详情失败: {} {}",
-            status, text
+            "10minutemail.net 获取邮件详情失败: {status} {text}"
         ));
     }
 
     let detail: Value = serde_json::from_str(&text)
-        .map_err(|e| format!("10minutemail.net 解析邮件详情失败: {}", e))?;
+        .map_err(|e| format!("10minutemail.net 解析邮件详情失败: {e}"))?;
 
     // 提取 HTML 和纯文本内容
     let mut html_body = String::new();

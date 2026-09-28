@@ -17,7 +17,7 @@ const BASE_URL: &str = "https://10minutemail.net";
 
 /// 创建 10minutemail.net 临时邮箱
 pub fn generate_email() -> Result<EmailInfo, String> {
-    let url = format!("{}/address.api.php", BASE_URL);
+    let url = format!("{BASE_URL}/address.api.php");
     block_on(async {
         let resp = http_client()
             .get(&url)
@@ -25,7 +25,7 @@ pub fn generate_email() -> Result<EmailInfo, String> {
             .header("User-Agent", get_current_ua())
             .send()
             .await
-            .map_err(|e| format!("ten-minute-mail-net: 请求失败: {}", e))?;
+            .map_err(|e| format!("ten-minute-mail-net: 请求失败: {e}"))?;
 
         if !resp.status().is_success() {
             return Err(format!("ten-minute-mail-net: HTTP {}", resp.status()));
@@ -50,7 +50,7 @@ pub fn generate_email() -> Result<EmailInfo, String> {
         let data: Value = resp
             .json()
             .await
-            .map_err(|e| format!("ten-minute-mail-net: 解析响应失败: {}", e))?;
+            .map_err(|e| format!("ten-minute-mail-net: 解析响应失败: {e}"))?;
         let email_addr = data
             .get("mail_get_mail")
             .and_then(|v| v.as_str())
@@ -90,7 +90,7 @@ pub fn get_emails(token: &str, email: &str) -> Result<Vec<Email>, String> {
         return Err("ten-minute-mail-net: token 缺少 cookie 字段".into());
     }
 
-    let list_url = format!("{}/address.api.php", BASE_URL);
+    let list_url = format!("{BASE_URL}/address.api.php");
     block_on(async {
         let resp = http_client()
             .get(&list_url)
@@ -99,7 +99,7 @@ pub fn get_emails(token: &str, email: &str) -> Result<Vec<Email>, String> {
             .header("Cookie", &cookie)
             .send()
             .await
-            .map_err(|e| format!("ten-minute-mail-net: 获取列表失败: {}", e))?;
+            .map_err(|e| format!("ten-minute-mail-net: 获取列表失败: {e}"))?;
 
         if !resp.status().is_success() {
             return Err(format!("ten-minute-mail-net: HTTP {}", resp.status()));
@@ -131,7 +131,7 @@ pub fn get_emails(token: &str, email: &str) -> Result<Vec<Email>, String> {
 }
 
 async fn fetch_detail(cookie: &str, mail_id: &str, recipient: &str) -> Result<Email, String> {
-    let url = format!("{}/mail.api.php?mailid={}", BASE_URL, mail_id);
+    let url = format!("{BASE_URL}/mail.api.php?mailid={mail_id}");
     let resp = http_client()
         .get(&url)
         .header("Accept", "application/json, text/plain, */*")

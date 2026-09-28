@@ -16,11 +16,11 @@ const BASE_URL: &str = "https://api.guerrillamail.com/ajax.php";
 pub fn generate_email() -> Result<EmailInfo, String> {
     block_on(async {
         let resp = http_client()
-            .get(format!("{}?f=get_email_address&lang=en", BASE_URL))
+            .get(format!("{BASE_URL}?f=get_email_address&lang=en"))
             .header("User-Agent", get_current_ua())
             .send()
             .await
-            .map_err(|e| format!("guerrillamail request failed: {}", e))?;
+            .map_err(|e| format!("guerrillamail request failed: {e}"))?;
 
         if !resp.status().is_success() {
             return Err(format!("guerrillamail generate failed: {}", resp.status()));
@@ -29,7 +29,7 @@ pub fn generate_email() -> Result<EmailInfo, String> {
         let data: Value = resp
             .json()
             .await
-            .map_err(|e| format!("parse failed: {}", e))?;
+            .map_err(|e| format!("parse failed: {e}"))?;
         let email_addr = data["email_addr"].as_str().unwrap_or("");
         let sid_token = data["sid_token"].as_str().unwrap_or("");
 
@@ -62,7 +62,7 @@ pub fn get_emails(token: &str, email: &str) -> Result<Vec<Email>, String> {
             .header("User-Agent", get_current_ua())
             .send()
             .await
-            .map_err(|e| format!("guerrillamail request failed: {}", e))?;
+            .map_err(|e| format!("guerrillamail request failed: {e}"))?;
 
         if !resp.status().is_success() {
             return Err(format!(
@@ -74,7 +74,7 @@ pub fn get_emails(token: &str, email: &str) -> Result<Vec<Email>, String> {
         let data: Value = resp
             .json()
             .await
-            .map_err(|e| format!("parse failed: {}", e))?;
+            .map_err(|e| format!("parse failed: {e}"))?;
         let list = data["list"].as_array().cloned().unwrap_or_default();
 
         let mut out = Vec::with_capacity(list.len());

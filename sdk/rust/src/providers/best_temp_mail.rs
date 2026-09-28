@@ -56,15 +56,15 @@ pub fn generate_email() -> Result<EmailInfo, String> {
         });
 
         let resp = http_client()
-            .post(format!("{}/api/v3/createEmail", BASE_URL))
+            .post(format!("{BASE_URL}/api/v3/createEmail"))
             .header("Content-Type", "application/json")
             .header("Accept", "application/json")
-            .header("Referer", format!("{}/", BASE_URL))
+            .header("Referer", format!("{BASE_URL}/"))
             .header("Origin", BASE_URL)
             .json(&body)
             .send()
             .await
-            .map_err(|e| format!("best-temp-mail: 创建邮箱请求失败: {}", e))?;
+            .map_err(|e| format!("best-temp-mail: 创建邮箱请求失败: {e}"))?;
 
         if !resp.status().is_success() {
             return Err(format!(
@@ -76,11 +76,11 @@ pub fn generate_email() -> Result<EmailInfo, String> {
         let data: Value = resp
             .json()
             .await
-            .map_err(|e| format!("best-temp-mail: 解析创建邮箱响应失败: {}", e))?;
+            .map_err(|e| format!("best-temp-mail: 解析创建邮箱响应失败: {e}"))?;
 
         let status = data.get("status").and_then(|v| v.as_str()).unwrap_or("");
         if status != "success" {
-            return Err(format!("best-temp-mail: 创建邮箱失败, status={}", status));
+            return Err(format!("best-temp-mail: 创建邮箱失败, status={status}"));
         }
 
         let info = data
@@ -103,7 +103,7 @@ pub fn generate_email() -> Result<EmailInfo, String> {
             .ok_or("best-temp-mail: 响应中缺少 update_tag 字段")?;
 
         if address.is_empty() || !address.contains('@') {
-            return Err(format!("best-temp-mail: 返回的邮箱地址无效: {}", address));
+            return Err(format!("best-temp-mail: 返回的邮箱地址无效: {address}"));
         }
 
         // 将 intToken + id + update_tag 序列化为 JSON 存入 token
@@ -135,7 +135,7 @@ pub fn get_emails(token: &str, email: &str) -> Result<Vec<Email>, String> {
 
     // 从 token 中解析 intToken, id, update_tag
     let token_data: Value = serde_json::from_str(token)
-        .map_err(|e| format!("best-temp-mail: 解析 token 失败: {}", e))?;
+        .map_err(|e| format!("best-temp-mail: 解析 token 失败: {e}"))?;
 
     let int_token = token_data
         .get("intToken")
@@ -161,15 +161,15 @@ pub fn get_emails(token: &str, email: &str) -> Result<Vec<Email>, String> {
         });
 
         let resp = http_client()
-            .post(format!("{}/api/v3/getEmailList", BASE_URL))
+            .post(format!("{BASE_URL}/api/v3/getEmailList"))
             .header("Content-Type", "application/json")
             .header("Accept", "application/json")
-            .header("Referer", format!("{}/", BASE_URL))
+            .header("Referer", format!("{BASE_URL}/"))
             .header("Origin", BASE_URL)
             .json(&body)
             .send()
             .await
-            .map_err(|e| format!("best-temp-mail: 获取邮件列表请求失败: {}", e))?;
+            .map_err(|e| format!("best-temp-mail: 获取邮件列表请求失败: {e}"))?;
 
         if !resp.status().is_success() {
             return Err(format!(
@@ -181,13 +181,12 @@ pub fn get_emails(token: &str, email: &str) -> Result<Vec<Email>, String> {
         let data: Value = resp
             .json()
             .await
-            .map_err(|e| format!("best-temp-mail: 解析邮件列表响应失败: {}", e))?;
+            .map_err(|e| format!("best-temp-mail: 解析邮件列表响应失败: {e}"))?;
 
         let status = data.get("status").and_then(|v| v.as_str()).unwrap_or("");
         if status != "success" {
             return Err(format!(
-                "best-temp-mail: 获取邮件列表失败, status={}",
-                status
+                "best-temp-mail: 获取邮件列表失败, status={status}"
             ));
         }
 

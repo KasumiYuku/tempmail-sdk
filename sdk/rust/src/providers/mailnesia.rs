@@ -136,7 +136,7 @@ fn parse_rows(page: &str) -> Vec<Value> {
 }
 
 fn extract_div_by_id(page: &str, div_id: &str, next_id: &str) -> String {
-    let needle = format!("id=\"{}\"", div_id);
+    let needle = format!("id=\"{div_id}\"");
     let Some(id_at) = page.find(&needle) else {
         return String::new();
     };
@@ -146,7 +146,7 @@ fn extract_div_by_id(page: &str, div_id: &str, next_id: &str) -> String {
     let start = id_at + open_rel + 1;
     let mut end = None;
     if !next_id.is_empty() {
-        let next = format!("<div id=\"{}\"", next_id);
+        let next = format!("<div id=\"{next_id}\"");
         if let Some(pos) = page[start..].find(&next) {
             end = Some(start + pos);
         }
@@ -196,8 +196,8 @@ fn fetch_detail(local: &str, row: &Value) -> Value {
             "html".to_string(),
             Value::String(extract_div_by_id(
                 &page,
-                &format!("text_html_{}", id),
-                &format!("text_plain_{}", id),
+                &format!("text_html_{id}"),
+                &format!("text_plain_{id}"),
             )),
         );
     }
@@ -209,7 +209,7 @@ pub fn generate_email() -> Result<EmailInfo, String> {
     fetch_html(mailbox_url(&local))?;
     Ok(EmailInfo {
         channel: Channel::Mailnesia,
-        email: format!("{}@{}", local, DOMAIN),
+        email: format!("{local}@{DOMAIN}"),
         token: None,
         expires_at: None,
         created_at: None,

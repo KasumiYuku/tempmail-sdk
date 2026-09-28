@@ -25,19 +25,19 @@ fn random_local(len: usize) -> String {
 fn fetch_domains() -> Result<Vec<String>, String> {
     block_on(async {
         let resp = http_client()
-            .get(format!("{}/api/domain", BASE))
+            .get(format!("{BASE}/api/domain"))
             .header("Accept", "application/json")
             .header("User-Agent", get_current_ua())
             .send()
             .await
-            .map_err(|e| format!("mail-sunls: 获取域名列表失败: {}", e))?;
+            .map_err(|e| format!("mail-sunls: 获取域名列表失败: {e}"))?;
         if !resp.status().is_success() {
             return Err(format!("mail-sunls: 获取域名列表 HTTP {}", resp.status()));
         }
         let data: Value = resp
             .json()
             .await
-            .map_err(|e| format!("mail-sunls: 解析域名列表失败: {}", e))?;
+            .map_err(|e| format!("mail-sunls: 解析域名列表失败: {e}"))?;
         let domains = data
             .as_array()
             .ok_or_else(|| "mail-sunls: 域名列表格式错误".to_string())?
@@ -60,7 +60,7 @@ pub fn generate_email() -> Result<EmailInfo, String> {
     let mut rng = rand::thread_rng();
     let domain = &domains[rng.gen_range(0..domains.len())];
     let local = random_local(10);
-    let email = format!("{}@{}", local, domain);
+    let email = format!("{local}@{domain}");
 
     Ok(EmailInfo {
         channel: Channel::MailSunls,
@@ -88,14 +88,14 @@ pub fn get_emails(email: &str) -> Result<Vec<Email>, String> {
             .header("User-Agent", get_current_ua())
             .send()
             .await
-            .map_err(|e| format!("mail-sunls: 获取邮件列表失败: {}", e))?;
+            .map_err(|e| format!("mail-sunls: 获取邮件列表失败: {e}"))?;
         if !resp.status().is_success() {
             return Err(format!("mail-sunls: 获取邮件列表 HTTP {}", resp.status()));
         }
         let data: Value = resp
             .json()
             .await
-            .map_err(|e| format!("mail-sunls: 解析邮件列表失败: {}", e))?;
+            .map_err(|e| format!("mail-sunls: 解析邮件列表失败: {e}"))?;
         let rows = data.as_array().cloned().unwrap_or_default();
 
         let mut out = Vec::with_capacity(rows.len());

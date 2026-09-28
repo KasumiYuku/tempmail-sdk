@@ -72,7 +72,7 @@ fn parse_cookie_header(hdr: &str) -> BTreeMap<String, String> {
 /// 将 Cookie 映射转换回 Cookie 头字符串
 fn cookie_header_from_map(m: &BTreeMap<String, String>) -> String {
     m.iter()
-        .map(|(k, v)| format!("{}={}", k, v))
+        .map(|(k, v)| format!("{k}={v}"))
         .collect::<Vec<_>>()
         .join("; ")
 }
@@ -99,7 +99,7 @@ fn merge_set_cookies(hdr: &str, headers: &wreq::header::HeaderMap) -> String {
 
 /// 编码会话信息为 token 字符串
 fn encode_sess(s: &AltmailsSess) -> Result<String, String> {
-    serde_json::to_string(s).map_err(|e| format!("altmails: token 序列化失败: {}", e))
+    serde_json::to_string(s).map_err(|e| format!("altmails: token 序列化失败: {e}"))
 }
 
 /// 从 token 字符串解码会话信息
@@ -135,7 +135,7 @@ fn ajax_headers() -> Vec<(&'static str, String)> {
         ("Accept", "application/json".to_string()),
         ("Accept-Language", "en-US,en;q=0.9".to_string()),
         ("X-Requested-With", "XMLHttpRequest".to_string()),
-        ("Referer", format!("{}/", ORIGIN)),
+        ("Referer", format!("{ORIGIN}/")),
     ]
 }
 
@@ -147,14 +147,14 @@ pub fn generate_email() -> Result<EmailInfo, String> {
         let client = http_client_no_cookie_jar();
 
         // 第一步：GET / 获取 session Cookie 和 CSRF token
-        let mut req = client.get(format!("{}/", ORIGIN));
+        let mut req = client.get(format!("{ORIGIN}/"));
         for (k, v) in browser_headers() {
             req = req.header(k, v);
         }
         let resp = req
             .send()
             .await
-            .map_err(|e| format!("altmails: 获取首页请求失败: {}", e))?;
+            .map_err(|e| format!("altmails: 获取首页请求失败: {e}"))?;
 
         if !resp.status().is_success() {
             return Err(format!("altmails: 获取首页返回 HTTP {}", resp.status()));
@@ -166,7 +166,7 @@ pub fn generate_email() -> Result<EmailInfo, String> {
         let html = resp
             .text()
             .await
-            .map_err(|e| format!("altmails: 读取首页响应失败: {}", e))?;
+            .map_err(|e| format!("altmails: 读取首页响应失败: {e}"))?;
 
         // 从 HTML inline script 中提取 CSRF token: '_token': 'xxx'
         let csrf = CSRF_RE
@@ -175,7 +175,7 @@ pub fn generate_email() -> Result<EmailInfo, String> {
             .ok_or_else(|| "altmails: 未找到 CSRF token".to_string())?;
 
         // 第二步：GET /random-email-address 获取随机邮箱地址
-        let mut req = client.get(format!("{}/random-email-address", ORIGIN));
+        let mut req = client.get(format!("{ORIGIN}/random-email-address"));
         for (k, v) in browser_headers() {
             req = req.header(k, v);
         }
@@ -183,7 +183,7 @@ pub fn generate_email() -> Result<EmailInfo, String> {
         let resp = req
             .send()
             .await
-            .map_err(|e| format!("altmails: 获取邮箱地址请求失败: {}", e))?;
+            .map_err(|e| format!("altmails: 获取邮箱地址请求失败: {e}"))?;
 
         if !resp.status().is_success() {
             return Err(format!("altmails: 获取邮箱地址返回 HTTP {}", resp.status()));
@@ -195,12 +195,12 @@ pub fn generate_email() -> Result<EmailInfo, String> {
         let address = resp
             .text()
             .await
-            .map_err(|e| format!("altmails: 读取邮箱地址响应失败: {}", e))?
+            .map_err(|e| format!("altmails: 读取邮箱地址响应失败: {e}"))?
             .trim()
             .to_string();
 
         if address.is_empty() || !address.contains('@') {
-            return Err(format!("altmails: 返回的邮箱地址无效: {}", address));
+            return Err(format!("altmails: 返回的邮箱地址无效: {address}"));
         }
 
         let tok = encode_sess(&AltmailsSess {
@@ -232,7 +232,7 @@ pub fn get_emails(token: &str, email: &str) -> Result<Vec<Email>, String> {
         let client = http_client_no_cookie_jar();
 
         // POST /fetch-emails/{email} 获取邮件列表
-        let fetch_url = format!("{}/fetch-emails/{}", ORIGIN, em);
+        let fetch_url = format!("{ORIGIN}/fetch-emails/{em}");
         let mut req = client.post(&fetch_url);
         for (k, v) in ajax_headers() {
             req = req.header(k, v);
@@ -244,7 +244,7 @@ pub fn get_emails(token: &str, email: &str) -> Result<Vec<Email>, String> {
         let resp = req
             .send()
             .await
-            .map_err(|e| format!("altmails: 获取邮件列表请求失败: {}", e))?;
+            .map_err(|e| format!("altmails: 获取邮件列表请求失败: {e}"))?;
 
         if !resp.status().is_success() {
             return Err(format!("altmails: 获取邮件列表返回 HTTP {}", resp.status()));
@@ -253,7 +253,7 @@ pub fn get_emails(token: &str, email: &str) -> Result<Vec<Email>, String> {
         let body: Value = resp
             .json()
             .await
-            .map_err(|e| format!("altmails: 解析邮件列表响应失败: {}", e))?;
+            .map_err(|e| format!("altmails: 解析邮件列表响应失败: {e}"))?;
 
         // 响应为 JSON 数组
         let messages = match body.as_array() {
@@ -288,7 +288,7 @@ pub fn get_emails(token: &str, email: &str) -> Result<Vec<Email>, String> {
             // GET /view/{id} 获取邮件 HTML 正文
             let mut html_body = String::new();
             if !id.is_empty() {
-                let view_url = format!("{}/view/{}", ORIGIN, id);
+                let view_url = format!("{ORIGIN}/view/{id}");
                 let mut reqv = client.get(&view_url);
                 for (k, v) in browser_headers() {
                     reqv = reqv.header(k, v);

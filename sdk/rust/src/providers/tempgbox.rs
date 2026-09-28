@@ -51,8 +51,8 @@ fn decode_payload(html: &str) -> Result<Value, String> {
         .ok_or_else(|| "tempgbox: malformed encoded response payload".to_string())?;
     let raw = general_purpose::STANDARD
         .decode(&tail[..end])
-        .map_err(|e| format!("tempgbox: decode payload failed: {}", e))?;
-    serde_json::from_slice(&raw).map_err(|e| format!("tempgbox: parse payload failed: {}", e))
+        .map_err(|e| format!("tempgbox: decode payload failed: {e}"))?;
+    serde_json::from_slice(&raw).map_err(|e| format!("tempgbox: parse payload failed: {e}"))
 }
 
 fn post_proxy(route: &str, device_id: &str, body: Value) -> Result<Value, String> {
@@ -61,7 +61,7 @@ fn post_proxy(route: &str, device_id: &str, body: Value) -> Result<Value, String
     block_on(async move {
         let ip = random_ip();
         let resp = http_client()
-            .post(format!("{}?route={}", API_URL, route))
+            .post(format!("{API_URL}?route={route}"))
             .header("Accept", "text/html,application/json")
             .header("Content-Type", "application/json")
             .header("Origin", "https://tempgbox.net")
@@ -74,13 +74,13 @@ fn post_proxy(route: &str, device_id: &str, body: Value) -> Result<Value, String
             .json(&body)
             .send()
             .await
-            .map_err(|e| format!("tempgbox {} request failed: {}", route, e))?;
+            .map_err(|e| format!("tempgbox {route} request failed: {e}"))?;
 
         let status = resp.status();
         let text = resp
             .text()
             .await
-            .map_err(|e| format!("tempgbox {} read response failed: {}", route, e))?;
+            .map_err(|e| format!("tempgbox {route} read response failed: {e}"))?;
         let payload = decode_payload(&text)?;
         if !status.is_success() {
             let reason = payload["detail"]
@@ -88,7 +88,7 @@ fn post_proxy(route: &str, device_id: &str, body: Value) -> Result<Value, String
                 .or_else(|| payload["error"].as_str())
                 .or_else(|| payload["message"].as_str())
                 .unwrap_or("");
-            return Err(format!("tempgbox {} failed: {} {}", route, status, reason));
+            return Err(format!("tempgbox {route} failed: {status} {reason}"));
         }
         Ok(payload)
     })

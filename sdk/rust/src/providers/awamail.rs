@@ -13,7 +13,7 @@ const BASE_URL: &str = "https://awamail.com/welcome";
 pub fn generate_email() -> Result<EmailInfo, String> {
     block_on(async {
         let resp = http_client()
-            .post(format!("{}/change_mailbox", BASE_URL))
+            .post(format!("{BASE_URL}/change_mailbox"))
             .header("Content-Length", "0")
             .header("User-Agent", get_current_ua())
             .header("dnt", "1")
@@ -21,7 +21,7 @@ pub fn generate_email() -> Result<EmailInfo, String> {
             .header("referer", "https://awamail.com/?lang=zh")
             .send()
             .await
-            .map_err(|e| format!("awamail request failed: {}", e))?;
+            .map_err(|e| format!("awamail request failed: {e}"))?;
 
         if !resp.status().is_success() {
             return Err(format!("awamail generate failed: {}", resp.status()));
@@ -45,7 +45,7 @@ pub fn generate_email() -> Result<EmailInfo, String> {
         let data: Value = resp
             .json()
             .await
-            .map_err(|e| format!("parse failed: {}", e))?;
+            .map_err(|e| format!("parse failed: {e}"))?;
         if !data["success"].as_bool().unwrap_or(false) {
             return Err("Failed to generate email".into());
         }
@@ -68,7 +68,7 @@ pub fn get_emails(token: &str, email: &str) -> Result<Vec<Email>, String> {
     let email = email.to_string();
     block_on(async {
         let resp = http_client()
-            .get(format!("{}/get_emails", BASE_URL))
+            .get(format!("{BASE_URL}/get_emails"))
             .header("User-Agent", get_current_ua())
             .header("Cookie", &token)
             .header("x-requested-with", "XMLHttpRequest")
@@ -77,7 +77,7 @@ pub fn get_emails(token: &str, email: &str) -> Result<Vec<Email>, String> {
             .header("referer", "https://awamail.com/?lang=zh")
             .send()
             .await
-            .map_err(|e| format!("awamail request failed: {}", e))?;
+            .map_err(|e| format!("awamail request failed: {e}"))?;
 
         if !resp.status().is_success() {
             return Err(format!("awamail get emails failed: {}", resp.status()));
@@ -86,7 +86,7 @@ pub fn get_emails(token: &str, email: &str) -> Result<Vec<Email>, String> {
         let data: Value = resp
             .json()
             .await
-            .map_err(|e| format!("parse failed: {}", e))?;
+            .map_err(|e| format!("parse failed: {e}"))?;
         if !data["success"].as_bool().unwrap_or(false) {
             return Err("Failed to get emails".into());
         }

@@ -71,12 +71,12 @@ fn random_local() -> String {
 /// token 格式: "cookies\n{time}"，time 用于后续增量获取邮件
 pub fn generate_email() -> Result<EmailInfo, String> {
     let local = random_local();
-    let addr = format!("{}@{}", local, DEFAULT_DOMAIN);
+    let addr = format!("{local}@{DEFAULT_DOMAIN}");
 
     block_on(async {
         /* 第一步：访问首页获取 session cookie */
         let resp = http_client_no_cookie_jar()
-            .get(format!("{}/", BASE_URL))
+            .get(format!("{BASE_URL}/"))
             .header(
                 "Accept",
                 "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
@@ -85,7 +85,7 @@ pub fn generate_email() -> Result<EmailInfo, String> {
             .header("User-Agent", browser_ua())
             .send()
             .await
-            .map_err(|e| format!("rootsh: 获取首页失败: {}", e))?;
+            .map_err(|e| format!("rootsh: 获取首页失败: {e}"))?;
 
         let cookies = extract_cookies(resp.headers());
         if cookies.is_empty() {
@@ -94,10 +94,10 @@ pub fn generate_email() -> Result<EmailInfo, String> {
 
         /* 第二步：申请邮箱 */
         let apply_resp = http_client_no_cookie_jar()
-            .post(format!("{}/applymail", BASE_URL))
+            .post(format!("{BASE_URL}/applymail"))
             .header("Content-Type", "application/x-www-form-urlencoded")
             .header("X-Requested-With", "XMLHttpRequest")
-            .header("Referer", format!("{}/", BASE_URL))
+            .header("Referer", format!("{BASE_URL}/"))
             .header("Accept", "application/json, text/javascript, */*; q=0.01")
             .header("Accept-Language", "zh-CN,zh;q=0.9,en;q=0.8")
             .header("User-Agent", browser_ua())
@@ -105,7 +105,7 @@ pub fn generate_email() -> Result<EmailInfo, String> {
             .body(format!("mail={}", urlencoding::encode(&addr)))
             .send()
             .await
-            .map_err(|e| format!("rootsh: 申请邮箱失败: {}", e))?;
+            .map_err(|e| format!("rootsh: 申请邮箱失败: {e}"))?;
 
         if !apply_resp.status().is_success() {
             return Err(format!("rootsh: 申请邮箱返回 HTTP {}", apply_resp.status()));
@@ -114,7 +114,7 @@ pub fn generate_email() -> Result<EmailInfo, String> {
         let body: Value = apply_resp
             .json()
             .await
-            .map_err(|e| format!("rootsh: 解析申请响应失败: {}", e))?;
+            .map_err(|e| format!("rootsh: 解析申请响应失败: {e}"))?;
 
         /* 检查 success 字段 */
         let success = body.get("success").and_then(|v| v.as_str()).unwrap_or("");
@@ -139,7 +139,7 @@ pub fn generate_email() -> Result<EmailInfo, String> {
         let time = body.get("time").and_then(|v| v.as_i64()).unwrap_or(0);
 
         /* token 格式: "cookies\n{time}" */
-        let token = format!("{}\n{}", cookies, time);
+        let token = format!("{cookies}\n{time}");
 
         Ok(EmailInfo {
             channel: Channel::Rootsh,
@@ -181,10 +181,10 @@ pub fn get_emails(token: &str, email: &str) -> Result<Vec<Email>, String> {
         );
 
         let resp = http_client_no_cookie_jar()
-            .post(format!("{}/getmail", BASE_URL))
+            .post(format!("{BASE_URL}/getmail"))
             .header("Content-Type", "application/x-www-form-urlencoded")
             .header("X-Requested-With", "XMLHttpRequest")
-            .header("Referer", format!("{}/", BASE_URL))
+            .header("Referer", format!("{BASE_URL}/"))
             .header("Accept", "application/json, text/javascript, */*; q=0.01")
             .header("Accept-Language", "zh-CN,zh;q=0.9,en;q=0.8")
             .header("User-Agent", browser_ua())
@@ -192,7 +192,7 @@ pub fn get_emails(token: &str, email: &str) -> Result<Vec<Email>, String> {
             .body(body)
             .send()
             .await
-            .map_err(|e| format!("rootsh: 获取邮件列表失败: {}", e))?;
+            .map_err(|e| format!("rootsh: 获取邮件列表失败: {e}"))?;
 
         if !resp.status().is_success() {
             return Err(format!("rootsh: 获取邮件列表返回 HTTP {}", resp.status()));
@@ -201,7 +201,7 @@ pub fn get_emails(token: &str, email: &str) -> Result<Vec<Email>, String> {
         let data: Value = resp
             .json()
             .await
-            .map_err(|e| format!("rootsh: 解析邮件列表响应失败: {}", e))?;
+            .map_err(|e| format!("rootsh: 解析邮件列表响应失败: {e}"))?;
 
         let success = data.get("success").and_then(|v| v.as_str()).unwrap_or("");
         if success != "true" {
@@ -235,7 +235,7 @@ pub fn get_emails(token: &str, email: &str) -> Result<Vec<Email>, String> {
             let from_addr = if display_name.is_empty() {
                 from_email.to_string()
             } else {
-                format!("{} <{}>", display_name, from_email)
+                format!("{display_name} <{from_email}>")
             };
 
             /* 获取邮件正文 */
@@ -269,10 +269,10 @@ async fn fetch_mail_body(cookies: &str, fid: &str, email: &str) -> Result<String
     );
 
     let resp = http_client_no_cookie_jar()
-        .post(format!("{}/viewmail", BASE_URL))
+        .post(format!("{BASE_URL}/viewmail"))
         .header("Content-Type", "application/x-www-form-urlencoded")
         .header("X-Requested-With", "XMLHttpRequest")
-        .header("Referer", format!("{}/", BASE_URL))
+        .header("Referer", format!("{BASE_URL}/"))
         .header("Accept", "application/json, text/javascript, */*; q=0.01")
         .header("Accept-Language", "zh-CN,zh;q=0.9,en;q=0.8")
         .header("User-Agent", browser_ua())
@@ -280,7 +280,7 @@ async fn fetch_mail_body(cookies: &str, fid: &str, email: &str) -> Result<String
         .body(body)
         .send()
         .await
-        .map_err(|e| format!("rootsh: 获取邮件正文失败: {}", e))?;
+        .map_err(|e| format!("rootsh: 获取邮件正文失败: {e}"))?;
 
     if !resp.status().is_success() {
         return Err(format!("rootsh: 获取邮件正文返回 HTTP {}", resp.status()));
@@ -289,7 +289,7 @@ async fn fetch_mail_body(cookies: &str, fid: &str, email: &str) -> Result<String
     let data: Value = resp
         .json()
         .await
-        .map_err(|e| format!("rootsh: 解析邮件正文响应失败: {}", e))?;
+        .map_err(|e| format!("rootsh: 解析邮件正文响应失败: {e}"))?;
 
     Ok(data
         .get("mail")

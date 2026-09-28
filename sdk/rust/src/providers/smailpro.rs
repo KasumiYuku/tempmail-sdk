@@ -42,7 +42,7 @@ async fn fetch_payload(target_url: &str, extra: &[(&str, &str)]) -> Result<Strin
     let resp = set_headers(http_client().get(&req_url))
         .send()
         .await
-        .map_err(|e| format!("smailpro: 获取 payload 失败: {}", e))?;
+        .map_err(|e| format!("smailpro: 获取 payload 失败: {e}"))?;
 
     if !resp.status().is_success() {
         return Err(format!("smailpro payload: {}", resp.status()));
@@ -51,7 +51,7 @@ async fn fetch_payload(target_url: &str, extra: &[(&str, &str)]) -> Result<Strin
     let text = resp
         .text()
         .await
-        .map_err(|e| format!("smailpro: 读取 payload 响应失败: {}", e))?;
+        .map_err(|e| format!("smailpro: 读取 payload 响应失败: {e}"))?;
 
     // payload 接口返回纯文本 JWT，去除可能的引号与空白
     let payload = text.trim().trim_matches('"').to_string();
@@ -70,7 +70,7 @@ async fn call_api(target_url: &str, extra: &[(&str, &str)], label: &str) -> Resu
     let resp = set_headers(http_client().get(&req_url))
         .send()
         .await
-        .map_err(|e| format!("smailpro: {} 请求失败: {}", label, e))?;
+        .map_err(|e| format!("smailpro: {label} 请求失败: {e}"))?;
 
     if !resp.status().is_success() {
         return Err(format!("smailpro {}: {}", label, resp.status()));
@@ -78,7 +78,7 @@ async fn call_api(target_url: &str, extra: &[(&str, &str)], label: &str) -> Resu
 
     resp.json()
         .await
-        .map_err(|e| format!("smailpro: 解析 {} 响应失败: {}", label, e))
+        .map_err(|e| format!("smailpro: 解析 {label} 响应失败: {e}"))
 }
 
 /// 创建临时邮箱

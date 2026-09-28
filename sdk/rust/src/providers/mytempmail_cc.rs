@@ -51,11 +51,11 @@ pub fn generate_email() -> Result<EmailInfo, String> {
             "expiry": DEFAULT_EXPIRY,
         });
 
-        let resp = headers(http_client().post(format!("{}/address", API_BASE)))
+        let resp = headers(http_client().post(format!("{API_BASE}/address")))
             .body(body.to_string())
             .send()
             .await
-            .map_err(|e| format!("mytempmail-cc: 创建邮箱请求失败: {}", e))?;
+            .map_err(|e| format!("mytempmail-cc: 创建邮箱请求失败: {e}"))?;
 
         if !resp.status().is_success() {
             return Err(format!(
@@ -67,7 +67,7 @@ pub fn generate_email() -> Result<EmailInfo, String> {
         let data: Value = resp
             .json()
             .await
-            .map_err(|e| format!("mytempmail-cc: 解析创建邮箱响应失败: {}", e))?;
+            .map_err(|e| format!("mytempmail-cc: 解析创建邮箱响应失败: {e}"))?;
 
         // 尝试从多个可能的字段名提取邮箱地址
         let email = data
@@ -76,7 +76,7 @@ pub fn generate_email() -> Result<EmailInfo, String> {
             .or_else(|| data.get("mail"))
             .and_then(|v| v.as_str())
             .map(|s| s.trim().to_string())
-            .unwrap_or_else(|| format!("{}@{}", name, DOMAIN));
+            .unwrap_or_else(|| format!("{name}@{DOMAIN}"));
 
         if email.is_empty() || !email.contains('@') {
             return Err("mytempmail-cc: 返回的邮箱地址无效".into());
@@ -123,11 +123,11 @@ pub fn get_emails(token: &str, email: &str) -> Result<Vec<Email>, String> {
     }
 
     block_on(async {
-        let url = format!("{}/mails/{}", API_BASE, tk);
+        let url = format!("{API_BASE}/mails/{tk}");
         let resp = headers(http_client().get(&url))
             .send()
             .await
-            .map_err(|e| format!("mytempmail-cc: 获取邮件列表请求失败: {}", e))?;
+            .map_err(|e| format!("mytempmail-cc: 获取邮件列表请求失败: {e}"))?;
 
         if resp.status().as_u16() == 404 {
             return Ok(Vec::new());
@@ -143,7 +143,7 @@ pub fn get_emails(token: &str, email: &str) -> Result<Vec<Email>, String> {
         let data: Value = resp
             .json()
             .await
-            .map_err(|e| format!("mytempmail-cc: 解析邮件列表响应失败: {}", e))?;
+            .map_err(|e| format!("mytempmail-cc: 解析邮件列表响应失败: {e}"))?;
 
         // 响应可能是数组，也可能是包含邮件数组的对象
         let items = if let Some(arr) = data.as_array() {

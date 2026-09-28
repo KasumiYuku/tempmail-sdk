@@ -29,7 +29,7 @@ fn client_id() -> String {
 fn apply_headers(req: wreq::RequestBuilder, client_id: &str) -> wreq::RequestBuilder {
     req.header("Accept", "application/json")
         .header("Origin", BASE_URL)
-        .header("Referer", format!("{}/", BASE_URL))
+        .header("Referer", format!("{BASE_URL}/"))
         .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0")
         .header("X-Client-ID", client_id)
 }
@@ -54,7 +54,7 @@ fn long_poll_client() -> Result<wreq::Client, String> {
 
 async fn get_mail_cx_config(client_id: &str) -> Result<Value, String> {
     let resp = apply_headers(
-        http_client().get(format!("{}/v1/config", BASE_URL)),
+        http_client().get(format!("{BASE_URL}/v1/config")),
         client_id,
     )
     .send()

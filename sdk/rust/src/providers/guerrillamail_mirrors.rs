@@ -16,11 +16,11 @@ fn mirror_generate(channel: Channel, base_url: &str) -> Result<EmailInfo, String
     let base_url = base_url.to_string();
     block_on(async {
         let resp = http_client()
-            .get(format!("{}?f=get_email_address&lang=en", base_url))
+            .get(format!("{base_url}?f=get_email_address&lang=en"))
             .header("User-Agent", get_current_ua())
             .send()
             .await
-            .map_err(|e| format!("{}: request failed: {}", channel, e))?;
+            .map_err(|e| format!("{channel}: request failed: {e}"))?;
 
         if !resp.status().is_success() {
             return Err(format!("{}: generate failed: {}", channel, resp.status()));
@@ -29,12 +29,12 @@ fn mirror_generate(channel: Channel, base_url: &str) -> Result<EmailInfo, String
         let data: Value = resp
             .json()
             .await
-            .map_err(|e| format!("parse failed: {}", e))?;
+            .map_err(|e| format!("parse failed: {e}"))?;
         let email_addr = data["email_addr"].as_str().unwrap_or("");
         let sid_token = data["sid_token"].as_str().unwrap_or("");
 
         if email_addr.is_empty() || sid_token.is_empty() {
-            return Err(format!("{}: missing email_addr or sid_token", channel));
+            return Err(format!("{channel}: missing email_addr or sid_token"));
         }
 
         Ok(EmailInfo {
@@ -63,7 +63,7 @@ fn mirror_get_emails(base_url: &str, token: &str, email: &str) -> Result<Vec<Ema
             .header("User-Agent", get_current_ua())
             .send()
             .await
-            .map_err(|e| format!("guerrillamail mirror request failed: {}", e))?;
+            .map_err(|e| format!("guerrillamail mirror request failed: {e}"))?;
 
         if !resp.status().is_success() {
             return Err(format!(
@@ -75,7 +75,7 @@ fn mirror_get_emails(base_url: &str, token: &str, email: &str) -> Result<Vec<Ema
         let data: Value = resp
             .json()
             .await
-            .map_err(|e| format!("parse failed: {}", e))?;
+            .map_err(|e| format!("parse failed: {e}"))?;
         let list = data["list"].as_array().cloned().unwrap_or_default();
 
         let mut out = Vec::with_capacity(list.len());
