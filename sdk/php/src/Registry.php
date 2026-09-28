@@ -14,8 +14,6 @@ use ChanhanzhanX\TempMail\Providers\DropmailClick;
 use ChanhanzhanX\TempMail\Providers\DuckMail;
 use ChanhanzhanX\TempMail\Providers\FakeEmailSite;
 use ChanhanzhanX\TempMail\Providers\Fmail;
-use ChanhanzhanX\TempMail\Providers\Freecustom;
-use ChanhanzhanX\TempMail\Providers\GoneboxEmail;
 use ChanhanzhanX\TempMail\Providers\HarakiriMail;
 use ChanhanzhanX\TempMail\Providers\Inboxes;
 use ChanhanzhanX\TempMail\Providers\InboxKitten;
@@ -68,7 +66,6 @@ use ChanhanzhanX\TempMail\Providers\Lroid;
 use ChanhanzhanX\TempMail\Providers\MailCatch;
 use ChanhanzhanX\TempMail\Providers\MaildropCc;
 use ChanhanzhanX\TempMail\Providers\Mailnesia;
-use ChanhanzhanX\TempMail\Providers\Mohmal;
 use ChanhanzhanX\TempMail\Providers\SmailPw;
 use ChanhanzhanX\TempMail\Providers\Tempgbox;
 use ChanhanzhanX\TempMail\Providers\TenMinuteMailNet;
@@ -98,7 +95,6 @@ use ChanhanzhanX\TempMail\Providers\Openinbox;
 use ChanhanzhanX\TempMail\Providers\Rootsh;
 use ChanhanzhanX\TempMail\Providers\ShittyEmail;
 use ChanhanzhanX\TempMail\Providers\TaEasy;
-use ChanhanzhanX\TempMail\Providers\TempMailNow;
 use ChanhanzhanX\TempMail\Providers\TempMailOrg;
 use ChanhanzhanX\TempMail\Providers\TempEmailCo;
 use ChanhanzhanX\TempMail\Providers\TempEmailInfo;
@@ -116,13 +112,41 @@ use ChanhanzhanX\TempMail\Providers\TenMinuteMailNetApi;
 use ChanhanzhanX\TempMail\Providers\ThrowawayMail;
 use ChanhanzhanX\TempMail\Providers\TmailLink;
 use ChanhanzhanX\TempMail\Providers\UnCorreoTemporal;
-use ChanhanzhanX\TempMail\Providers\WebMailTemp;
 use ChanhanzhanX\TempMail\Providers\XkxMe;
+use ChanhanzhanX\TempMail\Providers\Firetempmail;
+use ChanhanzhanX\TempMail\Providers\Huskmail;
+use ChanhanzhanX\TempMail\Providers\Mtempmail;
+use ChanhanzhanX\TempMail\Providers\Nullmail;
+use ChanhanzhanX\TempMail\Providers\ShitpostEmail;
+use ChanhanzhanX\TempMail\Providers\Smails;
+use ChanhanzhanX\TempMail\Providers\TempmailEe;
+use ChanhanzhanX\TempMail\Providers\Tempmailportal;
+use ChanhanzhanX\TempMail\Providers\TempmailsIo;
+use ChanhanzhanX\TempMail\Providers\TenminApp;
+use ChanhanzhanX\TempMail\Providers\Zerodrop;
+// 第四轮新增渠道 provider 导入
+use ChanhanzhanX\TempMail\Providers\TemporarymailCom;
+use ChanhanzhanX\TempMail\Providers\ThirtyMinEmail;
+use ChanhanzhanX\TempMail\Providers\LinshiXyz;
+use ChanhanzhanX\TempMail\Providers\Crazymailing;
+use ChanhanzhanX\TempMail\Providers\NoxenDe5Net;
+use ChanhanzhanX\TempMail\Providers\Nukemail;
+use ChanhanzhanX\TempMail\Providers\Shadowmail;
+use ChanhanzhanX\TempMail\Providers\Flybymail;
+use ChanhanzhanX\TempMail\Providers\Nowtempmail;
+use ChanhanzhanX\TempMail\Providers\Clawdemail;
+use ChanhanzhanX\TempMail\Providers\Tempmail100;
+use ChanhanzhanX\TempMail\Providers\Mailticking;
+use ChanhanzhanX\TempMail\Providers\Tempmailto;
+use ChanhanzhanX\TempMail\Providers\TempMailGg;
+use ChanhanzhanX\TempMail\Providers\Tmpkit;
+use ChanhanzhanX\TempMail\Providers\Internxt;
+use ChanhanzhanX\TempMail\Providers\GeneratorEmail;
 
 /**
  * 渠道注册表：单一事实来源
  *
- * 按 ChannelData 定义的顺序（与 baseline 逐行一致）注册全部 279 个渠道。
+ * 按 ChannelData 定义的顺序（与 baseline 逐行一致）注册全部 296 个渠道。
  * 有真实现的渠道绑定对应 provider 闭包，其余绑定桩实现。
  * listChannels / getChannelInfo / 两个 dispatch 全部由注册表派生。
  */
@@ -421,13 +445,11 @@ final class Registry
         // mailmomy 及其全部固定域名变体（共用 mailmomy.com 后端 API）
         // 主渠道 mailmomy 从 /api/domains/active 随机选域名（fixedDomain 为 null），其余为固定别名域名。
         $mailmomyChannels = [
-            '16888888-cyou' => '16888888.cyou',
             '17666688-shop' => '17666688.shop',
             '282mail-com' => '282mail.com',
             'bsdu32-buzz' => 'bsdu32.buzz',
             'doxu243-buzz' => 'doxu243.buzz',
             'easyme-pro' => 'easyme.pro',
-            'evergreenco-shop' => 'evergreenco.shop',
             'layueming-pics' => 'layueming.pics',
             'mingyuekeji-online' => 'mingyuekeji.online',
             'mingyueming-click' => 'mingyueming.click',
@@ -724,12 +746,6 @@ final class Registry
             static fn (string $e, ?string $t): array => Freecustom::getEmails($e, $t),
         ];
 
-        // gonebox-email：POST 创建，无需鉴权
-        $ov['gonebox-email'] = [
-            static fn (GenerateEmailOptions $o): EmailInfo => GoneboxEmail::generate(),
-            static fn (string $e, ?string $t): array => GoneboxEmail::getEmails($e, $t),
-        ];
-
         // harakirimail：无鉴权 REST API
         $ov['harakirimail'] = [
             static fn (GenerateEmailOptions $o): EmailInfo => HarakiriMail::generate(),
@@ -826,12 +842,6 @@ final class Registry
         $ov['mailnesia'] = [
             static fn (GenerateEmailOptions $o): EmailInfo => Mailnesia::generate(),
             static fn (string $e, ?string $t): array => Mailnesia::getEmails($e, $t),
-        ];
-
-        // mohmal：connect.sid 会话 + HTML 解析
-        $ov['mohmal'] = [
-            static fn (GenerateEmailOptions $o): EmailInfo => Mohmal::generate(),
-            static fn (string $e, ?string $t): array => Mohmal::getEmails($e, $t),
         ];
 
         // smail-pw：Remix/Flight loader 数据流解析
@@ -1002,12 +1012,6 @@ final class Registry
             static fn (string $e, ?string $t): array => TaEasy::getEmails($e, $t),
         ];
 
-        // temp-mail-now：CSRF + session cookie，POST /change_email + GET /fetch_emails
-        $ov['temp-mail-now'] = [
-            static fn (GenerateEmailOptions $o): EmailInfo => TempMailNow::generate(),
-            static fn (string $e, ?string $t): array => TempMailNow::getEmails($e, $t),
-        ];
-
         // temp-mail-org：JWT Bearer 认证，POST /mailbox + GET /messages
         $ov['temp-mail-org'] = [
             static fn (GenerateEmailOptions $o): EmailInfo => TempMailOrg::generate(),
@@ -1110,16 +1114,184 @@ final class Registry
             static fn (string $e, ?string $t): array => UnCorreoTemporal::getEmails($e, $t),
         ];
 
-        // webmailtemp：GET /api/create + GET /api/check/{user}，token 含 cookie
-        $ov['webmailtemp'] = [
-            static fn (GenerateEmailOptions $o): EmailInfo => WebMailTemp::generate(),
-            static fn (string $e, ?string $t): array => WebMailTemp::getEmails($e, $t),
-        ];
-
         // xkx-me：CSRF + session cookie，POST /mailbox/create/random（禁重定向）+ GET messages
         $ov['xkx-me'] = [
             static fn (GenerateEmailOptions $o): EmailInfo => XkxMe::generate(),
             static fn (string $e, ?string $t): array => XkxMe::getEmails($e, $t),
+        ];
+
+        // === Go 端新增渠道同步绑定 ===
+
+        // tempmails-io：POST /api/temp-mail/generate 建箱，读信前先 POST fetch-emails 触发上游同步
+        $ov['tempmails-io'] = [
+            static fn (GenerateEmailOptions $o): EmailInfo => TempmailsIo::generate(),
+            static fn (string $e, ?string $t): array => TempmailsIo::getEmails($e, $t ?? ''),
+        ];
+
+        // shitpost-email：POST /api/create 建箱（本地随机 username），GET /api/inbox 读信
+        $ov['shitpost-email'] = [
+            static fn (GenerateEmailOptions $o): EmailInfo => ShitpostEmail::generate(),
+            static fn (string $e, ?string $t): array => ShitpostEmail::getEmails($e, $t ?? ''),
+        ];
+
+        // smails：POST /api/mailbox 建箱，Bearer 读信（列表 + 逐封详情合并）
+        $ov['smails'] = [
+            static fn (GenerateEmailOptions $o): EmailInfo => Smails::generate(),
+            static fn (string $e, ?string $t): array => Smails::getEmails($e, $t ?? ''),
+        ];
+
+        // tempmailportal：POST /api/v2/inbox 建箱，Bearer 读信（列表 + 逐封详情合并）
+        $ov['tempmailportal'] = [
+            static fn (GenerateEmailOptions $o): EmailInfo => Tempmailportal::generate(),
+            static fn (string $e, ?string $t): array => Tempmailportal::getEmails($e, $t ?? ''),
+        ];
+
+        // huskmail：POST /api/v1/accounts 建箱（JWT），GET /v1/messages 读信（列表 + 详情合并）
+        $ov['huskmail'] = [
+            static fn (GenerateEmailOptions $o): EmailInfo => Huskmail::generate(),
+            static fn (string $e, ?string $t): array => Huskmail::getEmails($e, $t ?? ''),
+        ];
+
+        // zerodrop：本地生成地址（@zerodrop-sandbox.online），GET /api/inbox/{name} 读信
+        $ov['zerodrop'] = [
+            static fn (GenerateEmailOptions $o): EmailInfo => Zerodrop::generate(),
+            static fn (string $e, ?string $t): array => Zerodrop::getEmails($e, $t),
+        ];
+
+        // firetempmail：本地生成地址，GET mail.firetempmail.com/mail/get 读信（必带 Origin）
+        $ov['firetempmail'] = [
+            static fn (GenerateEmailOptions $o): EmailInfo => Firetempmail::generate(),
+            static fn (string $e, ?string $t): array => Firetempmail::getEmails($e, $t),
+        ];
+
+        // nullmail：POST /api/emails 建箱，GET /api/emails/{addr} 读信（正文逐封二拉 body 端点）
+        $ov['nullmail'] = [
+            static fn (GenerateEmailOptions $o): EmailInfo => Nullmail::generate(),
+            static fn (string $e, ?string $t): array => Nullmail::getEmails($e, $t),
+        ];
+
+        // tenmin-app：GET /api/inbox/{localpart} 首访即建箱（6 位十六进制 localpart）
+        $ov['tenmin-app'] = [
+            static fn (GenerateEmailOptions $o): EmailInfo => TenminApp::generate(),
+            static fn (string $e, ?string $t): array => TenminApp::getEmails($e, $t),
+        ];
+
+        // mtempmail：POST /api/emails/{apiKey} 建箱（公共 key），GET /api/messages/{apiKey}/{email} 读信
+        $ov['mtempmail'] = [
+            static fn (GenerateEmailOptions $o): EmailInfo => Mtempmail::generate(),
+            static fn (string $e, ?string $t): array => Mtempmail::getEmails($e, $t),
+        ];
+
+        // tempmail-ee：GET / 建立会话 → POST /api/mailbox/change（sec-ch-ua + browserIntegrity）
+        // 提取 Set-Cookie（temp_email + temp_mail_session），读信 POST /api/mails + 单封 MIME 解析
+        $ov['tempmail-ee'] = [
+            static fn (GenerateEmailOptions $o): EmailInfo => TempmailEe::generate(),
+            static fn (string $e, ?string $t): array => TempmailEe::getEmails($e, $t ?? ''),
+        ];
+
+        // === Go 端第四轮新增渠道同步绑定 ===
+
+        // temporarymail-com：GET /api/?action=requestEmailAccess 建箱（secretKey 鉴权），checkInbox 读信
+        // 列表主题常为 "[No Subject]"：详情覆盖真实主题 + /view/ 渲染端点全文剥标签还原
+        $ov['temporarymail-com'] = [
+            static fn (GenerateEmailOptions $o): EmailInfo => TemporarymailCom::generate(),
+            static fn (string $e, ?string $t): array => TemporarymailCom::getEmails($e, $t ?? ''),
+        ];
+
+        // 30minemail：GET /?generate 返回 HTML 页面解析 16 位 hex 本地名，messages.php 读信
+        $ov['30minemail'] = [
+            static fn (GenerateEmailOptions $o): EmailInfo => ThirtyMinEmail::generate(),
+            static fn (string $e, ?string $t): array => ThirtyMinEmail::getEmails($e, $t ?? ''),
+        ];
+
+        // linshi-xyz：本地生成 6 位 hex 前缀（无建箱请求），GET /api/mails/{前缀} 读信
+        $ov['linshi-xyz'] = [
+            static fn (GenerateEmailOptions $o): EmailInfo => LinshiXyz::generate(),
+            static fn (string $e, ?string $t): array => LinshiXyz::getEmails($e, $t ?? ''),
+        ];
+
+        // crazymailing：POST /api/mailbox 建箱（Origin/Referer），REST 读信 + 逐封二拉 body 端点
+        $ov['crazymailing'] = [
+            static fn (GenerateEmailOptions $o): EmailInfo => Crazymailing::generate(),
+            static fn (string $e, ?string $t): array => Crazymailing::getEmails($e, $t ?? ''),
+        ];
+
+        // noxen-de5-net：UniMail-Bot 公共实例（guest 登录 JWT Cookie 会话 + 随机建箱 + R2 下载 EML 解析）
+        $ov['noxen-de5-net'] = [
+            static fn (GenerateEmailOptions $o): EmailInfo => NoxenDe5Net::generate($o->domain),
+            static fn (string $e, ?string $t): array => NoxenDe5Net::getEmails($e, $t ?? ''),
+        ];
+
+        // nukemail：SHA-256 PoW（前缀 4 零）建箱 + nukemail_token Cookie 会话读信
+        $ov['nukemail'] = [
+            static fn (GenerateEmailOptions $o): EmailInfo => Nukemail::generate(),
+            static fn (string $e, ?string $t): array => Nukemail::getEmails($e, $t ?? ''),
+        ];
+
+        // shadowmail：register/login/new-address 会话（sessionId Cookie），get-emails 读信
+        $ov['shadowmail'] = [
+            static fn (GenerateEmailOptions $o): EmailInfo => Shadowmail::generate(),
+            static fn (string $e, ?string $t): array => Shadowmail::getEmails($e, $t ?? ''),
+        ];
+
+        // flybymail：POST /api/recipients 建箱，GET /api/recipients/{email}/emails 读信
+        $ov['flybymail'] = [
+            static fn (GenerateEmailOptions $o): EmailInfo => Flybymail::generate(),
+            static fn (string $e, ?string $t): array => Flybymail::getEmails($e, $t ?? ''),
+        ];
+
+        // nowtempmail：POST /mailbox 建箱，Bearer JWT 读信（列表 + 逐封详情合并）
+        $ov['nowtempmail'] = [
+            static fn (GenerateEmailOptions $o): EmailInfo => Nowtempmail::generate(),
+            static fn (string $e, ?string $t): array => Nowtempmail::getEmails($e, $t ?? ''),
+        ];
+
+        // clawdemail：POST /register 建箱（api.clawdemail.com），Bearer 读信（列表 + 详情合并）
+        $ov['clawdemail'] = [
+            static fn (GenerateEmailOptions $o): EmailInfo => Clawdemail::generate(),
+            static fn (string $e, ?string $t): array => Clawdemail::getEmails($e, $t ?? ''),
+        ];
+
+        // tempmail100：POST /init 取 JWT + POST /web/generate 建箱，GET /web/emails（裸 token）读信
+        $ov['tempmail100'] = [
+            static fn (GenerateEmailOptions $o): EmailInfo => Tempmail100::generate(),
+            static fn (string $e, ?string $t): array => Tempmail100::getEmails($e, $t ?? ''),
+        ];
+
+        // tempmailto：Laravel Cookie 会话，GET 首页建箱 + POST /get_messages 读信（_token + captcha 空）
+        $ov['tempmailto'] = [
+            static fn (GenerateEmailOptions $o): EmailInfo => Tempmailto::generate(),
+            static fn (string $e, ?string $t): array => Tempmailto::getEmails($e, $t ?? ''),
+        ];
+
+        // temp-mail-gg：Livewire v3 会话，POST /livewire/update 建箱/读信
+        $ov['temp-mail-gg'] = [
+            static fn (GenerateEmailOptions $o): EmailInfo => TempMailGg::generate(),
+            static fn (string $e, ?string $t): array => TempMailGg::getEmails($e, $t ?? ''),
+        ];
+
+        // mailticking：POST /get-mailbox 建箱（type=4 独立域名）+ activate-email 激活，get-emails 列信
+        $ov['mailticking'] = [
+            static fn (GenerateEmailOptions $o): EmailInfo => Mailticking::generate(),
+            static fn (string $e, ?string $t): array => Mailticking::getEmails($e, $t ?? ''),
+        ];
+
+        // tmpkit：tRPC 会话（initSession 建箱 + getEmails/getEmailDetail 读信，Cookie tempmail_session）
+        $ov['tmpkit'] = [
+            static fn (GenerateEmailOptions $o): EmailInfo => Tmpkit::generate(),
+            static fn (string $e, ?string $t): array => Tmpkit::getEmails($e, $t ?? ''),
+        ];
+
+        // internxt：Cookie 会话 + csrf-token 头（create-email 建箱，get-inbox/get-message 读信）
+        $ov['internxt'] = [
+            static fn (GenerateEmailOptions $o): EmailInfo => Internxt::generate(),
+            static fn (string $e, ?string $t): array => Internxt::getEmails($e, $t ?? ''),
+        ];
+
+        // generator-email：SSR 网页型（SITE_DATA 快照建箱 + 收信页 list-group-item2 行解析）
+        $ov['generator-email'] = [
+            static fn (GenerateEmailOptions $o): EmailInfo => GeneratorEmail::generate(),
+            static fn (string $e, ?string $t): array => GeneratorEmail::getEmails($e, $t ?? ''),
         ];
 
         return $ov;

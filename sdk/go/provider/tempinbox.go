@@ -7,6 +7,7 @@ import (
 	"math/rand"
 	"net/url"
 	"strings"
+	"time"
 
 	http "github.com/bogdanfinn/fhttp"
 )
@@ -76,7 +77,8 @@ func TempinboxGenerate(domain *string, channel ...string) (*CreatedMailbox, erro
 		}
 		user := tempinboxRandomUser()
 		addr := user + "@" + d
-		u := fmt.Sprintf("%s/email/%s", tempinboxBase, url.PathEscape(addr))
+		/* 追加每次变化的 cachebust 参数生成新缓存键，避免命中 CDN 边缘陈旧缓存而拿到其他用户的响应 */
+		u := fmt.Sprintf("%s/email/%s?cachebust=%d", tempinboxBase, url.PathEscape(addr), time.Now().UnixNano())
 		req, err := http.NewRequest("GET", u, nil)
 		if err != nil {
 			return nil, err
@@ -97,8 +99,9 @@ func TempinboxGenerate(domain *string, channel ...string) (*CreatedMailbox, erro
 		/* 响应为带引号的纯字符串，如 "user@domain" */
 		email = strings.Trim(strings.TrimSpace(string(body)), `"`)
 	} else {
-		/* 未指定域名，调用 /email/Random 获取随机邮箱 */
-		req, err := http.NewRequest("GET", tempinboxBase+"/email/Random", nil)
+		/* 未指定域名，调用 /email/Random 获取随机邮箱；cachebust 追加变化值避免命中 CDN 边缘陈旧缓存 */
+		u := fmt.Sprintf("%s/email/Random?cachebust=%d", tempinboxBase, time.Now().UnixNano())
+		req, err := http.NewRequest("GET", u, nil)
 		if err != nil {
 			return nil, err
 		}
@@ -140,7 +143,8 @@ func TempinboxGetEmails(email string) ([]NormEmail, error) {
 		return nil, fmt.Errorf("tempinbox: empty email")
 	}
 	seg := url.PathEscape(email)
-	u := fmt.Sprintf("%s/messages/%s", tempinboxBase, seg)
+	/* 每次轮询追加变化的 cachebust 参数生成新缓存键强制回源，避免命中 Cloudflare 边缘的陈旧空列表缓存 */
+	u := fmt.Sprintf("%s/messages/%s?cachebust=%d", tempinboxBase, seg, time.Now().UnixNano())
 	req, err := http.NewRequest("GET", u, nil)
 	if err != nil {
 		return nil, err

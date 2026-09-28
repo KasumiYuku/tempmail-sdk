@@ -53,7 +53,6 @@ CHANNEL_DOMAINS: Dict[str, List[str]] = {
     "mffac": ["mffac.com"],
     "nimail": ["nimail.cn"],
     "mailgolem": ["mailgolem.com"],
-    "mohmal": ["emailinbo.live"],
     "minuteinbox": ["minafter.com"],
 
     # tempmail-plus 系列

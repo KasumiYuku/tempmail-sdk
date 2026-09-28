@@ -51,7 +51,6 @@ export const CHANNEL_DOMAINS: Partial<Record<Channel, string[]>> = {
   "mailgolem": ["mailgolem.com"],
   "temp-mail-org": ["diarshop.com", "gicont.com", "suahi.com"],
   "minuteinbox": ["minafter.com"],
-  "mohmal": ["emailinbo.live"],
   "10minutemail-net": ["laoia.com", "acgia.com"],
   "xkx-me": ["xkx.me"],
 };

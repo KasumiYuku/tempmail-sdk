@@ -7,7 +7,7 @@ namespace ChanhanzhanX\TempMail;
 /**
  * 渠道标识常量类
  *
- * 暴露全部 279 个渠道 slug 常量，便于调用方以类型友好的方式引用渠道。
+ * 暴露全部 296 个渠道 slug 常量，便于调用方以类型友好的方式引用渠道。
  * 常量值即渠道标识字符串。由 .channel_meta.json 生成。
  */
 final class Channel
@@ -62,6 +62,8 @@ final class Channel
     public const TEMPMAILC = "tempmailc";
     /** Mailnesia（mailnesia.com） */
     public const MAILNESIA = "mailnesia";
+    /** Mailticking（mailticking.com） */
+    public const MAILTICKING = "mailticking";
     /** ThrowawayMail（throwawaymail.app） */
     public const THROWAWAYMAIL = "throwawaymail";
     /** TempMail Fish（tempmail.fish） */
@@ -160,8 +162,6 @@ final class Channel
     public const MAIL123 = "mail123";
     /** Mail10s（mail10s.com） */
     public const MAIL10S = "mail10s";
-    /** WebMailTemp（webmailtemp.com） */
-    public const WEBMAILTEMP = "webmailtemp";
     /** TempFastMail（tempfastmail.com） */
     public const TEMPFASTMAIL = "tempfastmail";
     /** 1SecMail（1sec-mail.com） */
@@ -324,8 +324,6 @@ final class Channel
     public const ROOTSH = "rootsh";
     /** FakeEmailSite（fake-email.site） */
     public const FAKE_EMAIL_SITE = "fake-email-site";
-    /** Mohmal（mohmal.com） */
-    public const MOHMAL = "mohmal";
     /** MailGolem（mailgolem.com） */
     public const MAILGOLEM = "mailgolem";
     /** BestTempMail（best-temp-mail.com） */
@@ -366,8 +364,6 @@ final class Channel
     public const EMAILTEMP_ORG = "emailtemp-org";
     /** MyTempMail.cc（mytempmail.cc） */
     public const MYTEMPMAIL_CC = "mytempmail-cc";
-    /** TempMailNow（temp-mail.now） */
-    public const TEMP_MAIL_NOW = "temp-mail-now";
     /** Mail.td（mail.td） */
     public const MAIL_TD = "mail-td";
     /** Mailhole.de（mailhole.de） */
@@ -380,8 +376,6 @@ final class Channel
     public const NIMAIL = "nimail";
     /** FreeCustom.Email（freecustom.email） */
     public const FREECUSTOM = "freecustom";
-    /** Mailmomy (16888888.cyou)（mailmomy.com） */
-    public const C_16888888_CYOU = "16888888-cyou";
     /** Mailmomy (17666688.shop)（mailmomy.com） */
     public const C_17666688_SHOP = "17666688-shop";
     /** Mailmomy (282mail.com)（mailmomy.com） */
@@ -410,8 +404,6 @@ final class Channel
     public const EBS_COM_AR = "ebs-com-ar";
     /** Mailinator (etgdev.de)（mailinator.com） */
     public const ETGDEV_DE = "etgdev-de";
-    /** Mailmomy (evergreenco.shop)（mailmomy.com） */
-    public const EVERGREENCO_SHOP = "evergreenco-shop";
     /** Mailinator (fwd2m.eszett.es)（mailinator.com） */
     public const FWD2M_ESZETT_ES = "fwd2m-eszett-es";
     /** Mailinator (jama.trenet.eu)（mailinator.com） */
@@ -558,8 +550,6 @@ final class Channel
     public const TEMP_MAIL_ORG = "temp-mail-org";
     /** XKX.me（xkx.me） */
     public const XKX_ME = "xkx-me";
-    /** Gonebox Email（gonebox.email） */
-    public const GONEBOX_EMAIL = "gonebox-email";
     /** Mailcat AI（mailcat.ai） */
     public const MAILCAT_AI = "mailcat-ai";
     /** TempGo Email（tempgo.email） */
@@ -570,4 +560,58 @@ final class Channel
     public const DROPMAIL_ME = "dropmail-me";
     /** 10MinuteMail.net（10minutemail.net） */
     public const TEN_MINUTE_MAIL_NET = "ten-minute-mail-net";
+    /** TempMails.io（tempmails.io） */
+    public const TEMPMAILS_IO = "tempmails-io";
+    /** ShitPost.email（shitpost.email） */
+    public const SHITPOST_EMAIL = "shitpost-email";
+    /** Smails.dev（smails.dev） */
+    public const SMAILS = "smails";
+    /** TempMail Portal（tempmailportal.com） */
+    public const TEMPMAILPORTAL = "tempmailportal";
+    /** HuskMail（huskmail.xyz） */
+    public const HUSKMAIL = "huskmail";
+    /** Zerodrop（zerodrop.dev） */
+    public const ZERODROP = "zerodrop";
+    /** FireTempMail（firetempmail.com） */
+    public const FIRETEMPMAIL = "firetempmail";
+    /** NullMail（nullmail.cc） */
+    public const NULLMAIL = "nullmail";
+    /** Tenmin.app（tenmin.app） */
+    public const TENMIN_APP = "tenmin-app";
+    /** MTempMail（mtempmail.com） */
+    public const MTEMPMAIL = "mtempmail";
+    /** TempMail.ee（tempmail.ee） */
+    public const TEMPMAIL_EE = "tempmail-ee";
+    /** Temporarymail.com（temporarymail.com） */
+    public const TEMPORARYMAIL_COM = "temporarymail-com";
+    /** 30minemail（30minemail.com） */
+    public const C_30MINEMAIL = "30minemail";
+    /** Linshi.xyz（linshi.xyz） */
+    public const LINSHI_XYZ = "linshi-xyz";
+    /** CrazyMailing（crazymailing.com） */
+    public const CRAZYMAILING = "crazymailing";
+    /** UniMail Bot（tempmail.noxen.de5.net） */
+    public const NOXEN_DE5_NET = "noxen-de5-net";
+    /** NukeMail（nukemail.app） */
+    public const NUKEMAIL = "nukemail";
+    /** ShadowMail（shadowmail.win） */
+    public const SHADOWMAIL = "shadowmail";
+    /** FlyByMail（flybymail.com） */
+    public const FLYBYMAIL = "flybymail";
+    /** NowTempMail（nowtempmail.com） */
+    public const NOWTEMPMAIL = "nowtempmail";
+    /** ClawdEmail（clawdemail.com） */
+    public const CLAWDEMAIL = "clawdemail";
+    /** TempMail100（tempmail100.com） */
+    public const TEMPMAIL100 = "tempmail100";
+    /** Tempmailto（tempmailto.com） */
+    public const TEMPMAILTO = "tempmailto";
+    /** TempMailGG（temp-mail.gg） */
+    public const TEMP_MAIL_GG = "temp-mail-gg";
+    /** Tmpkit（tmpkit.com） */
+    public const TMPKIT = "tmpkit";
+    /** Internxt（internxt.com） */
+    public const INTERNXT = "internxt";
+    /** GeneratorEmail（generator.email） */
+    public const GENERATOR_EMAIL = "generator-email";
 }

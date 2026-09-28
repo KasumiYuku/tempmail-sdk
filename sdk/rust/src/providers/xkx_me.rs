@@ -136,8 +136,8 @@ pub fn get_emails(token: &str, email: &str) -> Result<Vec<Email>, String> {
 
         let body = resp.text().await.map_err(|e| e.to_string())?;
 
-        let messages: Vec<serde_json::Map<String, Value>> =
-            serde_json::from_str(&body).unwrap_or_else(|_| {
+        let messages: Vec<serde_json::Map<String, Value>> = serde_json::from_str(&body)
+            .unwrap_or_else(|_| {
                 #[derive(serde::Deserialize)]
                 struct Wrapper {
                     #[serde(default)]

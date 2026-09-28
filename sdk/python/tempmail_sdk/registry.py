@@ -50,6 +50,7 @@ from .providers import (
     tempmail_fish,
     neighbours_sh,
     mailnesia,
+    mailticking,
     throwawaymail,
     shitty_email,
     tempmailpro,
@@ -59,7 +60,6 @@ from .providers import (
     getnada,
     mail123,
     mail10s,
-    webmailtemp,
     tempfastmail,
     one_sec_mail,
     fakemail,
@@ -91,7 +91,6 @@ from .providers import (
     haribu,
     rootsh,
     fake_email_site,
-    mohmal,
     mailgolem,
     best_temp_mail,
     disposablemail_app,
@@ -112,7 +111,6 @@ from .providers import (
     tempp_mails,
     emailtemp_org,
     mytempmail_cc,
-    temp_mail_now,
     mail_td,
     mailhole_de,
     tmail_link,
@@ -173,13 +171,11 @@ from .providers import (
     fish_skytale_net,
     spam_mccrew_com,
     dropmail_click,
-    n16888888_cyou,
     n17666688_shop,
     n282mail_com,
     bsdu32_buzz,
     doxu243_buzz,
     easyme_pro,
-    evergreenco_shop,
     layueming_pics,
     mingyuekeji_online,
     mingyueming_click,
@@ -200,12 +196,38 @@ from .providers import (
     tempgmailer,
     temp_mail_org,
     xkx_me,
-    gonebox_email,
     mailcat_ai,
     tempgo_email,
     restmail_net,
     dropmail_me,
     ten_minute_mail_net,
+    tempmails_io,
+    shitpost_email,
+    smails,
+    tempmailportal,
+    huskmail,
+    zerodrop,
+    firetempmail,
+    nullmail,
+    tenmin_app,
+    mtempmail,
+    tempmail_ee,
+    temporarymail_com,
+    email30min,
+    linshi_xyz,
+    crazymailing,
+    noxen_de5_net,
+    nukemail,
+    shadowmail,
+    flybymail,
+    nowtempmail,
+    clawdemail,
+    tempmail100,
+    tempmailto,
+    temp_mail_gg,
+    tmpkit,
+    internxt,
+    generator_email,
 )
 
 
@@ -518,6 +540,17 @@ register_channel(
         website="mailnesia.com",
         generate=lambda o: mailnesia.generate_email(),
         get_emails=lambda e, t: mailnesia.get_emails(e),
+    )
+)
+register_channel(
+    ChannelSpec(
+        channel="mailticking",
+        name="MailTicking",
+        website="mailticking.com",
+        generate=lambda o: mailticking.generate_email(),
+        get_emails=lambda e, t: mailticking.get_emails(
+            e, _require_token(t, "mailticking")
+        ),
     )
 )
 register_channel(
@@ -1003,17 +1036,6 @@ register_channel(
         website="mail10s.com",
         generate=lambda o: mail10s.generate_email(),
         get_emails=lambda e, t: mail10s.get_emails(e),
-    )
-)
-register_channel(
-    ChannelSpec(
-        channel="webmailtemp",
-        name="WebMailTemp",
-        website="webmailtemp.com",
-        generate=lambda o: webmailtemp.generate_email(),
-        get_emails=lambda e, t: webmailtemp.get_emails(
-            _require_token(t, "webmailtemp"), e
-        ),
     )
 )
 register_channel(
@@ -1812,15 +1834,6 @@ register_channel(
 )
 register_channel(
     ChannelSpec(
-        channel="mohmal",
-        name="Mohmal",
-        website="mohmal.com",
-        generate=lambda o: mohmal.generate_email(),
-        get_emails=lambda e, t: mohmal.get_emails(e, _require_token(t, "mohmal")),
-    )
-)
-register_channel(
-    ChannelSpec(
         channel="mailgolem",
         name="MailGolem",
         website="mailgolem.com",
@@ -2031,17 +2044,6 @@ register_channel(
 )
 register_channel(
     ChannelSpec(
-        channel="temp-mail-now",
-        name="TempMailNow",
-        website="temp-mail.now",
-        generate=lambda o: temp_mail_now.generate_email(),
-        get_emails=lambda e, t: temp_mail_now.get_emails(
-            _require_token(t, "temp-mail-now"), e
-        ),
-    )
-)
-register_channel(
-    ChannelSpec(
         channel="mail-td",
         name="Mail.TD",
         website="mail.td",
@@ -2096,15 +2098,6 @@ register_channel(
         website="freecustom.email",
         generate=lambda o: freecustom.generate_email(),
         get_emails=lambda e, t: freecustom.get_emails(t or e),
-    )
-)
-register_channel(
-    ChannelSpec(
-        channel="16888888-cyou",
-        name="Mailmomy (16888888.cyou)",
-        website="mailmomy.com",
-        generate=lambda o: n16888888_cyou.generate_email(),
-        get_emails=lambda e, t: n16888888_cyou.get_emails(t or e),
     )
 )
 register_channel(
@@ -2231,15 +2224,6 @@ register_channel(
         website="mailinator.com",
         generate=lambda o: etgdev_de.generate_email(),
         get_emails=lambda e, t: etgdev_de.get_emails(t or "", e),
-    )
-)
-register_channel(
-    ChannelSpec(
-        channel="evergreenco-shop",
-        name="Mailmomy (evergreenco.shop)",
-        website="mailmomy.com",
-        generate=lambda o: evergreenco_shop.generate_email(),
-        get_emails=lambda e, t: evergreenco_shop.get_emails(t or e),
     )
 )
 register_channel(
@@ -2905,15 +2889,6 @@ register_channel(
 )
 register_channel(
     ChannelSpec(
-        channel="gonebox-email",
-        name="GoneBox.email",
-        website="gonebox.email",
-        generate=lambda o: gonebox_email.generate_email(),
-        get_emails=lambda e, t: gonebox_email.get_emails(t or "", e),
-    )
-)
-register_channel(
-    ChannelSpec(
         channel="mailcat-ai",
         name="Mailcat.ai",
         website="mailcat.ai",
@@ -2962,6 +2937,297 @@ register_channel(
         generate=lambda o: ten_minute_mail_net.generate_email(),
         get_emails=lambda e, t: ten_minute_mail_net.get_emails(
             _require_token(t, "ten-minute-mail-net"), e
+        ),
+    )
+)
+register_channel(
+    ChannelSpec(
+        channel="tempmails-io",
+        name="TempMails.io",
+        website="tempmails.io",
+        generate=lambda o: tempmails_io.generate_email(),
+        get_emails=lambda e, t: tempmails_io.get_emails(
+            e, _require_token(t, "tempmails-io")
+        ),
+    )
+)
+register_channel(
+    ChannelSpec(
+        channel="shitpost-email",
+        name="ShitPost.email",
+        website="shitpost.email",
+        generate=lambda o: shitpost_email.generate_email(),
+        get_emails=lambda e, t: shitpost_email.get_emails(
+            e, _require_token(t, "shitpost-email")
+        ),
+    )
+)
+register_channel(
+    ChannelSpec(
+        channel="smails",
+        name="Smails.dev",
+        website="smails.dev",
+        generate=lambda o: smails.generate_email(),
+        get_emails=lambda e, t: smails.get_emails(
+            e, _require_token(t, "smails")
+        ),
+    )
+)
+register_channel(
+    ChannelSpec(
+        channel="tempmailportal",
+        name="TempMail Portal",
+        website="tempmailportal.com",
+        generate=lambda o: tempmailportal.generate_email(),
+        get_emails=lambda e, t: tempmailportal.get_emails(
+            e, _require_token(t, "tempmailportal")
+        ),
+    )
+)
+register_channel(
+    ChannelSpec(
+        channel="huskmail",
+        name="HuskMail",
+        website="huskmail.xyz",
+        generate=lambda o: huskmail.generate_email(),
+        get_emails=lambda e, t: huskmail.get_emails(
+            e, _require_token(t, "huskmail")
+        ),
+    )
+)
+register_channel(
+    ChannelSpec(
+        channel="zerodrop",
+        name="Zerodrop",
+        website="zerodrop.dev",
+        generate=lambda o: zerodrop.generate_email(),
+        get_emails=lambda e, t: zerodrop.get_emails(e, t),
+    )
+)
+register_channel(
+    ChannelSpec(
+        channel="firetempmail",
+        name="FireTempMail",
+        website="firetempmail.com",
+        generate=lambda o: firetempmail.generate_email(),
+        get_emails=lambda e, t: firetempmail.get_emails(e, t),
+    )
+)
+register_channel(
+    ChannelSpec(
+        channel="nullmail",
+        name="NullMail",
+        website="nullmail.cc",
+        generate=lambda o: nullmail.generate_email(),
+        get_emails=lambda e, t: nullmail.get_emails(e, t),
+    )
+)
+register_channel(
+    ChannelSpec(
+        channel="tenmin-app",
+        name="Tenmin.app",
+        website="tenmin.app",
+        generate=lambda o: tenmin_app.generate_email(),
+        get_emails=lambda e, t: tenmin_app.get_emails(
+            e, _require_token(t, "tenmin-app")
+        ),
+    )
+)
+register_channel(
+    ChannelSpec(
+        channel="mtempmail",
+        name="MTempMail",
+        website="mtempmail.com",
+        generate=lambda o: mtempmail.generate_email(),
+        get_emails=lambda e, t: mtempmail.get_emails(
+            e, _require_token(t, "mtempmail")
+        ),
+    )
+)
+register_channel(
+    ChannelSpec(
+        channel="tempmail-ee",
+        name="TempMail.ee",
+        website="tempmail.ee",
+        generate=lambda o: tempmail_ee.generate_email(),
+        get_emails=lambda e, t: tempmail_ee.get_emails(
+            e, _require_token(t, "tempmail-ee")
+        ),
+    )
+)
+register_channel(
+    ChannelSpec(
+        channel="temporarymail-com",
+        name="Temporarymail.com",
+        website="temporarymail.com",
+        generate=lambda o: temporarymail_com.generate_email(),
+        get_emails=lambda e, t: temporarymail_com.get_emails(
+            e, _require_token(t, "temporarymail-com")
+        ),
+    )
+)
+register_channel(
+    ChannelSpec(
+        channel="30minemail",
+        name="30minemail",
+        website="30minemail.com",
+        generate=lambda o: email30min.generate_email(),
+        get_emails=lambda e, t: email30min.get_emails(
+            e, _require_token(t, "30minemail")
+        ),
+    )
+)
+register_channel(
+    ChannelSpec(
+        channel="linshi-xyz",
+        name="Linshi.xyz",
+        website="linshi.xyz",
+        generate=lambda o: linshi_xyz.generate_email(),
+        get_emails=lambda e, t: linshi_xyz.get_emails(
+            e, _require_token(t, "linshi-xyz")
+        ),
+    )
+)
+register_channel(
+    ChannelSpec(
+        channel="crazymailing",
+        name="CrazyMailing",
+        website="crazymailing.com",
+        generate=lambda o: crazymailing.generate_email(),
+        get_emails=lambda e, t: crazymailing.get_emails(
+            e, _require_token(t, "crazymailing")
+        ),
+    )
+)
+register_channel(
+    ChannelSpec(
+        channel="noxen-de5-net",
+        name="UniMail Bot",
+        website="tempmail.noxen.de5.net",
+        generate=lambda o: noxen_de5_net.generate_email(),
+        get_emails=lambda e, t: noxen_de5_net.get_emails(
+            e, _require_token(t, "noxen-de5-net")
+        ),
+    )
+)
+register_channel(
+    ChannelSpec(
+        channel="nukemail",
+        name="NukeMail",
+        website="nukemail.app",
+        generate=lambda o: nukemail.generate_email(),
+        get_emails=lambda e, t: nukemail.get_emails(
+            e, _require_token(t, "nukemail")
+        ),
+    )
+)
+register_channel(
+    ChannelSpec(
+        channel="shadowmail",
+        name="ShadowMail",
+        website="shadowmail.win",
+        generate=lambda o: shadowmail.generate_email(),
+        get_emails=lambda e, t: shadowmail.get_emails(
+            e, _require_token(t, "shadowmail")
+        ),
+    )
+)
+register_channel(
+    ChannelSpec(
+        channel="flybymail",
+        name="FlyByMail",
+        website="flybymail.com",
+        generate=lambda o: flybymail.generate_email(),
+        get_emails=lambda e, t: flybymail.get_emails(
+            e, _require_token(t, "flybymail")
+        ),
+    )
+)
+register_channel(
+    ChannelSpec(
+        channel="nowtempmail",
+        name="NowTempMail",
+        website="nowtempmail.com",
+        generate=lambda o: nowtempmail.generate_email(),
+        get_emails=lambda e, t: nowtempmail.get_emails(
+            e, _require_token(t, "nowtempmail")
+        ),
+    )
+)
+register_channel(
+    ChannelSpec(
+        channel="clawdemail",
+        name="ClawdEmail",
+        website="clawdemail.com",
+        generate=lambda o: clawdemail.generate_email(),
+        get_emails=lambda e, t: clawdemail.get_emails(
+            e, _require_token(t, "clawdemail")
+        ),
+    )
+)
+register_channel(
+    ChannelSpec(
+        channel="tempmail100",
+        name="TempMail100",
+        website="tempmail100.com",
+        generate=lambda o: tempmail100.generate_email(),
+        get_emails=lambda e, t: tempmail100.get_emails(
+            e, _require_token(t, "tempmail100")
+        ),
+    )
+)
+register_channel(
+    ChannelSpec(
+        channel="tempmailto",
+        name="Tempmailto",
+        website="tempmailto.com",
+        generate=lambda o: tempmailto.generate_email(),
+        get_emails=lambda e, t: tempmailto.get_emails(
+            e, _require_token(t, "tempmailto")
+        ),
+    )
+)
+register_channel(
+    ChannelSpec(
+        channel="temp-mail-gg",
+        name="TempMailGG",
+        website="temp-mail.gg",
+        generate=lambda o: temp_mail_gg.generate_email(),
+        get_emails=lambda e, t: temp_mail_gg.get_emails(
+            e, _require_token(t, "temp-mail-gg")
+        ),
+    )
+)
+register_channel(
+    ChannelSpec(
+        channel="tmpkit",
+        name="Tmpkit",
+        website="tmpkit.com",
+        generate=lambda o: tmpkit.generate_email(),
+        get_emails=lambda e, t: tmpkit.get_emails(
+            e, _require_token(t, "tmpkit")
+        ),
+    )
+)
+register_channel(
+    ChannelSpec(
+        channel="internxt",
+        name="Internxt",
+        website="internxt.com",
+        generate=lambda o: internxt.generate_email(),
+        get_emails=lambda e, t: internxt.get_emails(
+            e, _require_token(t, "internxt")
+        ),
+    )
+)
+register_channel(
+    ChannelSpec(
+        channel="generator-email",
+        name="GeneratorEmail",
+        website="generator.email",
+        generate=lambda o: generator_email.generate_email(),
+        get_emails=lambda e, t: generator_email.get_emails(
+            e, _require_token(t, "generator-email")
         ),
     )
 )

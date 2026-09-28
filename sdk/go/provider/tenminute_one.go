@@ -1,6 +1,6 @@
 /*
- * 10minutemail.one：SSR __NUXT_DATA__ 中的 mailServiceToken（JWT）+ 页面内 emailDomains；
- * 本地随机用户名与域名组合成地址；收信 GET web API /mailbox/{email}
+ * 10minutemail.one：SSR __NUXT_DATA__ 中的 mailServiceToken（JWT）+ SSR 状态 $semailDomains（活跃域）；
+ * 本地随机用户名与活跃域组合成地址；收信 GET web API /mailbox/{email}
  */
 package provider
 
@@ -29,7 +29,8 @@ const (
 var (
 	tenminuteNuxtDataRe   = regexp.MustCompile(`(?is)<script[^>]*\bid="__NUXT_DATA__"[^>]*>([\s\S]*?)</script>`)
 	tenminuteJWTRe        = regexp.MustCompile(`^[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$`)
-	tenminuteKnownDomains = []string{"xghff.com", "oqqaj.com", "psovv.com", "dbwot.com", "ygwpr.com", "imxwe.com"}
+	tenminuteDomainRe     = regexp.MustCompile(`^[a-zA-Z0-9][a-zA-Z0-9.-]*\.[a-zA-Z]{2,}$`)
+	tenminuteKnownDomains = []string{"dbwot.com", "ygwpr.com", "imxwe.com"}
 )
 
 func tenminuteRandHex(n int) (string, error) {
@@ -152,21 +153,71 @@ func tenminuteParseQuotedJSONArray(html, field string) []string {
 	return out
 }
 
-func tenminuteAppendKnownDomains(domains []string) []string {
-	out := append([]string{}, domains...)
-	for _, known := range tenminuteKnownDomains {
-		seen := false
-		for _, domain := range out {
-			if strings.EqualFold(domain, known) {
-				seen = true
-				break
+/*
+ * tenminuteParseSSRActiveDomains 从 __NUXT_DATA__ 数组解析 SSR 状态中的 $semailDomains（当前活跃域）。
+ * 页面公开配置 emailDomains 已与平台实际收信域脱钩，必须改读 SSR 状态：
+ * 状态 map 形如 {"$semailDomains": 11}，值是指向域名引用数组（如 [12,13,14]）的下标，
+ * 数组元素再由下标解析出字符串域名（当前为 dbwot.com/ygwpr.com/imxwe.com）。
+ * 保留值直接为字符串列表或单域名的兼容分支。
+ */
+func tenminuteParseSSRActiveDomains(arr []interface{}) []string {
+	// 形如 {"$semailDomains": n}：n 指向域名引用数组（逐元素索引）或域名列表
+	for _, el := range arr {
+		m, ok := el.(map[string]interface{})
+		if !ok {
+			continue
+		}
+		ref, ok := m["$semailDomains"]
+		if !ok {
+			continue
+		}
+		rv := tenminuteResolveRef(arr, ref, 0)
+		switch list := rv.(type) {
+		case []interface{}:
+			var out []string
+			for _, e := range list {
+				s, ok := tenminuteResolveRef(arr, e, 0).(string)
+				if !ok || !tenminuteDomainRe.MatchString(s) {
+					continue
+				}
+				out = append(out, s)
+			}
+			if len(out) > 0 {
+				return out
+			}
+		case string:
+			if tenminuteDomainRe.MatchString(list) {
+				return []string{list}
 			}
 		}
-		if !seen {
-			out = append(out, known)
+	}
+	// 无状态 map 包裹的扁平形式 ["$semailDomains", n, "域1", "域2", ...]
+	for i := 0; i+1 < len(arr); i++ {
+		key, ok := arr[i].(string)
+		if !ok || key != "$semailDomains" {
+			continue
+		}
+		ref, ok := arr[i+1].(float64)
+		if !ok || ref != float64(int64(ref)) || ref < 0 || int(ref) >= len(arr) {
+			continue
+		}
+		start := int(ref)
+		var out []string
+		for _, el := range arr[start:] {
+			s, ok := el.(string)
+			if !ok {
+				break
+			}
+			if !tenminuteDomainRe.MatchString(s) {
+				break
+			}
+			out = append(out, s)
+		}
+		if len(out) > 0 {
+			return out
 		}
 	}
-	return out
+	return nil
 }
 
 func tenminutePickLocale(domain *string) string {
@@ -268,22 +319,14 @@ func tenminuteAPIHeaders(token string) http.Header {
 	return h
 }
 
+/*
+ * tenminuteItemNeedsDetail 判定列表项是否必须再拉单封详情：
+ * 列表接口只返回元数据（id/from/to/subject/date/seen/size），不含任何正文字段，
+ * 因此有 id 的邮件一律需要详情二拉。不再基于 text/body/html 等正交键判空，
+ * 避免因「列表没有正文键」而误判为无需详情、导致归一化后正文恒为空。
+ */
 func tenminuteItemNeedsDetail(m map[string]interface{}) bool {
-	id := fmt.Sprint(m["id"])
-	if strings.TrimSpace(id) == "" {
-		return false
-	}
-	body := strings.TrimSpace(fmt.Sprint(m["text"]))
-	if body == "" {
-		body = strings.TrimSpace(fmt.Sprint(m["body"]))
-	}
-	if body == "" {
-		body = strings.TrimSpace(fmt.Sprint(m["html"]))
-	}
-	if body == "" {
-		body = strings.TrimSpace(fmt.Sprint(m["mail_text"]))
-	}
-	return body == ""
+	return m["id"] != nil
 }
 
 // TenminuteOneGenerate 拉取 SSR 页面，解析 JWT 与域名列表，生成随机邮箱地址
@@ -326,7 +369,11 @@ func TenminuteOneGenerate(domain *string) (*CreatedMailbox, error) {
 		return nil, err
 	}
 
-	domains := tenminuteAppendKnownDomains(tenminuteParseQuotedJSONArray(html, "emailDomains"))
+	// 优先使用 SSR 状态里的活跃域（$semailDomains），页面公开配置 emailDomains 已弃收
+	var domains []string
+	if ssr := tenminuteParseSSRActiveDomains(arr); len(ssr) > 0 {
+		domains = ssr
+	}
 	if len(domains) == 0 {
 		domains = tenminuteKnownDomains
 	}
@@ -425,6 +472,19 @@ func TenminuteOneGetEmails(email, token string) ([]NormEmail, error) {
 										if _, ok := m[k]; !ok {
 											m[k] = v
 										}
+									}
+									// 详情接口正文位于嵌套 body.text/body.html：无条件提升覆盖，
+									// 列表仅含元数据（id/from/to/subject/date/seen），不存在正文键冲突。
+									if body2, ok := detail["body"].(map[string]interface{}); ok {
+										if tv, ok := body2["text"].(string); ok && tv != "" {
+											m["text"] = tv
+										}
+										if hv, ok := body2["html"].(string); ok && hv != "" {
+											m["html"] = hv
+										}
+									} else if tb, ok := detail["textBody"].(string); ok && tb != "" {
+										// textBody → text 兜底（防御性，平台漂移时保底）
+										m["text"] = tb
 									}
 								}
 							}

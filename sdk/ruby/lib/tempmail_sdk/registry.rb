@@ -18,20 +18,20 @@ module TempmailSdk
       Mailforspam: "mailforspam", FakeLegal: "fake_legal", TenminuteOne: "tenminute_one",
       Zhujump: "zhujump", Anonymmail: "anonymmail", Byom: "byom", Cleantempmail: "cleantempmail",
       DevmailUk: "devmail_uk", DropmailClick: "dropmail_click", FakeEmailSite: "fake_email_site",
-      Fmail: "fmail", Freecustom: "freecustom", GoneboxEmail: "gonebox_email",
+      Fmail: "fmail", Freecustom: "freecustom",
       Harakirimail: "harakirimail", Inboxes: "inboxes", M2u: "m2u", Mail10s: "mail10s",
       Mail123: "mail123", Mffac: "mffac", Tempmailc: "tempmailc", NeighboursSh: "neighbours_sh",
       Temporam: "temporam", Neighbours: "neighbours", TempyEmail: "tempy_email", Ockito: "ockito",
       Tempmail365: "tempmail365", Tempinbox: "tempinbox", MailSunls: "mail_sunls",
       Smailpro: "smailpro", MailholeDe: "mailhole_de", Nimail: "nimail", Rootsh: "rootsh",
-      ShittyEmail: "shitty_email", TaEasy: "ta_easy", TempMailNow: "temp_mail_now",
+      ShittyEmail: "shitty_email", TaEasy: "ta_easy",
       TempMailOrg: "temp_mail_org", TempemailCo: "tempemail_co", TempemailInfo: "tempemail_info",
       TempemailsNet: "tempemails_net", Tempfastmail: "tempfastmail", Tempgmailer: "tempgmailer",
       TempgoEmail: "tempgo_email", TempmailFish: "tempmail_fish", TempmailFyi: "tempmail_fyi",
       TempmailLolV2: "tempmail_lol_v2", Tempmailpro: "tempmailpro", Tempmailten: "tempmailten",
       TempMails: "tempp_mails", TenMinuteMailNet: "ten_minute_mail_net",
       Throwawaymail: "throwawaymail", TmailLink: "tmail_link",
-      Uncorreotemporal: "uncorreotemporal", Webmailtemp: "webmailtemp", XkxMe: "xkx_me",
+      Uncorreotemporal: "uncorreotemporal", XkxMe: "xkx_me",
       Altmails: "altmails", Apihz: "apihz", Awamail: "awamail", BestTempMail: "best_temp_mail",
       ChatgptOrgUk: "chatgpt_org_uk", Disposablemail: "disposablemail",
       DisposablemailApp: "disposablemail_app", Email10min: "email10min",
@@ -41,11 +41,21 @@ module TempmailSdk
       TempmailCn: "tempmail_cn", Linshiyou: "linshiyou", Mailnesia: "mailnesia",
       Dropmail: "dropmail", SmailPw: "smail_pw", Vip215: "vip_215",
       Tempgbox: "tempgbox", Anonbox: "anonbox", Eyepaste: "eyepaste",
-      Lroid: "lroid", Haribu: "haribu", Mohmal: "mohmal", Mailgolem: "mailgolem",
+      Lroid: "lroid", Haribu: "haribu", Mailgolem: "mailgolem",
       MytempmailCc: "mytempmail_cc", MailtempCc: "mailtemp_cc", Minuteinbox: "minuteinbox",
       Mailcatch: "mailcatch", MaildropCc: "maildrop_cc", TenminutemailNet: "tenminutemail_net",
       Openinbox: "openinbox", MailcatAi: "mailcat_ai", DropmailMe: "dropmail_me",
-      TwentyfourmailChacuo: "twentyfourmail_chacuo"
+      TwentyfourmailChacuo: "twentyfourmail_chacuo",
+      TempmailsIo: "tempmails_io", ShitpostEmail: "shitpost_email", Smails: "smails",
+      Tempmailportal: "tempmailportal", Huskmail: "huskmail", Zerodrop: "zerodrop",
+      Firetempmail: "firetempmail", Nullmail: "nullmail", TenminApp: "tenmin_app",
+      Mtempmail: "mtempmail", TempmailEe: "tempmail_ee", Mailticking: "mailticking",
+      TemporarymailCom: "temporarymail_com", ThirtyMinEmail: "thirty_min_email",
+      LinshiXyz: "linshi_xyz", Crazymailing: "crazymailing", NoxenDe5Net: "noxen_de5_net",
+      Nukemail: "nukemail", Shadowmail: "shadowmail", Flybymail: "flybymail",
+      Nowtempmail: "nowtempmail", Clawdemail: "clawdemail", Tempmail100: "tempmail100",
+      Tempmailto: "tempmailto", TempMailGg: "temp_mail_gg",
+      Tmpkit: "tmpkit", Internxt: "internxt", GeneratorEmail: "generator_email"
     }.freeze
 
     PROVIDER_AUTOLOADS.each do |mod_name, file|
@@ -463,10 +473,6 @@ module TempmailSdk
           get_emails: ->(e, t) { p::Getnada.get_emails(require_token(t, "getnada"), e) }
         },
         # mailmomy 家族：mailmomy 主渠道从域名池随机选域，其余为固定域名变体（同后端 API）
-        "16888888-cyou" => {
-          generate: ->(_o) { with_channel(p::Mailmomy.generate_email("16888888.cyou"), "16888888-cyou") },
-          get_emails: ->(e, _t) { p::Mailmomy.get_emails(e) }
-        },
         "17666688-shop" => {
           generate: ->(_o) { with_channel(p::Mailmomy.generate_email("17666688.shop"), "17666688-shop") },
           get_emails: ->(e, _t) { p::Mailmomy.get_emails(e) }
@@ -485,10 +491,6 @@ module TempmailSdk
         },
         "easyme-pro" => {
           generate: ->(_o) { with_channel(p::Mailmomy.generate_email("easyme.pro"), "easyme-pro") },
-          get_emails: ->(e, _t) { p::Mailmomy.get_emails(e) }
-        },
-        "evergreenco-shop" => {
-          generate: ->(_o) { with_channel(p::Mailmomy.generate_email("evergreenco.shop"), "evergreenco-shop") },
           get_emails: ->(e, _t) { p::Mailmomy.get_emails(e) }
         },
         "layueming-pics" => {
@@ -914,10 +916,6 @@ module TempmailSdk
           generate: ->(_o) { p::Freecustom.generate_email },
           get_emails: ->(e, t) { p::Freecustom.get_emails(t.to_s.empty? ? e : t) }
         },
-        "gonebox-email" => {
-          generate: ->(_o) { p::GoneboxEmail.generate_email },
-          get_emails: ->(e, t) { p::GoneboxEmail.get_emails(t.to_s, e) }
-        },
         "harakirimail" => {
           generate: ->(_o) { p::Harakirimail.generate_email },
           get_emails: ->(e, _t) { p::Harakirimail.get_emails(e) }
@@ -1004,10 +1002,6 @@ module TempmailSdk
           generate: ->(_o) { p::TaEasy.generate_email },
           get_emails: ->(e, t) { p::TaEasy.get_emails(e, require_token(t, "ta-easy")) }
         },
-        "temp-mail-now" => {
-          generate: ->(_o) { p::TempMailNow.generate_email },
-          get_emails: ->(e, t) { p::TempMailNow.get_emails(require_token(t, "temp-mail-now"), e) }
-        },
         "temp-mail-org" => {
           generate: ->(_o) { p::TempMailOrg.generate_email },
           get_emails: ->(e, t) { p::TempMailOrg.get_emails(require_token(t, "temp-mail-org"), e) }
@@ -1076,10 +1070,6 @@ module TempmailSdk
           generate: ->(_o) { p::Uncorreotemporal.generate_email },
           get_emails: ->(e, t) { p::Uncorreotemporal.get_emails(require_token(t, "uncorreotemporal"), e) }
         },
-        "webmailtemp" => {
-          generate: ->(_o) { p::Webmailtemp.generate_email },
-          get_emails: ->(e, t) { p::Webmailtemp.get_emails(require_token(t, "webmailtemp"), e) }
-        },
         "xkx-me" => {
           generate: ->(_o) { p::XkxMe.generate_email },
           get_emails: ->(e, t) { p::XkxMe.get_emails(require_token(t, "xkx-me"), e) }
@@ -1131,10 +1121,6 @@ module TempmailSdk
         "haribu" => {
           generate: ->(_o) { p::Haribu.generate_email },
           get_emails: ->(e, t) { p::Haribu.get_emails(require_token(t, "haribu"), e) }
-        },
-        "mohmal" => {
-          generate: ->(_o) { p::Mohmal.generate_email },
-          get_emails: ->(e, t) { p::Mohmal.get_emails(e, require_token(t, "mohmal")) }
         },
         "mailgolem" => {
           generate: ->(_o) { p::Mailgolem.generate_email },
@@ -1231,6 +1217,120 @@ module TempmailSdk
         "email10min" => {
           generate: ->(_o) { p::Email10min.generate_email },
           get_emails: ->(e, t) { p::Email10min.get_emails(e, require_token(t, "email10min")) }
+        },
+        # 渠道追加批次：与 baseline 尾部 11 个新增渠道一一对应（顺序固定）
+        "tempmails-io" => {
+          generate: ->(_o) { p::TempmailsIo.generate_email },
+          get_emails: ->(e, t) { p::TempmailsIo.get_emails(e, require_token(t, "tempmails-io")) }
+        },
+        "shitpost-email" => {
+          generate: ->(_o) { p::ShitpostEmail.generate_email },
+          get_emails: ->(e, t) { p::ShitpostEmail.get_emails(e, require_token(t, "shitpost-email")) }
+        },
+        "smails" => {
+          generate: ->(_o) { p::Smails.generate_email },
+          get_emails: ->(e, t) { p::Smails.get_emails(require_token(t, "smails"), e) }
+        },
+        "tempmailportal" => {
+          generate: ->(_o) { p::Tempmailportal.generate_email },
+          get_emails: ->(e, t) { p::Tempmailportal.get_emails(require_token(t, "tempmailportal"), e) }
+        },
+        "huskmail" => {
+          generate: ->(_o) { p::Huskmail.generate_email },
+          get_emails: ->(e, t) { p::Huskmail.get_emails(require_token(t, "huskmail"), e) }
+        },
+        "zerodrop" => {
+          generate: ->(_o) { p::Zerodrop.generate_email },
+          get_emails: ->(e, t) { p::Zerodrop.get_emails(e, t) }
+        },
+        "firetempmail" => {
+          generate: ->(_o) { p::Firetempmail.generate_email },
+          get_emails: ->(e, t) { p::Firetempmail.get_emails(e, t) }
+        },
+        "nullmail" => {
+          generate: ->(_o) { p::Nullmail.generate_email },
+          get_emails: ->(e, t) { p::Nullmail.get_emails(e, t) }
+        },
+        "tenmin-app" => {
+          generate: ->(_o) { p::TenminApp.generate_email },
+          get_emails: ->(e, t) { p::TenminApp.get_emails(e, require_token(t, "tenmin-app")) }
+        },
+        "mtempmail" => {
+          generate: ->(_o) { p::Mtempmail.generate_email },
+          get_emails: ->(e, t) { p::Mtempmail.get_emails(e, t) }
+        },
+        "tempmail-ee" => {
+          generate: ->(_o) { p::TempmailEe.generate_email },
+          get_emails: ->(e, t) { p::TempmailEe.get_emails(e, require_token(t, "tempmail-ee")) }
+        },
+        "mailticking" => {
+          generate: ->(_o) { p::Mailticking.generate_email },
+          get_emails: ->(e, t) { p::Mailticking.get_emails(e, require_token(t, "mailticking")) }
+        },
+        # 渠道追加批次：与 baseline 尾部 11 个新增渠道一一对应（顺序固定）
+        "temporarymail-com" => {
+          generate: ->(_o) { p::TemporarymailCom.generate_email },
+          get_emails: ->(e, t) { p::TemporarymailCom.get_emails(e, require_token(t, "temporarymail-com")) }
+        },
+        "30minemail" => {
+          generate: ->(_o) { p::ThirtyMinEmail.generate_email },
+          get_emails: ->(e, t) { p::ThirtyMinEmail.get_emails(e, require_token(t, "30minemail")) }
+        },
+        "linshi-xyz" => {
+          generate: ->(_o) { p::LinshiXyz.generate_email },
+          get_emails: ->(e, t) { p::LinshiXyz.get_emails(e, require_token(t, "linshi-xyz")) }
+        },
+        "crazymailing" => {
+          generate: ->(_o) { p::Crazymailing.generate_email },
+          get_emails: ->(e, t) { p::Crazymailing.get_emails(e, require_token(t, "crazymailing")) }
+        },
+        "noxen-de5-net" => {
+          generate: ->(o) { p::NoxenDe5Net.generate_email(o.domain) },
+          get_emails: ->(e, t) { p::NoxenDe5Net.get_emails(e, require_token(t, "noxen-de5-net")) }
+        },
+        "nukemail" => {
+          generate: ->(_o) { p::Nukemail.generate_email },
+          get_emails: ->(e, t) { p::Nukemail.get_emails(e, require_token(t, "nukemail")) }
+        },
+        "shadowmail" => {
+          generate: ->(_o) { p::Shadowmail.generate_email },
+          get_emails: ->(e, t) { p::Shadowmail.get_emails(e, require_token(t, "shadowmail")) }
+        },
+        "flybymail" => {
+          generate: ->(_o) { p::Flybymail.generate_email },
+          get_emails: ->(e, t) { p::Flybymail.get_emails(e, require_token(t, "flybymail")) }
+        },
+        "nowtempmail" => {
+          generate: ->(_o) { p::Nowtempmail.generate_email },
+          get_emails: ->(e, t) { p::Nowtempmail.get_emails(e, require_token(t, "nowtempmail")) }
+        },
+        "clawdemail" => {
+          generate: ->(_o) { p::Clawdemail.generate_email },
+          get_emails: ->(e, t) { p::Clawdemail.get_emails(e, require_token(t, "clawdemail")) }
+        },
+        "tempmail100" => {
+          generate: ->(_o) { p::Tempmail100.generate_email },
+          get_emails: ->(e, t) { p::Tempmail100.get_emails(e, require_token(t, "tempmail100")) }
+        },
+        "tempmailto" => {
+          generate: ->(_o) { p::Tempmailto.generate_email },
+          get_emails: ->(e, t) { p::Tempmailto.get_emails(e, require_token(t, "tempmailto")) }
+        },
+        "temp-mail-gg" => {
+          generate: ->(_o) { p::TempMailGg.generate_email },
+          get_emails: ->(e, t) { p::TempMailGg.get_emails(e, require_token(t, "temp-mail-gg")) }
+        },
+        "tmpkit" => {
+          generate: ->(_o) { p::Tmpkit.generate_email },
+          get_emails: ->(e, t) { p::Tmpkit.get_emails(e, require_token(t, "tmpkit")) }
+        },
+        "internxt" => {
+          generate: ->(_o) { p::Internxt.generate_email },
+          get_emails: ->(e, t) { p::Internxt.get_emails(e, require_token(t, "internxt")) }
+        },
+        "generator-email" => {
+          generate: ->(_o) { p::GeneratorEmail.generate_email },
+          get_emails: ->(e, t) { p::GeneratorEmail.get_emails(e, require_token(t, "generator-email")) }
         },
       }
     end

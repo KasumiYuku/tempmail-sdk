@@ -16,6 +16,15 @@ import (
  *       POST /messages（body: _token={csrf}&captcha=）获取邮箱地址和邮件列表
  *       GET /view/{id} 获取单封邮件 HTML 正文
  * token 存储 CSRF token 值，session 由 tls-client 的 cookie jar 自动维护
+ *
+ * 平台级归因（2026-09-28 探针实测，no-receive 属平台问题，保持本实现）：
+ * - 邮箱与会话解耦：POST /messages 在无 session 校验痕迹下每次返回全新地址
+ *   （zqnbhhg919 / heourdu715 / xmiofax779... 连续 13 轮轮询每轮一个新邮箱，
+ *   Loyav/WebmailTemp 系模板行为），前一地址即被托管方转冷，SDK 轮询读不到信。
+ * - 底层 MTA（mail.tormails.com，banner s.picporno.com Postfix）对本机出口 IP
+ *   返回 "554 5.7.1 Client host rejected: Access denied"：MX 已关闭外部直投。
+ * - 3 封哨兵信送至 zqnbhhg919@tormails.com 与其它会话内地址，120 秒轮询后
+ *   全部落空（messages 恒为空数组）。平台 API 侧（/en、/messages、/view）健康。
  */
 
 const emailtempOrgBaseURL = "https://emailtemp.org"

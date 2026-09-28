@@ -39,7 +39,10 @@ pub fn generate_email() -> Result<EmailInfo, String> {
             .map_err(|e| format!("10minutemail.net 读取响应失败: {}", e))?;
 
         if !status.is_success() {
-            return Err(format!("10minutemail.net 创建邮箱失败: {} {}", status, text));
+            return Err(format!(
+                "10minutemail.net 创建邮箱失败: {} {}",
+                status, text
+            ));
         }
 
         let data: Value = serde_json::from_str(&text)
@@ -109,7 +112,10 @@ pub fn get_emails(token: &str, email: &str) -> Result<Vec<Email>, String> {
             .map_err(|e| format!("10minutemail.net 读取响应失败: {}", e))?;
 
         if !status.is_success() {
-            return Err(format!("10minutemail.net 获取邮件列表失败: {} {}", status, text));
+            return Err(format!(
+                "10minutemail.net 获取邮件列表失败: {} {}",
+                status, text
+            ));
         }
 
         let data: Value = serde_json::from_str(&text)
@@ -157,7 +163,10 @@ async fn fetch_mail_detail(cookie: &str, mail_id: &str, email: &str) -> Result<E
         .map_err(|e| format!("10minutemail.net 读取邮件详情失败: {}", e))?;
 
     if !status.is_success() {
-        return Err(format!("10minutemail.net 获取邮件详情失败: {} {}", status, text));
+        return Err(format!(
+            "10minutemail.net 获取邮件详情失败: {} {}",
+            status, text
+        ));
     }
 
     let detail: Value = serde_json::from_str(&text)
@@ -182,10 +191,7 @@ async fn fetch_mail_detail(cookie: &str, mail_id: &str, email: &str) -> Result<E
     // 如果 body 数组中没有纯文本，从 plain 字段提取
     if text_body.is_empty() {
         if let Some(plain_arr) = detail["plain"].as_array() {
-            let parts: Vec<&str> = plain_arr
-                .iter()
-                .filter_map(|v| v.as_str())
-                .collect();
+            let parts: Vec<&str> = plain_arr.iter().filter_map(|v| v.as_str()).collect();
             text_body = parts.join("\n");
         }
     }

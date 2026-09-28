@@ -14,9 +14,7 @@ use serde_json::{json, Value};
 const BASE_URL: &str = "https://web2.temp-mail.org";
 
 /// 公共请求头：模拟浏览器访问
-fn common_headers(
-    builder: wreq::RequestBuilder,
-) -> wreq::RequestBuilder {
+fn common_headers(builder: wreq::RequestBuilder) -> wreq::RequestBuilder {
     builder
         .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36")
         .header("Origin", "https://temp-mail.org")
@@ -148,9 +146,7 @@ pub fn get_emails(token: &str, email: &str) -> Result<Vec<Email>, String> {
                     .await;
 
             let detail = match detail_resp {
-                Ok(r) if r.status().is_success() => {
-                    r.json::<Value>().await.unwrap_or(Value::Null)
-                }
+                Ok(r) if r.status().is_success() => r.json::<Value>().await.unwrap_or(Value::Null),
                 _ => {
                     // 详情获取失败时回退到摘要数据
                     msg.clone()

@@ -360,6 +360,21 @@ func init() {
 	})
 
 	registerChannel(ChannelSpec{
+		Channel: ChannelMailticking,
+		Name:    "MailTicking",
+		Website: "mailticking.com",
+		Generate: func(opts *GenerateEmailOptions) (*EmailInfo, error) {
+			return fromMailbox(prov.MailtickingGenerate())
+		},
+		GetEmails: func(email, token string) ([]Email, error) {
+			if token == "" {
+				return nil, fmt.Errorf("internal error: token missing for mailticking channel")
+			}
+			return normEmailsResult(prov.MailtickingGetEmails(email, token))
+		},
+	})
+
+	registerChannel(ChannelSpec{
 		Channel: ChannelThrowawaymail,
 		Name:    "ThrowawayMail",
 		Website: "throwawaymail.app",
@@ -1073,21 +1088,6 @@ func init() {
 		},
 		GetEmails: func(email, token string) ([]Email, error) {
 			return normEmailsResult(prov.Mail10sGetEmails(email))
-		},
-	})
-
-	registerChannel(ChannelSpec{
-		Channel: ChannelWebmailtemp,
-		Name:    "WebMailTemp",
-		Website: "webmailtemp.com",
-		Generate: func(opts *GenerateEmailOptions) (*EmailInfo, error) {
-			return fromMailbox(prov.WebmailtempGenerate())
-		},
-		GetEmails: func(email, token string) ([]Email, error) {
-			if token == "" {
-				return nil, fmt.Errorf("internal error: token missing for webmailtemp channel")
-			}
-			return normEmailsResult(prov.WebmailtempGetEmails(token, email))
 		},
 	})
 
@@ -2228,21 +2228,6 @@ func init() {
 	})
 
 	registerChannel(ChannelSpec{
-		Channel: ChannelMohmal,
-		Name:    "Mohmal",
-		Website: "mohmal.com",
-		Generate: func(opts *GenerateEmailOptions) (*EmailInfo, error) {
-			return fromMailbox(prov.MohmalGenerate())
-		},
-		GetEmails: func(email, token string) ([]Email, error) {
-			if token == "" {
-				return nil, fmt.Errorf("internal error: token missing for mohmal channel")
-			}
-			return normEmailsResult(prov.MohmalGetEmails(email, token))
-		},
-	})
-
-	registerChannel(ChannelSpec{
 		Channel: ChannelMailgolem,
 		Name:    "MailGolem",
 		Website: "mailgolem.com",
@@ -2534,21 +2519,6 @@ func init() {
 	})
 
 	registerChannel(ChannelSpec{
-		Channel: ChannelTempMailNow,
-		Name:    "TempMailNow",
-		Website: "temp-mail.now",
-		Generate: func(opts *GenerateEmailOptions) (*EmailInfo, error) {
-			return fromMailbox(prov.TempMailNowGenerate())
-		},
-		GetEmails: func(email, token string) ([]Email, error) {
-			if token == "" {
-				return nil, fmt.Errorf("internal error: token missing for temp-mail-now channel")
-			}
-			return normEmailsResult(prov.TempMailNowGetEmails(token, email))
-		},
-	})
-
-	registerChannel(ChannelSpec{
 		Channel: ChannelMailTd,
 		Name:    "Mail.td",
 		Website: "mail.td",
@@ -2601,7 +2571,7 @@ func init() {
 			return fromMailbox(prov.TwentyfourmailChacuoGenerate())
 		},
 		GetEmails: func(email, token string) ([]Email, error) {
-			return normEmailsResult(prov.TwentyfourmailChacuoGetEmails(email))
+			return normEmailsResult(prov.TwentyfourmailChacuoGetEmails(token, email))
 		},
 	})
 
@@ -2626,18 +2596,6 @@ func init() {
 		},
 		GetEmails: func(email, token string) ([]Email, error) {
 			return normEmailsResult(prov.FreecustomGetEmails(email))
-		},
-	})
-
-	registerChannel(ChannelSpec{
-		Channel: ChannelN16888888Cyou,
-		Name:    "Mailmomy (16888888.cyou)",
-		Website: "mailmomy.com",
-		Generate: func(opts *GenerateEmailOptions) (*EmailInfo, error) {
-			return fromMailbox(prov.N16888888CyouGenerate())
-		},
-		GetEmails: func(email, token string) ([]Email, error) {
-			return normEmailsResult(prov.N16888888CyouGetEmails(email))
 		},
 	})
 
@@ -2806,18 +2764,6 @@ func init() {
 		},
 		GetEmails: func(email, token string) ([]Email, error) {
 			return normEmailsResult(prov.EtgdevDeGetEmails(email))
-		},
-	})
-
-	registerChannel(ChannelSpec{
-		Channel: ChannelEvergreencoShop,
-		Name:    "Mailmomy (evergreenco.shop)",
-		Website: "mailmomy.com",
-		Generate: func(opts *GenerateEmailOptions) (*EmailInfo, error) {
-			return fromMailbox(prov.EvergreencoShopGenerate())
-		},
-		GetEmails: func(email, token string) ([]Email, error) {
-			return normEmailsResult(prov.EvergreencoShopGetEmails(email))
 		},
 	})
 
@@ -3710,18 +3656,6 @@ func init() {
 	})
 
 	registerChannel(ChannelSpec{
-		Channel: ChannelGoneboxEmail,
-		Name:    "Gonebox Email",
-		Website: "gonebox.email",
-		Generate: func(opts *GenerateEmailOptions) (*EmailInfo, error) {
-			return fromMailbox(prov.GoneboxEmailGenerate())
-		},
-		GetEmails: func(email, token string) ([]Email, error) {
-			return normEmailsResult(prov.GoneboxEmailGetEmails(email))
-		},
-	})
-
-	registerChannel(ChannelSpec{
 		Channel: ChannelMailcatAi,
 		Name:    "Mailcat AI",
 		Website: "mailcat.ai",
@@ -3798,6 +3732,411 @@ func init() {
 				return nil, fmt.Errorf("internal error: token missing for ten-minute-mail-net channel")
 			}
 			return normEmailsResult(prov.TenMinuteMailNetGetEmails(token, email))
+		},
+	})
+
+	registerChannel(ChannelSpec{
+		Channel: ChannelTempmailsIo,
+		Name:    "TempMails.io",
+		Website: "tempmails.io",
+		Generate: func(opts *GenerateEmailOptions) (*EmailInfo, error) {
+			return fromMailbox(prov.TempmailsIoGenerate())
+		},
+		GetEmails: func(email, token string) ([]Email, error) {
+			if token == "" {
+				return nil, fmt.Errorf("internal error: token missing for tempmails-io channel")
+			}
+			return normEmailsResult(prov.TempmailsIoGetEmails(email, token))
+		},
+	})
+
+	registerChannel(ChannelSpec{
+		Channel: ChannelShitpostEmail,
+		Name:    "ShitPost.email",
+		Website: "shitpost.email",
+		Generate: func(opts *GenerateEmailOptions) (*EmailInfo, error) {
+			return fromMailbox(prov.ShitpostEmailGenerate())
+		},
+		GetEmails: func(email, token string) ([]Email, error) {
+			if token == "" {
+				return nil, fmt.Errorf("internal error: token missing for shitpost-email channel")
+			}
+			return normEmailsResult(prov.ShitpostEmailGetEmails(email, token))
+		},
+	})
+
+	registerChannel(ChannelSpec{
+		Channel: ChannelSmails,
+		Name:    "Smails.dev",
+		Website: "smails.dev",
+		Generate: func(opts *GenerateEmailOptions) (*EmailInfo, error) {
+			return fromMailbox(prov.SmailsGenerate())
+		},
+		GetEmails: func(email, token string) ([]Email, error) {
+			if token == "" {
+				return nil, fmt.Errorf("internal error: token missing for smails channel")
+			}
+			return normEmailsResult(prov.SmailsGetEmails(email, token))
+		},
+	})
+
+	registerChannel(ChannelSpec{
+		Channel: ChannelTempmailportal,
+		Name:    "TempMail Portal",
+		Website: "tempmailportal.com",
+		Generate: func(opts *GenerateEmailOptions) (*EmailInfo, error) {
+			return fromMailbox(prov.TempmailportalGenerate())
+		},
+		GetEmails: func(email, token string) ([]Email, error) {
+			if token == "" {
+				return nil, fmt.Errorf("internal error: token missing for tempmailportal channel")
+			}
+			return normEmailsResult(prov.TempmailportalGetEmails(email, token))
+		},
+	})
+
+	registerChannel(ChannelSpec{
+		Channel: ChannelHuskmail,
+		Name:    "HuskMail",
+		Website: "huskmail.xyz",
+		Generate: func(opts *GenerateEmailOptions) (*EmailInfo, error) {
+			return fromMailbox(prov.HuskmailGenerate())
+		},
+		GetEmails: func(email, token string) ([]Email, error) {
+			if token == "" {
+				return nil, fmt.Errorf("internal error: token missing for huskmail channel")
+			}
+			return normEmailsResult(prov.HuskmailGetEmails(email, token))
+		},
+	})
+
+	registerChannel(ChannelSpec{
+		Channel: ChannelZerodrop,
+		Name:    "Zerodrop",
+		Website: "zerodrop.dev",
+		Generate: func(opts *GenerateEmailOptions) (*EmailInfo, error) {
+			return fromMailbox(prov.ZerodropGenerate())
+		},
+		GetEmails: func(email, token string) ([]Email, error) {
+			if token == "" {
+				return nil, fmt.Errorf("internal error: token missing for zerodrop channel")
+			}
+			return normEmailsResult(prov.ZerodropGetEmails(email, token))
+		},
+	})
+
+	registerChannel(ChannelSpec{
+		Channel: ChannelFiretempmail,
+		Name:    "FireTempMail",
+		Website: "firetempmail.com",
+		Generate: func(opts *GenerateEmailOptions) (*EmailInfo, error) {
+			return fromMailbox(prov.FiretempmailGenerate())
+		},
+		GetEmails: func(email, token string) ([]Email, error) {
+			if token == "" {
+				return nil, fmt.Errorf("internal error: token missing for firetempmail channel")
+			}
+			return normEmailsResult(prov.FiretempmailGetEmails(email, token))
+		},
+	})
+
+	registerChannel(ChannelSpec{
+		Channel: ChannelNullmail,
+		Name:    "NullMail",
+		Website: "nullmail.cc",
+		Generate: func(opts *GenerateEmailOptions) (*EmailInfo, error) {
+			return fromMailbox(prov.NullmailGenerate())
+		},
+		GetEmails: func(email, token string) ([]Email, error) {
+			if token == "" {
+				return nil, fmt.Errorf("internal error: token missing for nullmail channel")
+			}
+			return normEmailsResult(prov.NullmailGetEmails(email, token))
+		},
+	})
+
+	registerChannel(ChannelSpec{
+		Channel: ChannelTenminApp,
+		Name:    "Tenmin.app",
+		Website: "tenmin.app",
+		Generate: func(opts *GenerateEmailOptions) (*EmailInfo, error) {
+			return fromMailbox(prov.TenminAppGenerate())
+		},
+		GetEmails: func(email, token string) ([]Email, error) {
+			if token == "" {
+				return nil, fmt.Errorf("internal error: token missing for tenmin-app channel")
+			}
+			return normEmailsResult(prov.TenminAppGetEmails(email, token))
+		},
+	})
+
+	registerChannel(ChannelSpec{
+		Channel: ChannelMtempmail,
+		Name:    "MTempMail",
+		Website: "mtempmail.com",
+		Generate: func(opts *GenerateEmailOptions) (*EmailInfo, error) {
+			return fromMailbox(prov.MtempmailGenerate())
+		},
+		GetEmails: func(email, token string) ([]Email, error) {
+			if token == "" {
+				return nil, fmt.Errorf("internal error: token missing for mtempmail channel")
+			}
+			return normEmailsResult(prov.MtempmailGetEmails(email, token))
+		},
+	})
+
+	registerChannel(ChannelSpec{
+		Channel: ChannelTempmailEE,
+		Name:    "TempMail.ee",
+		Website: "tempmail.ee",
+		Generate: func(opts *GenerateEmailOptions) (*EmailInfo, error) {
+			return fromMailbox(prov.TempmailEEGenerate())
+		},
+		GetEmails: func(email, token string) ([]Email, error) {
+			if token == "" {
+				return nil, fmt.Errorf("internal error: token missing for tempmail-ee channel")
+			}
+			return normEmailsResult(prov.TempmailEEGetEmails(email, token))
+		},
+	})
+
+	registerChannel(ChannelSpec{
+		Channel: ChannelTemporarymailCom,
+		Name:    "Temporarymail.com",
+		Website: "temporarymail.com",
+		Generate: func(opts *GenerateEmailOptions) (*EmailInfo, error) {
+			return fromMailbox(prov.TemporarymailGenerate())
+		},
+		GetEmails: func(email, token string) ([]Email, error) {
+			if token == "" {
+				return nil, fmt.Errorf("internal error: token missing for temporarymail-com channel")
+			}
+			return normEmailsResult(prov.TemporarymailGetEmails(email, token))
+		},
+	})
+
+	registerChannel(ChannelSpec{
+		Channel: ChannelEmail30Min,
+		Name:    "30minemail",
+		Website: "30minemail.com",
+		Generate: func(opts *GenerateEmailOptions) (*EmailInfo, error) {
+			return fromMailbox(prov.ThirtyMinEmailGenerate())
+		},
+		GetEmails: func(email, token string) ([]Email, error) {
+			if token == "" {
+				return nil, fmt.Errorf("internal error: token missing for 30minemail channel")
+			}
+			return normEmailsResult(prov.ThirtyMinEmailGetEmails(email, token))
+		},
+	})
+
+	registerChannel(ChannelSpec{
+		Channel: ChannelLinshiXYZ,
+		Name:    "Linshi.xyz",
+		Website: "linshi.xyz",
+		Generate: func(opts *GenerateEmailOptions) (*EmailInfo, error) {
+			return fromMailbox(prov.LinshiXYZGenerate())
+		},
+		GetEmails: func(email, token string) ([]Email, error) {
+			if token == "" {
+				return nil, fmt.Errorf("internal error: token missing for linshi-xyz channel")
+			}
+			return normEmailsResult(prov.LinshiXYZGetEmails(email, token))
+		},
+	})
+
+	registerChannel(ChannelSpec{
+		Channel: ChannelCrazymailing,
+		Name:    "CrazyMailing",
+		Website: "crazymailing.com",
+		Generate: func(opts *GenerateEmailOptions) (*EmailInfo, error) {
+			return fromMailbox(prov.CrazymailingGenerate())
+		},
+		GetEmails: func(email, token string) ([]Email, error) {
+			if token == "" {
+				return nil, fmt.Errorf("internal error: token missing for crazymailing channel")
+			}
+			return normEmailsResult(prov.CrazymailingGetEmails(email, token))
+		},
+	})
+
+	registerChannel(ChannelSpec{
+		Channel: ChannelNoxenDe5Net,
+		Name:    "UniMail Bot",
+		Website: "tempmail.noxen.de5.net",
+		Generate: func(opts *GenerateEmailOptions) (*EmailInfo, error) {
+			return fromMailbox(prov.NoxenDe5NetGenerate(opts.Domain))
+		},
+		GetEmails: func(email, token string) ([]Email, error) {
+			if token == "" {
+				return nil, fmt.Errorf("internal error: token missing for noxen-de5-net channel")
+			}
+			return normEmailsResult(prov.NoxenDe5NetGetEmails(email, token))
+		},
+	})
+
+	registerChannel(ChannelSpec{
+		Channel: ChannelNukemail,
+		Name:    "NukeMail",
+		Website: "nukemail.app",
+		Generate: func(opts *GenerateEmailOptions) (*EmailInfo, error) {
+			return fromMailbox(prov.NukemailGenerate())
+		},
+		GetEmails: func(email, token string) ([]Email, error) {
+			if token == "" {
+				return nil, fmt.Errorf("internal error: token missing for nukemail channel")
+			}
+			return normEmailsResult(prov.NukemailGetEmails(email, token))
+		},
+	})
+
+	registerChannel(ChannelSpec{
+		Channel: ChannelShadowmail,
+		Name:    "ShadowMail",
+		Website: "shadowmail.win",
+		Generate: func(opts *GenerateEmailOptions) (*EmailInfo, error) {
+			return fromMailbox(prov.ShadowmailGenerate())
+		},
+		GetEmails: func(email, token string) ([]Email, error) {
+			if token == "" {
+				return nil, fmt.Errorf("internal error: token missing for shadowmail channel")
+			}
+			return normEmailsResult(prov.ShadowmailGetEmails(email, token))
+		},
+	})
+
+	registerChannel(ChannelSpec{
+		Channel: ChannelFlybymail,
+		Name:    "FlyByMail",
+		Website: "flybymail.com",
+		Generate: func(opts *GenerateEmailOptions) (*EmailInfo, error) {
+			return fromMailbox(prov.FlybymailGenerate())
+		},
+		GetEmails: func(email, token string) ([]Email, error) {
+			if token == "" {
+				return nil, fmt.Errorf("internal error: token missing for flybymail channel")
+			}
+			return normEmailsResult(prov.FlybymailGetEmails(email, token))
+		},
+	})
+
+	registerChannel(ChannelSpec{
+		Channel: ChannelNowtempmail,
+		Name:    "NowTempMail",
+		Website: "nowtempmail.com",
+		Generate: func(opts *GenerateEmailOptions) (*EmailInfo, error) {
+			return fromMailbox(prov.NowtempMailGenerate())
+		},
+		GetEmails: func(email, token string) ([]Email, error) {
+			if token == "" {
+				return nil, fmt.Errorf("internal error: token missing for nowtempmail channel")
+			}
+			return normEmailsResult(prov.NowtempMailGetEmails(email, token))
+		},
+	})
+
+	registerChannel(ChannelSpec{
+		Channel: ChannelClawdemail,
+		Name:    "ClawdEmail",
+		Website: "clawdemail.com",
+		Generate: func(opts *GenerateEmailOptions) (*EmailInfo, error) {
+			return fromMailbox(prov.ClawdEmailGenerate(""))
+		},
+		GetEmails: func(email, token string) ([]Email, error) {
+			if token == "" {
+				return nil, fmt.Errorf("internal error: token missing for clawdemail channel")
+			}
+			return normEmailsResult(prov.ClawdEmailGetEmails(email, token))
+		},
+	})
+
+	registerChannel(ChannelSpec{
+		Channel: ChannelTempmail100,
+		Name:    "TempMail100",
+		Website: "tempmail100.com",
+		Generate: func(opts *GenerateEmailOptions) (*EmailInfo, error) {
+			return fromMailbox(prov.TempMail100Generate())
+		},
+		GetEmails: func(email, token string) ([]Email, error) {
+			if token == "" {
+				return nil, fmt.Errorf("internal error: token missing for tempmail100 channel")
+			}
+			return normEmailsResult(prov.TempMail100GetEmails(email, token))
+		},
+	})
+
+	registerChannel(ChannelSpec{
+		Channel: ChannelTempmailto,
+		Name:    "Tempmailto",
+		Website: "tempmailto.com",
+		Generate: func(opts *GenerateEmailOptions) (*EmailInfo, error) {
+			return fromMailbox(prov.TempmailtoGenerate())
+		},
+		GetEmails: func(email, token string) ([]Email, error) {
+			if token == "" {
+				return nil, fmt.Errorf("internal error: token missing for tempmailto channel")
+			}
+			return normEmailsResult(prov.TempmailtoGetEmails(email, token))
+		},
+	})
+
+	registerChannel(ChannelSpec{
+		Channel: ChannelTempMailGG,
+		Name:    "TempMailGG",
+		Website: "temp-mail.gg",
+		Generate: func(opts *GenerateEmailOptions) (*EmailInfo, error) {
+			return fromMailbox(prov.TempMailGGGenerate(""))
+		},
+		GetEmails: func(email, token string) ([]Email, error) {
+			if token == "" {
+				return nil, fmt.Errorf("internal error: token missing for temp-mail-gg channel")
+			}
+			return normEmailsResult(prov.TempMailGGGetEmails(email, token))
+		},
+	})
+
+	registerChannel(ChannelSpec{
+		Channel: ChannelTmpkit,
+		Name:    "Tmpkit",
+		Website: "tmpkit.com",
+		Generate: func(opts *GenerateEmailOptions) (*EmailInfo, error) {
+			return fromMailbox(prov.TmpkitGenerate())
+		},
+		GetEmails: func(email, token string) ([]Email, error) {
+			if token == "" {
+				return nil, fmt.Errorf("internal error: token missing for tmpkit channel")
+			}
+			return normEmailsResult(prov.TmpkitGetEmails(email, token))
+		},
+	})
+
+	registerChannel(ChannelSpec{
+		Channel: ChannelInternxt,
+		Name:    "Internxt",
+		Website: "internxt.com",
+		Generate: func(opts *GenerateEmailOptions) (*EmailInfo, error) {
+			return fromMailbox(prov.InternxtGenerate())
+		},
+		GetEmails: func(email, token string) ([]Email, error) {
+			if token == "" {
+				return nil, fmt.Errorf("internal error: token missing for internxt channel")
+			}
+			return normEmailsResult(prov.InternxtGetEmails(email, token))
+		},
+	})
+
+	registerChannel(ChannelSpec{
+		Channel: ChannelGeneratorEmail,
+		Name:    "GeneratorEmail",
+		Website: "generator.email",
+		Generate: func(opts *GenerateEmailOptions) (*EmailInfo, error) {
+			return fromMailbox(prov.GeneratorEmailGenerate())
+		},
+		GetEmails: func(email, token string) ([]Email, error) {
+			if token == "" {
+				return nil, fmt.Errorf("internal error: token missing for generator-email channel")
+			}
+			return normEmailsResult(prov.GeneratorEmailGetEmails(email, token))
 		},
 	})
 }

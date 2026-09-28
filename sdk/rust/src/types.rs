@@ -61,6 +61,9 @@ pub enum Channel {
     NeighboursSh,
     #[serde(rename = "mailnesia")]
     Mailnesia,
+    /// mailticking.com（旧域名 temporary-mail.net 更名站）临时邮箱
+    #[serde(rename = "mailticking")]
+    Mailticking,
     #[serde(rename = "throwawaymail")]
     Throwawaymail,
     #[serde(rename = "shitty-email")]
@@ -155,8 +158,6 @@ pub enum Channel {
     Mail123,
     #[serde(rename = "mail10s")]
     Mail10s,
-    #[serde(rename = "webmailtemp")]
-    Webmailtemp,
     #[serde(rename = "tempfastmail")]
     Tempfastmail,
     #[serde(rename = "1sec-mail")]
@@ -331,8 +332,6 @@ pub enum Channel {
     Rootsh,
     #[serde(rename = "fake-email-site")]
     FakeEmailSite,
-    #[serde(rename = "mohmal")]
-    Mohmal,
     /// mailgolem.com 渠道
     #[serde(rename = "mailgolem")]
     Mailgolem,
@@ -393,9 +392,6 @@ pub enum Channel {
     /// mytempmail.cc 渠道
     #[serde(rename = "mytempmail-cc")]
     MytempmailCc,
-    /// temp-mail.now 渠道
-    #[serde(rename = "temp-mail-now")]
-    TempMailNow,
     /// mail.td 渠道
     #[serde(rename = "mail-td")]
     MailTd,
@@ -556,8 +552,6 @@ pub enum Channel {
     /// dropmail.click 渠道
     #[serde(rename = "dropmail-click")]
     DropmailClick,
-    #[serde(rename = "16888888-cyou")]
-    N16888888Cyou,
     #[serde(rename = "17666688-shop")]
     N17666688Shop,
     #[serde(rename = "282mail-com")]
@@ -576,8 +570,6 @@ pub enum Channel {
     Doxu243Buzz,
     #[serde(rename = "easyme-pro")]
     EasymePro,
-    #[serde(rename = "evergreenco-shop")]
-    EvergreencoShop,
     #[serde(rename = "j-fairuse-org")]
     JFairuseOrg,
     #[serde(rename = "layueming-pics")]
@@ -612,9 +604,6 @@ pub enum Channel {
     /// xkx.me 临时邮箱
     #[serde(rename = "xkx-me")]
     XkxMe,
-    /// gonebox.email 临时邮箱
-    #[serde(rename = "gonebox-email")]
-    GoneboxEmail,
     /// mailcat.ai 临时邮箱
     #[serde(rename = "mailcat-ai")]
     MailcatAi,
@@ -627,6 +616,87 @@ pub enum Channel {
     /// 10minutemail.net PHP session 临时邮箱
     #[serde(rename = "ten-minute-mail-net")]
     TenMinuteMailNet,
+    /// tempmails.io 无认证 REST 临时邮箱
+    #[serde(rename = "tempmails-io")]
+    TempmailsIo,
+    /// shitpost.email 公共实例临时邮箱
+    #[serde(rename = "shitpost-email")]
+    ShitpostEmail,
+    /// smails.dev 临时邮箱
+    #[serde(rename = "smails")]
+    Smails,
+    /// tempmailportal.com 临时邮箱
+    #[serde(rename = "tempmailportal")]
+    Tempmailportal,
+    /// huskmail.xyz 临时邮箱
+    #[serde(rename = "huskmail")]
+    Huskmail,
+    /// zerodrop.dev 临时邮箱
+    #[serde(rename = "zerodrop")]
+    Zerodrop,
+    /// firetempmail.com 临时邮箱
+    #[serde(rename = "firetempmail")]
+    Firetempmail,
+    /// nullmail.cc 临时邮箱
+    #[serde(rename = "nullmail")]
+    Nullmail,
+    /// tenmin.app 临时邮箱
+    #[serde(rename = "tenmin-app")]
+    TenminApp,
+    /// mtempmail.com 临时邮箱
+    #[serde(rename = "mtempmail")]
+    Mtempmail,
+    /// tempmail.ee 临时邮箱
+    #[serde(rename = "tempmail-ee")]
+    TempmailEe,
+    /// temporarymail.com 临时邮箱
+    #[serde(rename = "temporarymail-com")]
+    TemporarymailCom,
+    /// 30minemail.com 临时邮箱
+    #[serde(rename = "30minemail")]
+    Email30Min,
+    /// linshi.xyz 临时邮箱
+    #[serde(rename = "linshi-xyz")]
+    LinshiXyz,
+    /// crazymailing.com 临时邮箱
+    #[serde(rename = "crazymailing")]
+    Crazymailing,
+    /// tempmail.noxen.de5.net UniMail-Bot 公共实例
+    #[serde(rename = "noxen-de5-net")]
+    NoxenDe5Net,
+    /// nukemail.app 临时邮箱
+    #[serde(rename = "nukemail")]
+    Nukemail,
+    /// shadowmail.win 临时邮箱
+    #[serde(rename = "shadowmail")]
+    Shadowmail,
+    /// flybymail.com 临时邮箱
+    #[serde(rename = "flybymail")]
+    Flybymail,
+    /// nowtempmail.com 临时邮箱
+    #[serde(rename = "nowtempmail")]
+    Nowtempmail,
+    /// clawdemail.com 临时邮箱
+    #[serde(rename = "clawdemail")]
+    Clawdemail,
+    /// tempmail100.com 临时邮箱
+    #[serde(rename = "tempmail100")]
+    Tempmail100,
+    /// tempmailto.com 临时邮箱
+    #[serde(rename = "tempmailto")]
+    Tempmailto,
+    /// temp-mail.gg 临时邮箱
+    #[serde(rename = "temp-mail-gg")]
+    TempMailGg,
+    /// tmpkit.com（Next.js tRPC 会话）临时邮箱
+    #[serde(rename = "tmpkit")]
+    Tmpkit,
+    /// internxt.com（临时邮箱页 Cookie 会话 + CSRF）临时邮箱
+    #[serde(rename = "internxt")]
+    Internxt,
+    /// generator.email（SSR 网页型，SITE_DATA 快照建箱）临时邮箱
+    #[serde(rename = "generator-email")]
+    GeneratorEmail,
 }
 
 impl std::fmt::Display for Channel {
@@ -659,6 +729,7 @@ impl std::fmt::Display for Channel {
             Channel::TempmailFish => write!(f, "tempmail-fish"),
             Channel::NeighboursSh => write!(f, "neighbours-sh"),
             Channel::Mailnesia => write!(f, "mailnesia"),
+            Channel::Mailticking => write!(f, "mailticking"),
             Channel::Throwawaymail => write!(f, "throwawaymail"),
             Channel::ShittyEmail => write!(f, "shitty-email"),
             Channel::Tempmailpro => write!(f, "tempmailpro"),
@@ -706,7 +777,6 @@ impl std::fmt::Display for Channel {
             Channel::VillatogelCom => write!(f, "villatogel-com"),
             Channel::Mail123 => write!(f, "mail123"),
             Channel::Mail10s => write!(f, "mail10s"),
-            Channel::Webmailtemp => write!(f, "webmailtemp"),
             Channel::Tempfastmail => write!(f, "tempfastmail"),
             Channel::OneSecMail => write!(f, "1sec-mail"),
             Channel::Fakemail => write!(f, "fakemail"),
@@ -794,7 +864,6 @@ impl std::fmt::Display for Channel {
             Channel::Haribu => write!(f, "haribu"),
             Channel::Rootsh => write!(f, "rootsh"),
             Channel::FakeEmailSite => write!(f, "fake-email-site"),
-            Channel::Mohmal => write!(f, "mohmal"),
             Channel::Mailgolem => write!(f, "mailgolem"),
             Channel::BestTempMail => write!(f, "best-temp-mail"),
             Channel::DisposablemailApp => write!(f, "disposablemail-app"),
@@ -815,7 +884,6 @@ impl std::fmt::Display for Channel {
             Channel::TemppMails => write!(f, "tempp-mails"),
             Channel::EmailtempOrg => write!(f, "emailtemp-org"),
             Channel::MytempmailCc => write!(f, "mytempmail-cc"),
-            Channel::TempMailNow => write!(f, "temp-mail-now"),
             Channel::MailTd => write!(f, "mail-td"),
             Channel::MailholeDe => write!(f, "mailhole-de"),
             Channel::TmailLink => write!(f, "tmail-link"),
@@ -879,7 +947,6 @@ impl std::fmt::Display for Channel {
             Channel::ReallyIstrashCom => write!(f, "really-istrash-com"),
             Channel::SpamHortukOvh => write!(f, "spam-hortuk-ovh"),
             Channel::DropmailClick => write!(f, "dropmail-click"),
-            Channel::N16888888Cyou => write!(f, "16888888-cyou"),
             Channel::N17666688Shop => write!(f, "17666688-shop"),
             Channel::N282mailCom => write!(f, "282mail-com"),
             Channel::Bsdu32Buzz => write!(f, "bsdu32-buzz"),
@@ -889,7 +956,6 @@ impl std::fmt::Display for Channel {
             Channel::DisposableNogonadNl => write!(f, "disposable-nogonad-nl"),
             Channel::Doxu243Buzz => write!(f, "doxu243-buzz"),
             Channel::EasymePro => write!(f, "easyme-pro"),
-            Channel::EvergreencoShop => write!(f, "evergreenco-shop"),
             Channel::JFairuseOrg => write!(f, "j-fairuse-org"),
             Channel::LayuemingPics => write!(f, "layueming-pics"),
             Channel::MailinatorzzMoooCom => write!(f, "mailinatorzz-mooo-com"),
@@ -906,11 +972,37 @@ impl std::fmt::Display for Channel {
             Channel::Tempgmailer => write!(f, "tempgmailer"),
             Channel::TempMailOrg => write!(f, "temp-mail-org"),
             Channel::XkxMe => write!(f, "xkx-me"),
-            Channel::GoneboxEmail => write!(f, "gonebox-email"),
             Channel::MailcatAi => write!(f, "mailcat-ai"),
             Channel::TempgoEmail => write!(f, "tempgo-email"),
             Channel::RestmailNet => write!(f, "restmail-net"),
             Channel::TenMinuteMailNet => write!(f, "ten-minute-mail-net"),
+            Channel::TempmailsIo => write!(f, "tempmails-io"),
+            Channel::ShitpostEmail => write!(f, "shitpost-email"),
+            Channel::Smails => write!(f, "smails"),
+            Channel::Tempmailportal => write!(f, "tempmailportal"),
+            Channel::Huskmail => write!(f, "huskmail"),
+            Channel::Zerodrop => write!(f, "zerodrop"),
+            Channel::Firetempmail => write!(f, "firetempmail"),
+            Channel::Nullmail => write!(f, "nullmail"),
+            Channel::TenminApp => write!(f, "tenmin-app"),
+            Channel::Mtempmail => write!(f, "mtempmail"),
+            Channel::TempmailEe => write!(f, "tempmail-ee"),
+            Channel::TemporarymailCom => write!(f, "temporarymail-com"),
+            Channel::Email30Min => write!(f, "30minemail"),
+            Channel::LinshiXyz => write!(f, "linshi-xyz"),
+            Channel::Crazymailing => write!(f, "crazymailing"),
+            Channel::NoxenDe5Net => write!(f, "noxen-de5-net"),
+            Channel::Nukemail => write!(f, "nukemail"),
+            Channel::Shadowmail => write!(f, "shadowmail"),
+            Channel::Flybymail => write!(f, "flybymail"),
+            Channel::Nowtempmail => write!(f, "nowtempmail"),
+            Channel::Clawdemail => write!(f, "clawdemail"),
+            Channel::Tempmail100 => write!(f, "tempmail100"),
+            Channel::Tempmailto => write!(f, "tempmailto"),
+            Channel::TempMailGg => write!(f, "temp-mail-gg"),
+            Channel::Tmpkit => write!(f, "tmpkit"),
+            Channel::Internxt => write!(f, "internxt"),
+            Channel::GeneratorEmail => write!(f, "generator-email"),
         }
     }
 }

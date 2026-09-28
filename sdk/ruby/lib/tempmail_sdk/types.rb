@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "time"
+
 module TempmailSdk
   # 创建临时邮箱后返回的邮箱信息
   # Token 等认证信息由 SDK 内部维护，不对外暴露（token 通过私有读取器访问）
@@ -77,6 +79,17 @@ module TempmailSdk
       @attachments = attachments || []
     end
     # rubocop:enable Metrics/ParameterLists
+
+    # 发信地址的域名部分；无法从 from_addr 提取时返回空串
+    # @return [String]
+    def from_domain
+      addr = from_addr.to_s
+      if (m = addr.match(/<?([^@\s<>]+)@([^@\s<>]+)>?/))
+        return m[2]
+      end
+
+      ""
+    end
 
     def to_h
       {

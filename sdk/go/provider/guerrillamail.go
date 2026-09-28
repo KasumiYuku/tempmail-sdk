@@ -128,7 +128,7 @@ func GuerrillaMailGetEmails(token string, email string) ([]NormEmail, error) {
 			}
 		}
 
-		out = append(out, NormalizeMap(item, email))
+		out = append(out, NormalizeMap(guerrillamailMirrorFlatten(item, email), email))
 	}
 	return out, nil
 }

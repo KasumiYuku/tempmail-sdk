@@ -10,6 +10,7 @@ import (
 	"net/url"
 	"regexp"
 	"sort"
+	"strconv"
 	"strings"
 
 	http "github.com/bogdanfinn/fhttp"
@@ -40,11 +41,42 @@ var (
 	moaktDateRe     = regexp.MustCompile(`(?is)<li\s+class="date"[^>]*>[\s\S]*?<span[^>]*>([^<]+)</span>`)
 	moaktSenderRe   = regexp.MustCompile(`(?is)<li\s+class="sender"[^>]*>[\s\S]*?<span[^>]*>([\s\S]*?)</span>\s*</li>`)
 	moaktFromAddrRe = regexp.MustCompile(`<([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})>`)
+	// /plain 视图：正文位于 div.email-body>pre 中，内容为完整的 HTML 转义文本，
+	// pre 的子元素可能是转义后的文本或已解析的标签，需整体渲染后反转义
+	moaktPlainBodyRe = regexp.MustCompile(`(?is)<div\s+class="email-body"[^>]*>\s*<pre[^>]*>`)
+	moaktClosePreRe  = regexp.MustCompile(`</pre>`)
+	// /html 视图的附件区块：每条附件依次包含 attach_name/attach_type/attach_size
+	// 与 /{locale}/email/{id}/attachment/{uuid} 下载链接
+	moaktAttachGroupRe = regexp.MustCompile(`(?is)<ul[^>]*>((?:\s|<li)[\s\S]*?)</ul>`)
+	moaktAttachLiRe    = regexp.MustCompile(`(?is)<li[^>]*>([\s\S]*?)</li>`)
+	moaktAttachNameRe  = regexp.MustCompile(`(?is)<(?:span|div)[^>]*class="[^"]*\battach_name\b[^"]*"[^>]*>([\s\S]*?)</(?:span|div)>`)
+	moaktAttachTypeRe  = regexp.MustCompile(`(?is)<(?:span|div)[^>]*class="[^"]*\battach_type\b[^"]*"[^>]*>([\s\S]*?)</(?:span|div)>`)
+	moaktAttachSizeRe  = regexp.MustCompile(`(?is)<(?:span|div)[^>]*class="[^"]*\battach_size\b[^"]*"[^>]*>([\s\S]*?)</(?:span|div)>`)
+	moaktAttachLinkRe  = regexp.MustCompile(`href="(/[^"]+/attachment/[0-9a-f-]{36})"`)
 )
 
 /*
- * moaktExtractBodyHTML 使用 HTML 解析器提取 email-body div 的完整内部 HTML，
- * 避免非贪婪正则在嵌套 div 时截断正文。
+ * moaktExtractBodyText 在 /plain 视图中定位 div.email-body>pre 中的正文。
+ * 平台将正文整体 HTML 转义后放入 pre（如 &lt;br /&gt;），此处直接截取
+ * pre 内容并 UnescapeString 还原为原文；转义保证了正文中的 </pre> 等
+ * 字面量不会干扰结束定位。
+ */
+func moaktExtractBodyText(page string) string {
+	m := moaktPlainBodyRe.FindStringIndex(page)
+	if m == nil {
+		return ""
+	}
+	rest := page[m[1]:]
+	if end := moaktClosePreRe.FindStringIndex(rest); end != nil {
+		rest = rest[:end[0]]
+	}
+	return strings.TrimSpace(html.UnescapeString(rest))
+}
+
+/*
+ * moaktExtractBodyHTML 在 /html 视图中提取 email-body div 的完整内部 HTML，
+ * 避免非贪婪正则在嵌套 div 时截断正文。该视图的正文容器可能为空，
+ * 需与 /plain 视图提取的纯文本互为回退。
  */
 func moaktExtractBodyHTML(page string) string {
 	doc, err := gohtml.Parse(strings.NewReader(page))
@@ -251,6 +283,180 @@ func moaktListMailIDs(htmlStr string) []string {
 	return out
 }
 
+/*
+ * moaktExtractAttachments 解析详情页 message-attachments 区块中的附件列表。
+ * 每条附件携带 attach_name/attach_type/attach_size 元数据与
+ * /{locale}/email/{id}/attachment/{uuid} 下载链接，返回
+ * normalizeAttachments 接受的 raw["attachments"] 数组形式
+ * （元素含 filename/size/contentType/url）。
+ */
+func moaktExtractAttachments(page string, origin string, locale string) []interface{} {
+	idx := strings.Index(page, "message-attachments")
+	if idx < 0 {
+		return nil
+	}
+	block := page[idx:]
+	/* 附件区块固定以 <ul> 列表呈现，避免松散 li 匹配扩散到区块外 */
+	ul := moaktAttachGroupRe.FindStringSubmatch(block)
+	if len(ul) < 2 {
+		return nil
+	}
+	var atts []interface{}
+	for _, li := range moaktAttachLiRe.FindAllStringSubmatch(ul[1], -1) {
+		name := moaktStripTags(html.UnescapeString(moaktFirstMatch(moaktAttachNameRe, li[1])))
+		if name == "" {
+			continue
+		}
+		att := map[string]interface{}{"filename": name}
+		if ct := moaktStripTags(strings.TrimSpace(moaktFirstMatch(moaktAttachTypeRe, li[1]))); ct != "" {
+			att["contentType"] = ct
+		}
+		if sizeStr := strings.TrimSpace(moaktFirstMatch(moaktAttachSizeRe, li[1])); sizeStr != "" {
+			att["size"] = moaktAttachSizeBytes(moaktStripTags(sizeStr))
+		}
+		if lk := moaktAttachLinkRe.FindStringSubmatch(li[1]); len(lk) >= 2 {
+			target := lk[1]
+			if !strings.HasPrefix(target, "/") {
+				target = "/" + target
+			}
+			att["url"] = origin + target
+		} else if idURL := moaktAttachMailID(li[1]); idURL != "" {
+			att["url"] = idURL
+		}
+		atts = append(atts, att)
+	}
+	return atts
+}
+
+/* moaktFirstMatch 返回首个分组捕获结果，无匹配时返回空串 */
+func moaktFirstMatch(re *regexp.Regexp, src string) string {
+	m := re.FindStringSubmatch(src)
+	if len(m) >= 2 {
+		return m[1]
+	}
+	return ""
+}
+
+/*
+ * moaktAttachSizeBytes 将 attach_size 的人类可读文本（如 "0.00 MB"、"128 KB"）
+ * 换算为字节（float64，与 normalizeAttachments 的 size 提取约定一致）。
+ */
+func moaktAttachSizeBytes(s string) float64 {
+	fields := strings.Fields(s)
+	if len(fields) < 2 {
+		return 0
+	}
+	v, err := strconv.ParseFloat(fields[0], 64)
+	if err != nil {
+		return 0
+	}
+	switch strings.ToUpper(fields[1]) {
+	case "KB":
+		return v * 1024
+	case "MB":
+		return v * 1024 * 1024
+	case "GB":
+		return v * 1024 * 1024 * 1024
+	}
+	return 0
+}
+
+/*
+ * moaktAttachMailID 从 /html 视图或 /plain 视图附件链接的兜底匹配中提取
+ * 邮件 ID，用于仅拿到下载 uuid 的场景（按 moakt.com 的链接格式降级）。
+ */
+func moaktAttachMailID(li string) string {
+	m := moaktHrefEmailRe.FindStringSubmatch(li)
+	if len(m) < 2 {
+		return ""
+	}
+	if !strings.Contains(li, "/attachment/") {
+		return ""
+	}
+	return moaktOrigin + m[1]
+}
+
+/*
+ * moaktFetchPage 以同一 Cookie 会话请求 moakt 页面，返回响应体字符串；
+ * HTTP 状态非 2xx 或读取失败时返回错误。
+ */
+func moaktFetchPage(client tls_client.HttpClient, sess *moaktSess, detailURL string, referer string) (string, error) {
+	req, err := http.NewRequest("GET", detailURL, nil)
+	if err != nil {
+		return "", err
+	}
+	moaktSetPageHeaders(req, referer)
+	req.Header.Set("Cookie", sess.CookieHdr)
+	resp, err := client.Do(req)
+	if err != nil {
+		return "", err
+	}
+	defer resp.Body.Close()
+	if err := CheckHTTPStatus(resp, "moakt mail"); err != nil {
+		_, _ = io.Copy(io.Discard, resp.Body)
+		return "", err
+	}
+	b, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return "", err
+	}
+	return string(b), nil
+}
+
+/*
+ * moaktAppendMail 解析某封邮件的详情页并追加一条归一化结果骨架。
+ * /html 视图仅当正文容器非空时作为 HTML 候选，/plain 视图的纯文本
+ * 连同附件区块一并解析，Text 恒由预归一化的纯文本填充。
+ */
+func moaktAppendMail(out *[]NormEmail, client tls_client.HttpClient, sess *moaktSess, id string, email string, inclHTML bool) bool {
+	origin := moaktOrigin
+	locEsc := url.PathEscape(sess.Locale)
+	base := origin + "/" + locEsc
+
+	plainPage, err := moaktFetchPage(client, sess, base+"/email/"+url.PathEscape(id)+"/plain", base+"/email/"+url.PathEscape(id))
+	if err != nil {
+		return false
+	}
+	raw := moaktParseMessageHTML(plainPage, id, email)
+	text := moaktExtractBodyText(plainPage)
+	if text != "" {
+		raw["text"] = text
+	}
+
+	/* 附件区块仅存在于 /html 视图，HTML 候选亦一并获取 */
+	htmlPage := ""
+	if inclHTML {
+		if hp, err := moaktFetchPage(client, sess, base+"/email/"+url.PathEscape(id)+"/html", base+"/email/"+url.PathEscape(id)); err == nil {
+			htmlPage = hp
+			if body := moaktExtractBodyHTML(hp); body != "" {
+				raw["html"] = body
+			}
+		}
+	}
+	attPage := htmlPage
+	if attPage == "" {
+		attPage = plainPage
+	}
+	if atts := moaktExtractAttachments(attPage, origin, locEsc); len(atts) > 0 {
+		raw["attachments"] = atts
+	}
+
+	/* /html 视图字段脚注缺失时从 /plain 视图兜底解析 */
+	outRaw := raw
+	if htmlPage != "" {
+		for _, key := range []string{"subject", "date", "from"} {
+			if v, ok := raw[key].(string); !ok || v == "" {
+				if alt := moaktParseMessageHTML(htmlPage, id, email); alt[key] != nil {
+					outRaw[key] = alt[key]
+				}
+			}
+		}
+	}
+
+	*out = append(*out, NormalizeMap(outRaw, email))
+	return true
+}
+
 func moaktParseMessageHTML(page string, id string, recipient string) map[string]interface{} {
 	raw := map[string]interface{}{"id": id, "to": recipient}
 	if sm := moaktTitleRe.FindStringSubmatch(page); len(sm) >= 2 {
@@ -265,10 +471,6 @@ func moaktParseMessageHTML(page string, id string, recipient string) map[string]
 		if em := moaktFromAddrRe.FindStringSubmatch(inner); len(em) >= 2 {
 			raw["from"] = strings.TrimSpace(em[1])
 		}
-	}
-	/* 使用 HTML 解析器提取邮件正文（完整支持嵌套 div） */
-	if body := moaktExtractBodyHTML(page); body != "" {
-		raw["html"] = body
 	}
 	return raw
 }
@@ -380,7 +582,8 @@ func MoaktGenerate(domain *string) (*CreatedMailbox, error) {
 	}, nil
 }
 
-// MoaktGetEmails 拉取收件箱链接后逐封 GET .../email/{id}/html 解析正文。
+// MoaktGetEmails 拉取收件箱链接后逐封请求 .../email/{id}/html 与 .../email/{id}/plain 详情，
+// 正文与附件解析规则见 moaktAppendMail。
 func MoaktGetEmails(email, token string) ([]NormEmail, error) {
 	sess, err := moaktDecodeSess(token)
 	if err != nil {
@@ -411,28 +614,7 @@ func MoaktGetEmails(email, token string) ([]NormEmail, error) {
 	ids := moaktListMailIDs(string(body))
 	out := make([]NormEmail, 0, len(ids))
 	for _, id := range ids {
-		detailURL := moaktOrigin + "/" + url.PathEscape(loc) + "/email/" + url.PathEscape(id) + "/html"
-		reqd, err := http.NewRequest("GET", detailURL, nil)
-		if err != nil {
-			continue
-		}
-		moaktSetPageHeaders(reqd, moaktOrigin+"/"+url.PathEscape(loc)+"/email/"+url.PathEscape(id))
-		reqd.Header.Set("Cookie", sess.CookieHdr)
-		respd, err := client.Do(reqd)
-		if err != nil {
-			continue
-		}
-		if err := CheckHTTPStatus(respd, "moakt mail html"); err != nil {
-			respd.Body.Close()
-			continue
-		}
-		b, err := io.ReadAll(respd.Body)
-		respd.Body.Close()
-		if err != nil {
-			continue
-		}
-		raw := moaktParseMessageHTML(string(b), id, email)
-		out = append(out, NormalizeMap(raw, email))
+		moaktAppendMail(&out, client, sess, id, email, true)
 	}
 	return out, nil
 }

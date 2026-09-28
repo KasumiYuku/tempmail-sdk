@@ -50,9 +50,8 @@ static SENDER_RE: LazyLock<Regex> = LazyLock::new(|| {
     Regex::new(r#"(?is)<li\s+class="sender"[^>]*>[\s\S]*?<span[^>]*>([\s\S]*?)</span>\s*</li>"#)
         .expect("re")
 });
-static BODY_OPEN_RE: LazyLock<Regex> = LazyLock::new(|| {
-    Regex::new(r#"(?is)<div\s+class="email-body"\s*>"#).expect("re")
-});
+static BODY_OPEN_RE: LazyLock<Regex> =
+    LazyLock::new(|| Regex::new(r#"(?is)<div\s+class="email-body"\s*>"#).expect("re"));
 static FROM_ADDR_RE: LazyLock<Regex> = LazyLock::new(|| {
     Regex::new(r#"<([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})>"#).expect("re")
 });

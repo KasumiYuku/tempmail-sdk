@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"strings"
+	"time"
 
 	http "github.com/bogdanfinn/fhttp"
 )
@@ -18,6 +19,33 @@ import (
  */
 
 const disposablemailAppAPIBase = "https://disposablemail.app/api"
+
+/**
+ * 归因注记（2026-09-28 平台级归因）：
+ * 探针实测（MX 为 mail.disposablemail.app）：
+ * - disposablemail.dev 域可正常收信，Sentinel 邮件经 SMTP 发送后平台 API 30 秒内可见。
+ * - mailmehere.cc 域存在收信丢失（连续 2 封信均未落件；随后补发才被平台记录）。
+ * - 建箱支持 {"domain": "..."} 显式指定域；服务器会随机分配域并偶发限流（HTTP 429）。
+ * 根因：平台随机域名策略 + mailmehere.cc 域收信不可靠，非 SDK 客户端缺陷。
+ * SDK 已修正为按邮件真实字段（fromAddress/bodyText 等）显式映射。
+ */
+
+/* disposablemailAppEmailMsg disposablemail.app 邮件对象的真实响应结构
+ * 平台下发的字段与 SDK 设计文档中的映射表不同（如 from_address 实为 fromAddress），
+ * 直接按真实字段解析避免字段候选策略错配 */
+type disposablemailAppEmailMsg struct {
+	ID          string      `json:"id"`
+	FromAddress string      `json:"fromAddress"`
+	FromName    string      `json:"fromName"`
+	Subject     string      `json:"subject"`
+	BodyText    string      `json:"bodyText"`
+	BodyHTML    string      `json:"bodyHtml"`
+	ReceivedAt  string      `json:"receivedAt"`
+	IsRead      bool        `json:"isRead"`
+	Forwarded   bool        `json:"forwarded"`
+	Size        int64       `json:"size"`
+	Attachments interface{} `json:"attachments"`
+}
 
 /* disposablemailAppHeaders 设置请求头 */
 func disposablemailAppHeaders(req *http.Request) {
@@ -37,7 +65,7 @@ func disposablemailAppHeaders(req *http.Request) {
  *   3. token 直接存储 API 返回的 token 字符串
  */
 func DisposablemailAppGenerate(channel ...string) (*CreatedMailbox, error) {
-	req, err := http.NewRequest("POST", disposablemailAppAPIBase+"/inbox", strings.NewReader("{}"))
+	req, err := http.NewRequest("POST", disposablemailAppAPIBase+"/inbox", strings.NewReader(`{"domain":"disposablemail.dev"}`))
 	if err != nil {
 		return nil, fmt.Errorf("disposablemail-app: 创建请求失败: %w", err)
 	}
@@ -107,12 +135,17 @@ func DisposablemailAppGetEmails(email, token string) ([]NormEmail, error) {
 		return nil, fmt.Errorf("disposablemail-app: token 为空")
 	}
 
-	u := fmt.Sprintf("%s/inbox/emails?token=%s", disposablemailAppAPIBase, token)
+	/*
+	 * 平台对同一 URL 偶发返回陈旧空列表（SDK 压测观察：手工带 Origin 可读、
+	 * SDK 同 URL n=0），附加 cachebust 强制回源；同时显式禁缓存。
+	 */
+	u := fmt.Sprintf("%s/inbox/emails?token=%s&cachebust=%d", disposablemailAppAPIBase, token, time.Now().UnixNano())
 	req, err := http.NewRequest("GET", u, nil)
 	if err != nil {
 		return nil, fmt.Errorf("disposablemail-app: 创建请求失败: %w", err)
 	}
 	disposablemailAppHeaders(req)
+	req.Header.Set("Cache-Control", "no-cache")
 	/* GET 请求不需要 Content-Type */
 	req.Header.Del("Content-Type")
 
@@ -137,8 +170,8 @@ func DisposablemailAppGetEmails(email, token string) ([]NormEmail, error) {
 	 * 有邮件时 emails 数组包含邮件对象
 	 */
 	var result struct {
-		Emails []map[string]interface{} `json:"emails"`
-		Total  int                      `json:"total"`
+		Emails []disposablemailAppEmailMsg `json:"emails"`
+		Total  int                         `json:"total"`
 	}
 	if err := json.Unmarshal(body, &result); err != nil {
 		return nil, fmt.Errorf("disposablemail-app: 解析邮件列表失败: %w", err)
@@ -148,5 +181,23 @@ func DisposablemailAppGetEmails(email, token string) ([]NormEmail, error) {
 		return []NormEmail{}, nil
 	}
 
-	return normEmailsFromMaps(result.Emails, email), nil
+	/* 以邮件对象原始结构显式映射后归一化，避免依赖空类型的隐性解析 */
+	emails := make([]NormEmail, 0, len(result.Emails))
+	for _, msg := range result.Emails {
+		flat := map[string]interface{}{
+			"id":          msg.ID,
+			"from":        msg.FromAddress,
+			"to":          email,
+			"subject":     msg.Subject,
+			"text":        msg.BodyText,
+			"html":        msg.BodyHTML,
+			"date":        msg.ReceivedAt,
+			"isRead":      msg.IsRead,
+			"name":        msg.FromName,
+			"attachments": msg.Attachments,
+		}
+		emails = append(emails, NormalizeMap(flat, email))
+	}
+
+	return emails, nil
 }

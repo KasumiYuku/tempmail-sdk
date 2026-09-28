@@ -98,3 +98,11 @@ sdk/kotlin/build/
 sdk/go/verify/verify_result.json
 sdk/go/verify/verify_report.md
 sdk/go/verify/REPORT.md
+
+sdk/go/verify/sweep1_reps.txt
+sdk/go/verify/net_families.json
+sdk/go/verify_sweep/
+sdk/go/demo/
+sdk/go/example/
+sdk/go/verify/
+devlog.md

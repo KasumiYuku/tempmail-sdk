@@ -1,7 +1,7 @@
 package com.xxxxteam.tempmail;
 
 /**
- * 全部 279 个渠道标识常量（与 baseline 逐行一致，供强类型引用）。
+ * 全部 301 个渠道标识常量（与 baseline 逐行一致，供强类型引用）。
  */
 public final class Channels {
 
@@ -58,6 +58,8 @@ public final class Channels {
     public static final String Tempmailc = "tempmailc";
     /** Mailnesia */
     public static final String Mailnesia = "mailnesia";
+    /** MailTicking */
+    public static final String Mailticking = "mailticking";
     /** ThrowawayMail */
     public static final String Throwawaymail = "throwawaymail";
     /** TempMail Fish */
@@ -156,8 +158,6 @@ public final class Channels {
     public static final String Mail123 = "mail123";
     /** Mail10s */
     public static final String Mail10s = "mail10s";
-    /** WebMailTemp */
-    public static final String Webmailtemp = "webmailtemp";
     /** TempFastMail */
     public static final String Tempfastmail = "tempfastmail";
     /** 1SecMail */
@@ -320,8 +320,6 @@ public final class Channels {
     public static final String Rootsh = "rootsh";
     /** FakeEmailSite */
     public static final String FakeEmailSite = "fake-email-site";
-    /** Mohmal */
-    public static final String Mohmal = "mohmal";
     /** MailGolem */
     public static final String Mailgolem = "mailgolem";
     /** BestTempMail */
@@ -362,8 +360,6 @@ public final class Channels {
     public static final String EmailtempOrg = "emailtemp-org";
     /** MyTempMail.cc */
     public static final String MytempmailCc = "mytempmail-cc";
-    /** TempMailNow */
-    public static final String TempMailNow = "temp-mail-now";
     /** Mail.td */
     public static final String MailTd = "mail-td";
     /** Mailhole.de */
@@ -376,8 +372,6 @@ public final class Channels {
     public static final String Nimail = "nimail";
     /** FreeCustom.Email */
     public static final String Freecustom = "freecustom";
-    /** Mailmomy (16888888.cyou) */
-    public static final String N16888888Cyou = "16888888-cyou";
     /** Mailmomy (17666688.shop) */
     public static final String N17666688Shop = "17666688-shop";
     /** Mailmomy (282mail.com) */
@@ -406,8 +400,6 @@ public final class Channels {
     public static final String EbsComAr = "ebs-com-ar";
     /** Mailinator (etgdev.de) */
     public static final String EtgdevDe = "etgdev-de";
-    /** Mailmomy (evergreenco.shop) */
-    public static final String EvergreencoShop = "evergreenco-shop";
     /** Mailinator (fwd2m.eszett.es) */
     public static final String Fwd2mEszettEs = "fwd2m-eszett-es";
     /** Mailinator (jama.trenet.eu) */
@@ -554,8 +546,6 @@ public final class Channels {
     public static final String TempMailOrg = "temp-mail-org";
     /** XKX.me */
     public static final String XkxMe = "xkx-me";
-    /** Gonebox Email */
-    public static final String GoneboxEmail = "gonebox-email";
     /** Mailcat AI */
     public static final String MailcatAi = "mailcat-ai";
     /** TempGo Email */
@@ -566,4 +556,58 @@ public final class Channels {
     public static final String DropmailMe = "dropmail-me";
     /** 10MinuteMail.net */
     public static final String TenMinuteMailNet = "ten-minute-mail-net";
+    /** TempMails.io */
+    public static final String TempmailsIo = "tempmails-io";
+    /** ShitPost.email */
+    public static final String ShitpostEmail = "shitpost-email";
+    /** Smails.dev */
+    public static final String Smails = "smails";
+    /** TempMail Portal */
+    public static final String Tempmailportal = "tempmailportal";
+    /** HuskMail */
+    public static final String Huskmail = "huskmail";
+    /** Zerodrop */
+    public static final String Zerodrop = "zerodrop";
+    /** FireTempMail */
+    public static final String Firetempmail = "firetempmail";
+    /** NullMail */
+    public static final String Nullmail = "nullmail";
+    /** Tenmin.app */
+    public static final String TenminApp = "tenmin-app";
+    /** MTempMail */
+    public static final String Mtempmail = "mtempmail";
+    /** TempMail.ee */
+    public static final String TempmailEe = "tempmail-ee";
+    /** Temporarymail.com */
+    public static final String TemporarymailCom = "temporarymail-com";
+    /** 30minemail */
+    public static final String Email30min = "30minemail";
+    /** Linshi.xyz */
+    public static final String LinshiXyz = "linshi-xyz";
+    /** CrazyMailing */
+    public static final String Crazymailing = "crazymailing";
+    /** UniMail Bot */
+    public static final String NoxenDe5Net = "noxen-de5-net";
+    /** NukeMail */
+    public static final String Nukemail = "nukemail";
+    /** ShadowMail */
+    public static final String Shadowmail = "shadowmail";
+    /** FlyByMail */
+    public static final String Flybymail = "flybymail";
+    /** NowTempMail */
+    public static final String Nowtempmail = "nowtempmail";
+    /** ClawdEmail */
+    public static final String Clawdemail = "clawdemail";
+    /** TempMail100 */
+    public static final String Tempmail100 = "tempmail100";
+    /** Tempmailto */
+    public static final String Tempmailto = "tempmailto";
+    /** TempMailGG */
+    public static final String TempMailGg = "temp-mail-gg";
+    /** Tmpkit */
+    public static final String Tmpkit = "tmpkit";
+    /** Internxt */
+    public static final String Internxt = "internxt";
+    /** GeneratorEmail */
+    public static final String GeneratorEmail = "generator-email";
 }

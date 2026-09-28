@@ -52,6 +52,7 @@ add_library(tempmail_sdk STATIC
     src/providers/mailforspam.c
     src/providers/tempmailc.c
     src/providers/mailnesia.c
+    src/providers/mailticking.c
     src/providers/throwawaymail.c
     src/providers/tempmail_fish.c
     src/providers/neighbours_sh.c
@@ -63,7 +64,6 @@ add_library(tempmail_sdk STATIC
     src/providers/getnada.c
     src/providers/mail123.c
     src/providers/mail10s.c
-    src/providers/webmailtemp.c
     src/providers/tempfastmail.c
     src/providers/one_sec_mail.c
     src/providers/fakemail.c
@@ -89,7 +89,6 @@ add_library(tempmail_sdk STATIC
     src/providers/haribu.c
     src/providers/rootsh.c
     src/providers/fake_email_site.c
-    src/providers/mohmal.c
     src/providers/mailgolem.c
     src/providers/best_temp_mail.c
     src/providers/disposablemail_app.c
@@ -109,7 +108,6 @@ add_library(tempmail_sdk STATIC
     src/providers/tempp_mails.c
     src/providers/emailtemp_org.c
     src/providers/mytempmail_cc.c
-    src/providers/temp_mail_now.c
     src/providers/mail_td.c
     src/providers/mailhole_de.c
     src/providers/tmail_link.c
@@ -178,13 +176,11 @@ add_library(tempmail_sdk STATIC
     src/providers/null_k3vin_net.c
     src/providers/really_istrash_com.c
     src/providers/spam_hortuk_ovh.c
-    src/providers/16888888_cyou.c
     src/providers/17666688_shop.c
     src/providers/282mail_com.c
     src/providers/bsdu32_buzz.c
     src/providers/doxu243_buzz.c
     src/providers/easyme_pro.c
-    src/providers/evergreenco_shop.c
     src/providers/layueming_pics.c
     src/providers/mingyuekeji_online.c
     src/providers/mingyueming_click.c
@@ -195,7 +191,6 @@ add_library(tempmail_sdk STATIC
     src/providers/sbook_pics.c
     src/providers/xue32_buzz.c
     src/providers/xkx_me.c
-    src/providers/gonebox_email.c
     src/providers/mailcat_ai.c
     src/providers/tempgo_email.c
     src/providers/restmail_net.c
@@ -209,6 +204,33 @@ add_library(tempmail_sdk STATIC
     src/providers/notfond_404_mn.c
     src/providers/dropmail_me.c
     src/providers/ten_minute_mail_net.c
+    src/providers/tempmails_io.c
+    src/providers/shitpost_email.c
+    src/providers/smails.c
+    src/providers/tempmailportal.c
+    src/providers/huskmail.c
+    src/providers/zerodrop.c
+    src/providers/firetempmail.c
+    src/providers/nullmail.c
+    src/providers/tenmin_app.c
+    src/providers/mtempmail.c
+    src/providers/tempmail_ee.c
+    src/providers/temporarymail_com.c
+    src/providers/email30min.c
+    src/providers/linshi_xyz.c
+    src/providers/crazymailing.c
+    src/providers/noxen_de5_net.c
+    src/providers/nukemail.c
+    src/providers/shadowmail.c
+    src/providers/flybymail.c
+    src/providers/nowtempmail.c
+    src/providers/clawdemail.c
+    src/providers/tempmail100.c
+    src/providers/tempmailto.c
+    src/providers/temp_mail_gg.c
+    src/providers/tmpkit.c
+    src/providers/internxt.c
+    src/providers/generator_email.c
     vendor/cJSON.c
 )
 

@@ -47,8 +47,12 @@ pub fn generate_email() -> Result<EmailInfo, String> {
             return Err("ten-minute-mail-net: 响应中未找到 PHPSESSID".into());
         }
 
-        let data: Value = resp.json().await.map_err(|e| format!("ten-minute-mail-net: 解析响应失败: {}", e))?;
-        let email_addr = data.get("mail_get_mail")
+        let data: Value = resp
+            .json()
+            .await
+            .map_err(|e| format!("ten-minute-mail-net: 解析响应失败: {}", e))?;
+        let email_addr = data
+            .get("mail_get_mail")
             .and_then(|v| v.as_str())
             .unwrap_or("")
             .to_string();
@@ -56,7 +60,8 @@ pub fn generate_email() -> Result<EmailInfo, String> {
             return Err("ten-minute-mail-net: 响应缺少有效邮箱地址".into());
         }
 
-        let token = serde_json::json!({ "cookie": format!("PHPSESSID={}", session_id) }).to_string();
+        let token =
+            serde_json::json!({ "cookie": format!("PHPSESSID={}", session_id) }).to_string();
 
         Ok(EmailInfo {
             channel: Channel::TenMinuteMailNet,
@@ -76,7 +81,8 @@ pub fn get_emails(token: &str, email: &str) -> Result<Vec<Email>, String> {
 
     let parsed: Value = serde_json::from_str(token)
         .map_err(|_| "ten-minute-mail-net: token 格式无效".to_string())?;
-    let cookie = parsed.get("cookie")
+    let cookie = parsed
+        .get("cookie")
         .and_then(|v| v.as_str())
         .unwrap_or("")
         .to_string();

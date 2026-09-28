@@ -159,13 +159,18 @@ pub fn get_emails(token: &str, email: &str) -> Result<Vec<Email>, String> {
         return Err(format!("tempgmailer: get inbox failed: {}", text));
     }
 
-    let messages = data["data"]["messages"].as_array().cloned().unwrap_or_default();
+    let messages = data["data"]["messages"]
+        .as_array()
+        .cloned()
+        .unwrap_or_default();
 
     let mut result = Vec::new();
     for msg in &messages {
         let from_addr = msg["from"]["address"].as_str().unwrap_or("");
         let subject = msg["subject"].as_str().unwrap_or("");
-        let html_content = msg["body"].as_str().unwrap_or(msg["intro"].as_str().unwrap_or(""));
+        let html_content = msg["body"]
+            .as_str()
+            .unwrap_or(msg["intro"].as_str().unwrap_or(""));
         let text_content = msg["intro"].as_str().unwrap_or("");
         let created_at = msg["createdAt"].as_str().unwrap_or("");
 

@@ -24,10 +24,10 @@ fn fnv_hash(s: &str) -> String {
     for byte in s.bytes() {
         hash ^= byte as u32;
         hash = hash.wrapping_add(
-            (hash << 1)
-                .wrapping_add((hash << 4).wrapping_add(
-                    (hash << 7).wrapping_add((hash << 8).wrapping_add(hash << 24)),
-                )),
+            (hash << 1).wrapping_add(
+                (hash << 4)
+                    .wrapping_add((hash << 7).wrapping_add((hash << 8).wrapping_add(hash << 24))),
+            ),
         );
     }
     format!("{:x}", hash)
@@ -47,7 +47,9 @@ fn random_part() -> String {
     let date_str = Utc::now().format("%Y%m%d").to_string();
     let chars: &[u8] = b"abcdefghijklmnopqrstuvwxyz0123456789";
     let mut rng = rand::thread_rng();
-    let rand_str: String = (0..16).map(|_| chars[rng.gen_range(0..chars.len())] as char).collect();
+    let rand_str: String = (0..16)
+        .map(|_| chars[rng.gen_range(0..chars.len())] as char)
+        .collect();
     format!("{}{}", date_str, rand_str)
 }
 
@@ -110,7 +112,10 @@ fn graphql_request(auth_token: &str, query: &str) -> Result<Value, String> {
             .map_err(|e| format!("dropmail-me: 读取 GraphQL 响应失败: {}", e))?;
 
         if !status.is_success() {
-            return Err(format!("dropmail-me: GraphQL 请求失败: {} {}", status, text));
+            return Err(format!(
+                "dropmail-me: GraphQL 请求失败: {} {}",
+                status, text
+            ));
         }
 
         let data: Value = serde_json::from_str(&text)
@@ -161,8 +166,8 @@ pub fn generate_email(_duration: u32, _domain: Option<&str>) -> Result<EmailInfo
 
 /// 获取邮件列表
 pub fn get_emails(token: &str, email: &str) -> Result<Vec<Email>, String> {
-    let session: Value = serde_json::from_str(token)
-        .map_err(|e| format!("dropmail-me: 解析 token 失败: {}", e))?;
+    let session: Value =
+        serde_json::from_str(token).map_err(|e| format!("dropmail-me: 解析 token 失败: {}", e))?;
 
     let session_id = session["session_id"]
         .as_str()

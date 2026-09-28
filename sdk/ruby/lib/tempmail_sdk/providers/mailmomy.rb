@@ -12,7 +12,7 @@ module TempmailSdk
     #   2. 本地随机 10 位 [a-z0-9] local part，拼接为 <local>@<域名>
     #   3. GET /api/mail/messages?to=<email>&page=1&limit=20 -> {"emails": [...], ...}
     #
-    # 16 个域名变体渠道（如 16888888.cyou、sbook.pics 等）复用同一后端，
+    # 域名变体渠道（如 17666688.shop、sbook.pics 等）复用同一后端，
     # 仅在 generate_email(domain) 传入固定域名即可，收信逻辑完全一致。
     module Mailmomy
       CHANNEL = "mailmomy"

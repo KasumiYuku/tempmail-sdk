@@ -7,8 +7,10 @@ import (
 	"math/rand"
 	"net/url"
 	"strings"
+	"time"
 
 	http "github.com/bogdanfinn/fhttp"
+	tls_client "github.com/bogdanfinn/tls-client"
 )
 
 const (
@@ -26,7 +28,11 @@ type neighboursShListResponse struct {
 	} `json:"data"`
 }
 
-/* neighboursShDetailResponse 单邮件详情响应：{"success":true,"data":{...}} */
+/*
+neighboursShDetailResponse 单邮件详情响应：{"success":true,"data":{...}}
+
+	平台 text 稳定为字符串，html 实测可能为布尔 false，两种字段均用 any 承接
+*/
 type neighboursShDetailResponse struct {
 	Success bool `json:"success"`
 	Data    *struct {
@@ -42,8 +48,8 @@ type neighboursShDetailResponse struct {
 			Text string `json:"text"`
 		} `json:"to"`
 		Subject     string        `json:"subject"`
-		Text        string        `json:"text"`
-		HTML        string        `json:"html"`
+		Text        any           `json:"text"`
+		HTML        any           `json:"html"`
 		Date        string        `json:"date"`
 		Attachments []interface{} `json:"attachments"`
 	} `json:"data"`
@@ -63,15 +69,59 @@ func neighboursShRandomUsername() string {
 }
 
 /*
+ * neighboursShClient 获取渠道 HTTP 客户端：优先使用注入的共享缓存客户端，
+ * 包内独立运行时（无根包注入）自动降级为本地构建的 TLS 指纹客户端。
+ */
+func neighboursShClient() tls_client.HttpClient {
+	if HTTPClient == nil {
+		/* 包内独立运行（测试等）：按当前配置快照自建客户端 */
+		options := []tls_client.HttpClientOption{
+			tls_client.WithTimeoutSeconds(30),
+			tls_client.WithCookieJar(tls_client.NewCookieJar()),
+		}
+		if GetConfigSnapshot != nil {
+			cfg := GetConfigSnapshot()
+			if cfg.Timeout > int64(time.Second) {
+				options[0] = tls_client.WithTimeoutSeconds(int(cfg.Timeout / int64(time.Second)))
+			}
+			if cfg.Insecure {
+				options = append(options, tls_client.WithInsecureSkipVerify())
+			}
+			if cfg.Proxy != "" {
+				options = append(options, tls_client.WithProxyUrl(cfg.Proxy))
+			}
+		}
+		client, err := tls_client.NewHttpClient(tls_client.NewNoopLogger(), options...)
+		if err == nil {
+			return client
+		}
+		final, ferr := tls_client.NewHttpClient(tls_client.NewNoopLogger())
+		if ferr != nil {
+			return nil
+		}
+		return final
+	}
+	client := HTTPClient()
+	if client == nil {
+		return nil
+	}
+	return client
+}
+
+/*
  * neighboursShGetJSON 使用 SDK 共享客户端发起 GET 请求并读取响应体
  */
 func neighboursShGetJSON(u string) ([]byte, int, error) {
+	client := neighboursShClient()
+	if client == nil {
+		return nil, 0, fmt.Errorf("neighbours-sh: HTTP 客户端初始化失败")
+	}
 	req, err := http.NewRequest(http.MethodGet, u, nil)
 	if err != nil {
 		return nil, 0, err
 	}
 	req.Header.Set("Accept", "application/json")
-	resp, err := HTTPClient().Do(req)
+	resp, err := client.Do(req)
 	if err != nil {
 		return nil, 0, err
 	}
@@ -85,10 +135,35 @@ func neighboursShGetJSON(u string) ([]byte, int, error) {
 
 /*
  * NeighboursShGenerate 创建 neighbours.sh 临时邮箱
- * 公共收件箱模式，任意用户名即可收信，无需 API 调用，Token 存邮箱地址本身
+ * neighbours.sh 裸域已被平台弃收（不在 /config/domains 现役列表），
+ * 先在 /api/v1/config/domains 拉取现役域名随机选择，避免生成黑洞地址。
  */
 func NeighboursShGenerate() (*CreatedMailbox, error) {
-	email := neighboursShRandomUsername() + "@" + neighboursShDomain
+	body, status, err := neighboursShGetJSON(fmt.Sprintf("%s/config/domains", neighboursShBase))
+	if err != nil {
+		return nil, fmt.Errorf("neighbours-sh: 获取域名列表失败: %w", err)
+	}
+	if status < 200 || status >= 300 {
+		return nil, fmt.Errorf("neighbours-sh: 获取域名列表 http %d", status)
+	}
+	var cfg struct {
+		Data struct {
+			Domains         []string `json:"domains"`
+			WildcardDomains []string `json:"wildcardDomains"`
+		} `json:"data"`
+	}
+	if err := json.Unmarshal(body, &cfg); err != nil {
+		return nil, fmt.Errorf("neighbours-sh: 解析域名列表失败: %w", err)
+	}
+	domains := append([]string{}, cfg.Data.Domains...)
+	for _, w := range cfg.Data.WildcardDomains {
+		domains = append(domains, strings.TrimPrefix(w, "*."))
+	}
+	if len(domains) == 0 {
+		return nil, fmt.Errorf("neighbours-sh: 平台无可用域名")
+	}
+	domain := domains[rand.Intn(len(domains))]
+	email := neighboursShRandomUsername() + "@" + domain
 	return &CreatedMailbox{
 		Channel: "neighbours-sh",
 		Email:   email,
@@ -116,15 +191,44 @@ func neighboursShFlatten(detail *neighboursShDetailResponse, recipient string) m
 	if d.UID != nil {
 		id = fmt.Sprintf("%d", *d.UID)
 	}
+	text := ""
+	if s, ok := d.Text.(string); ok {
+		text = s
+	}
+	htmlBody := ""
+	if s, ok := d.HTML.(string); ok {
+		htmlBody = s
+	}
 	return map[string]any{
 		"id":          id,
 		"from":        from,
 		"to":          to,
 		"subject":     d.Subject,
-		"text":        d.Text,
-		"html":        d.HTML,
+		"text":        text,
+		"html":        htmlBody,
 		"date":        d.Date,
 		"attachments": d.Attachments,
+	}
+}
+
+/*
+ * neighboursShToNorm 无根包注入时的本地兜底归一化，保底返回非空邮件
+ */
+func neighboursShToNorm(raw map[string]any) NormEmail {
+	str := func(v any) string {
+		if s, ok := v.(string); ok {
+			return s
+		}
+		return ""
+	}
+	return NormEmail{
+		ID:      str(raw["id"]),
+		From:    str(raw["from"]),
+		To:      str(raw["to"]),
+		Subject: str(raw["subject"]),
+		Text:    str(raw["text"]),
+		HTML:    str(raw["html"]),
+		Date:    str(raw["date"]),
 	}
 }
 
@@ -174,7 +278,12 @@ func NeighboursShGetEmails(token, email string) ([]NormEmail, error) {
 		if detail.Data == nil {
 			continue
 		}
-		out = append(out, NormalizeMap(neighboursShFlatten(&detail, address), address))
+		if NormalizeMap != nil {
+			out = append(out, NormalizeMap(neighboursShFlatten(&detail, address), address))
+			continue
+		}
+		/* 包内独立运行（无根包注入归一化）时本地兜底映射 */
+		out = append(out, neighboursShToNorm(neighboursShFlatten(&detail, address)))
 	}
 	return out, nil
 }

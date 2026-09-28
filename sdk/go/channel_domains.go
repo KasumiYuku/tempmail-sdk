@@ -53,7 +53,6 @@ var channelDomains = map[Channel][]string{
 	ChannelMffac:        {"mffac.com"},
 	ChannelNimail:       {"nimail.cn"},
 	ChannelMailgolem:    {"mailgolem.com"},
-	ChannelMohmal:       {"emailinbo.live"},
 
 	// tempmail-plus 系列
 	ChannelTempmailPlus: {"mailto.plus"},

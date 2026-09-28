@@ -11,11 +11,18 @@ import (
 	http "github.com/bogdanfinn/fhttp"
 )
 
-/* 10minutemail.net 临时邮箱服务商
- * 流程：GET / 获取 session cookie（PHPSESSID）+ 从 HTML 提取随机分配的邮箱地址
- *       GET /mailbox.ajax.php?_={毫秒时间戳} 获取邮件列表（返回 HTML 表格，非 JSON）
- *       GET /readmail.html?mid={id} 获取单封邮件整页 HTML，从中提取正文片段
- * token 无需存储额外信息，session 由 tls-client 的 cookie jar 自动维护
+/*
+ * 10minutemail.net 静态解析问题（2026-09-28 深诊，时错时对，属广域 DNS 污染/劫持）：
+ * 国内部分递归 DNS（如本机 127.0.0.1 上游 199.96.62.21 的权威答案）解析到 199.96.62.21，
+ * 该地址 443 端口 TLS 握手 EOF、80 端口无响应，SDK HTTPClient 无法建连（联通性失败）。
+ * 实际 Cloudflare 权威解析为 172.66.40.135 / 172.66.43.121，经正确 IP 直连实测：
+ * - GET / 返回 200 与源码页（含 <input id="fe_text" value="xxx@xxx.com" 邮箱字段，正则可提取）
+ * - GET mailbox.ajax.php?_={ts}（带首页 PHPSESSID）返回 200 与邮件表格，信罗列完整（入箱 welcome）
+ * - GET readmail.html?mid=... 返回 200，mailinhtml 正文段与 email-decode 锚点均与现实现一致，提取正确
+ * 即页面结构与 API 未变、无 CF 挑战（原页面 CF 邮件混淆保护为常态配置），平台面完好；
+ * verify gen-failed「未能从首页提取邮箱」与平台结构无关，属网络解析层的间歇性联通失败。
+ * 由于使用共享 HTTPClient 的约束无法改走固定 IP，本文件提取逻辑保持现状（无需改动）；
+ * 网络污染下该渠道间歇失败为网络层问题，SDK 代码无补偿空间。
  */
 
 const tenminutemailNetBaseURL = "https://10minutemail.net"

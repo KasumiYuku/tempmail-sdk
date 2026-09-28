@@ -15,10 +15,10 @@ import com.xxxxteam.tempmail.providers.MailTm;
 import com.xxxxteam.tempmail.providers.Mailcatch;
 import com.xxxxteam.tempmail.providers.MaildropCc;
 import com.xxxxteam.tempmail.providers.Mailnesia;
+import com.xxxxteam.tempmail.providers.Mailticking;
 import com.xxxxteam.tempmail.providers.Moakt;
 import com.xxxxteam.tempmail.providers.Mailinator;
 import com.xxxxteam.tempmail.providers.Mailmomy;
-import com.xxxxteam.tempmail.providers.Mohmal;
 import com.xxxxteam.tempmail.providers.OneSecMail;
 import com.xxxxteam.tempmail.providers.SmailPw;
 import com.xxxxteam.tempmail.providers.TempmailCn;
@@ -81,7 +81,6 @@ import com.xxxxteam.tempmail.providers.DropmailClick;
 import com.xxxxteam.tempmail.providers.FakeEmailSite;
 import com.xxxxteam.tempmail.providers.Fmail;
 import com.xxxxteam.tempmail.providers.Freecustom;
-import com.xxxxteam.tempmail.providers.GoneboxEmail;
 import com.xxxxteam.tempmail.providers.Harakirimail;
 import com.xxxxteam.tempmail.providers.Inboxes;
 import com.xxxxteam.tempmail.providers.M2u;
@@ -98,7 +97,6 @@ import com.xxxxteam.tempmail.providers.TempGmailer;
 import com.xxxxteam.tempmail.providers.TempGoEmail;
 import com.xxxxteam.tempmail.providers.TempMailFish;
 import com.xxxxteam.tempmail.providers.TempMailFyi;
-import com.xxxxteam.tempmail.providers.TempMailNow;
 import com.xxxxteam.tempmail.providers.TempMailOrg;
 import com.xxxxteam.tempmail.providers.TempMailPro;
 import com.xxxxteam.tempmail.providers.TempMailTen;
@@ -106,11 +104,37 @@ import com.xxxxteam.tempmail.providers.TemppMails;
 import com.xxxxteam.tempmail.providers.ThrowawayMail;
 import com.xxxxteam.tempmail.providers.TmailLink;
 import com.xxxxteam.tempmail.providers.UnCorreoTemporal;
-import com.xxxxteam.tempmail.providers.WebMailTemp;
 import com.xxxxteam.tempmail.providers.XkxMe;
+import com.xxxxteam.tempmail.providers.Firetempmail;
+import com.xxxxteam.tempmail.providers.Huskmail;
+import com.xxxxteam.tempmail.providers.Mtempmail;
+import com.xxxxteam.tempmail.providers.Nullmail;
+import com.xxxxteam.tempmail.providers.ShitpostEmail;
+import com.xxxxteam.tempmail.providers.Smails;
+import com.xxxxteam.tempmail.providers.TempmailEe;
+import com.xxxxteam.tempmail.providers.Tempmailportal;
+import com.xxxxteam.tempmail.providers.TempmailsIo;
+import com.xxxxteam.tempmail.providers.TenminApp;
+import com.xxxxteam.tempmail.providers.Zerodrop;
+import com.xxxxteam.tempmail.providers.TemporarymailCom;
+import com.xxxxteam.tempmail.providers.Email30min;
+import com.xxxxteam.tempmail.providers.LinshiXyz;
+import com.xxxxteam.tempmail.providers.Crazymailing;
+import com.xxxxteam.tempmail.providers.NoxenDe5Net;
+import com.xxxxteam.tempmail.providers.Nukemail;
+import com.xxxxteam.tempmail.providers.Shadowmail;
+import com.xxxxteam.tempmail.providers.Flybymail;
+import com.xxxxteam.tempmail.providers.Nowtempmail;
+import com.xxxxteam.tempmail.providers.Clawdemail;
+import com.xxxxteam.tempmail.providers.Tempmail100;
+import com.xxxxteam.tempmail.providers.Tempmailto;
+import com.xxxxteam.tempmail.providers.TempMailGg;
+import com.xxxxteam.tempmail.providers.Tmpkit;
+import com.xxxxteam.tempmail.providers.Internxt;
+import com.xxxxteam.tempmail.providers.GeneratorEmail;
 
 /**
- * 全部 279 个渠道的注册入口（严格按 baseline 顺序）。
+ * 全部 301 个渠道的注册入口（严格按 baseline 顺序）。
  *
  * <p>Java 无 C# 的 ModuleInitializer，由 {@link Registry} 的静态初始化块调用 {@link #init()}
  * 完成注册，{@code TempMail.listChannels()} 输出顺序与 .baseline_channels.txt 逐行一致。
@@ -281,6 +305,12 @@ final class RegistryChannels {
                 "mailnesia.com",
                 o -> Mailnesia.generate(),
                 (e, t) -> Mailnesia.getEmails(e)));
+        Registry.register(new ChannelSpec(
+                "mailticking",
+                "MailTicking",
+                "mailticking.com",
+                o -> Mailticking.generate(),
+                (e, t) -> Mailticking.getEmails(t, e)));
         Registry.register(new ChannelSpec(
                 "throwawaymail",
                 "ThrowawayMail",
@@ -575,12 +605,6 @@ final class RegistryChannels {
                 "mail10s.com",
                 o -> Mail10s.generate(),
                 (e, t) -> Mail10s.getEmails(e)));
-        Registry.register(new ChannelSpec(
-                "webmailtemp",
-                "WebMailTemp",
-                "webmailtemp.com",
-                o -> WebMailTemp.generate(),
-                (e, t) -> WebMailTemp.getEmails(t, e)));
         Registry.register(new ChannelSpec(
                 "tempfastmail",
                 "TempFastMail",
@@ -1068,12 +1092,6 @@ final class RegistryChannels {
                 o -> FakeEmailSite.generate(),
                 (e, t) -> FakeEmailSite.getEmails(e)));
         Registry.register(new ChannelSpec(
-                "mohmal",
-                "Mohmal",
-                "mohmal.com",
-                o -> Mohmal.generate(),
-                (e, t) -> Mohmal.getEmails(e, t)));
-        Registry.register(new ChannelSpec(
                 "mailgolem",
                 "MailGolem",
                 "mailgolem.com",
@@ -1194,12 +1212,6 @@ final class RegistryChannels {
                 o -> MytempMailCc.generate(),
                 (e, t) -> MytempMailCc.getEmails(t, e)));
         Registry.register(new ChannelSpec(
-                "temp-mail-now",
-                "TempMailNow",
-                "temp-mail.now",
-                o -> TempMailNow.generate(),
-                (e, t) -> TempMailNow.getEmails(t, e)));
-        Registry.register(new ChannelSpec(
                 "mail-td",
                 "Mail.td",
                 "mail.td",
@@ -1235,12 +1247,6 @@ final class RegistryChannels {
                 "freecustom.email",
                 o -> Freecustom.generate(),
                 (e, t) -> Freecustom.getEmails(t, e)));
-        Registry.register(new ChannelSpec(
-                "16888888-cyou",
-                "Mailmomy (16888888.cyou)",
-                "mailmomy.com",
-                o -> Mailmomy.generate("16888888-cyou", "16888888.cyou"),
-                (e, t) -> Mailmomy.getEmails(e)));
         Registry.register(new ChannelSpec(
                 "17666688-shop",
                 "Mailmomy (17666688.shop)",
@@ -1325,12 +1331,6 @@ final class RegistryChannels {
                 "mailinator.com",
                 o -> Mailinator.generate("etgdev-de", "etgdev.de"),
                 (e, t) -> Mailinator.getEmails(e)));
-        Registry.register(new ChannelSpec(
-                "evergreenco-shop",
-                "Mailmomy (evergreenco.shop)",
-                "mailmomy.com",
-                o -> Mailmomy.generate("evergreenco-shop", "evergreenco.shop"),
-                (e, t) -> Mailmomy.getEmails(e)));
         Registry.register(new ChannelSpec(
                 "fwd2m-eszett-es",
                 "Mailinator (fwd2m.eszett.es)",
@@ -1770,12 +1770,6 @@ final class RegistryChannels {
                 o -> XkxMe.generate(),
                 (e, t) -> XkxMe.getEmails(t, e)));
         Registry.register(new ChannelSpec(
-                "gonebox-email",
-                "Gonebox Email",
-                "gonebox.email",
-                o -> GoneboxEmail.generate(),
-                (e, t) -> GoneboxEmail.getEmails(t, e)));
-        Registry.register(new ChannelSpec(
                 "mailcat-ai",
                 "Mailcat AI",
                 "mailcat.ai",
@@ -1805,5 +1799,167 @@ final class RegistryChannels {
                 "10minutemail.net",
                 o -> TenminutemailNet.generate(),
                 (e, t) -> TenminutemailNet.getEmails(t, e)));
+        Registry.register(new ChannelSpec(
+                "tempmails-io",
+                "TempMails.io",
+                "tempmails.io",
+                o -> TempmailsIo.generate(),
+                (e, t) -> TempmailsIo.getEmails(t, e)));
+        Registry.register(new ChannelSpec(
+                "shitpost-email",
+                "ShitPost.email",
+                "shitpost.email",
+                o -> ShitpostEmail.generate(),
+                (e, t) -> ShitpostEmail.getEmails(t, e)));
+        Registry.register(new ChannelSpec(
+                "smails",
+                "Smails.dev",
+                "smails.dev",
+                o -> Smails.generate(),
+                (e, t) -> Smails.getEmails(t, e)));
+        Registry.register(new ChannelSpec(
+                "tempmailportal",
+                "TempMail Portal",
+                "tempmailportal.com",
+                o -> Tempmailportal.generate(),
+                (e, t) -> Tempmailportal.getEmails(t, e)));
+        Registry.register(new ChannelSpec(
+                "huskmail",
+                "HuskMail",
+                "huskmail.xyz",
+                o -> Huskmail.generate(),
+                (e, t) -> Huskmail.getEmails(t, e)));
+        Registry.register(new ChannelSpec(
+                "zerodrop",
+                "Zerodrop",
+                "zerodrop.dev",
+                o -> Zerodrop.generate(),
+                (e, t) -> Zerodrop.getEmails(t, e)));
+        Registry.register(new ChannelSpec(
+                "firetempmail",
+                "FireTempMail",
+                "firetempmail.com",
+                o -> Firetempmail.generate(),
+                (e, t) -> Firetempmail.getEmails(t, e)));
+        Registry.register(new ChannelSpec(
+                "nullmail",
+                "NullMail",
+                "nullmail.cc",
+                o -> Nullmail.generate(),
+                (e, t) -> Nullmail.getEmails(t, e)));
+        Registry.register(new ChannelSpec(
+                "tenmin-app",
+                "Tenmin.app",
+                "tenmin.app",
+                o -> TenminApp.generate(),
+                (e, t) -> TenminApp.getEmails(t, e)));
+        Registry.register(new ChannelSpec(
+                "mtempmail",
+                "MTempMail",
+                "mtempmail.com",
+                o -> Mtempmail.generate(),
+                (e, t) -> Mtempmail.getEmails(t, e)));
+        Registry.register(new ChannelSpec(
+                "tempmail-ee",
+                "TempMail.ee",
+                "tempmail.ee",
+                o -> TempmailEe.generate(),
+                (e, t) -> TempmailEe.getEmails(t, e)));
+        Registry.register(new ChannelSpec(
+                "temporarymail-com",
+                "Temporarymail.com",
+                "temporarymail.com",
+                o -> TemporarymailCom.generate(),
+                (e, t) -> TemporarymailCom.getEmails(t, e)));
+        Registry.register(new ChannelSpec(
+                "30minemail",
+                "30minemail",
+                "30minemail.com",
+                o -> Email30min.generate(),
+                (e, t) -> Email30min.getEmails(t, e)));
+        Registry.register(new ChannelSpec(
+                "linshi-xyz",
+                "Linshi.xyz",
+                "linshi.xyz",
+                o -> LinshiXyz.generate(),
+                (e, t) -> LinshiXyz.getEmails(t, e)));
+        Registry.register(new ChannelSpec(
+                "crazymailing",
+                "CrazyMailing",
+                "crazymailing.com",
+                o -> Crazymailing.generate(),
+                (e, t) -> Crazymailing.getEmails(t, e)));
+        Registry.register(new ChannelSpec(
+                "noxen-de5-net",
+                "UniMail Bot",
+                "tempmail.noxen.de5.net",
+                o -> NoxenDe5Net.generate(),
+                (e, t) -> NoxenDe5Net.getEmails(t, e)));
+        Registry.register(new ChannelSpec(
+                "nukemail",
+                "NukeMail",
+                "nukemail.app",
+                o -> Nukemail.generate(),
+                (e, t) -> Nukemail.getEmails(t, e)));
+        Registry.register(new ChannelSpec(
+                "shadowmail",
+                "ShadowMail",
+                "shadowmail.win",
+                o -> Shadowmail.generate(),
+                (e, t) -> Shadowmail.getEmails(t, e)));
+        Registry.register(new ChannelSpec(
+                "flybymail",
+                "FlyByMail",
+                "flybymail.com",
+                o -> Flybymail.generate(),
+                (e, t) -> Flybymail.getEmails(t, e)));
+        Registry.register(new ChannelSpec(
+                "nowtempmail",
+                "NowTempMail",
+                "nowtempmail.com",
+                o -> Nowtempmail.generate(),
+                (e, t) -> Nowtempmail.getEmails(t, e)));
+        Registry.register(new ChannelSpec(
+                "clawdemail",
+                "ClawdEmail",
+                "clawdemail.com",
+                o -> Clawdemail.generate(),
+                (e, t) -> Clawdemail.getEmails(t, e)));
+        Registry.register(new ChannelSpec(
+                "tempmail100",
+                "TempMail100",
+                "tempmail100.com",
+                o -> Tempmail100.generate(),
+                (e, t) -> Tempmail100.getEmails(t, e)));
+        Registry.register(new ChannelSpec(
+                "tempmailto",
+                "Tempmailto",
+                "tempmailto.com",
+                o -> Tempmailto.generate(),
+                (e, t) -> Tempmailto.getEmails(t, e)));
+        Registry.register(new ChannelSpec(
+                "temp-mail-gg",
+                "TempMailGG",
+                "temp-mail.gg",
+                o -> TempMailGg.generate(),
+                (e, t) -> TempMailGg.getEmails(t, e)));
+        Registry.register(new ChannelSpec(
+                "tmpkit",
+                "Tmpkit",
+                "tmpkit.com",
+                o -> Tmpkit.generate(),
+                (e, t) -> Tmpkit.getEmails(t, e)));
+        Registry.register(new ChannelSpec(
+                "internxt",
+                "Internxt",
+                "internxt.com",
+                o -> Internxt.generate(),
+                (e, t) -> Internxt.getEmails(t, e)));
+        Registry.register(new ChannelSpec(
+                "generator-email",
+                "GeneratorEmail",
+                "generator.email",
+                o -> GeneratorEmail.generate(),
+                (e, t) -> GeneratorEmail.getEmails(t, e)));
     }
 }

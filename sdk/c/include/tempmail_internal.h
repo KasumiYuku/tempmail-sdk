@@ -217,6 +217,12 @@ tm_email_t *tm_provider_tempmailc_get_emails(const char *email, int *count);
 tm_email_info_t *tm_provider_mailnesia_generate(void);
 tm_email_t *tm_provider_mailnesia_get_emails(const char *email, int *count);
 
+/* mailticking（https://www.mailticking.com，POST 建箱 + activate_token 激活
+ * 会话，仅列表能力） */
+tm_email_info_t *tm_provider_mailticking_generate(void);
+tm_email_t *tm_provider_mailticking_get_emails(const char *email,
+                                               const char *token, int *count);
+
 tm_email_info_t *tm_provider_throwawaymail_generate(void);
 tm_email_t *tm_provider_throwawaymail_get_emails(const char *mailbox_id,
                                                  const char *email, int *count);
@@ -258,10 +264,6 @@ tm_email_t *tm_provider_mail123_get_emails(const char *email, int *count);
 
 tm_email_info_t *tm_provider_mail10s_generate(void);
 tm_email_t *tm_provider_mail10s_get_emails(const char *email, int *count);
-
-tm_email_info_t *tm_provider_webmailtemp_generate(void);
-tm_email_t *tm_provider_webmailtemp_get_emails(const char *token,
-                                               const char *email, int *count);
 
 tm_email_info_t *tm_provider_tempfastmail_generate(void);
 tm_email_t *tm_provider_tempfastmail_get_emails(const char *token,
@@ -360,10 +362,6 @@ tm_email_info_t *tm_provider_fake_email_site_generate(void);
 tm_email_t *tm_provider_fake_email_site_get_emails(const char *email,
                                                    int *count);
 
-tm_email_info_t *tm_provider_mohmal_generate(void);
-tm_email_t *tm_provider_mohmal_get_emails(const char *token, const char *email,
-                                          int *count);
-
 tm_email_info_t *tm_provider_mailgolem_generate(void);
 tm_email_t *tm_provider_mailgolem_get_emails(const char *token,
                                              const char *email, int *count);
@@ -449,10 +447,6 @@ tm_email_t *tm_provider_emailtemp_org_get_emails(const char *token,
 
 tm_email_info_t *tm_provider_mytempmail_cc_generate(void);
 tm_email_t *tm_provider_mytempmail_cc_get_emails(const char *token,
-                                                 const char *email, int *count);
-
-tm_email_info_t *tm_provider_temp_mail_now_generate(void);
-tm_email_t *tm_provider_temp_mail_now_get_emails(const char *token,
                                                  const char *email, int *count);
 
 tm_email_info_t *tm_provider_mail_td_generate(void);
@@ -684,8 +678,6 @@ tm_email_info_t *tm_provider_sendfree_org_generate(void);
 tm_email_t *tm_provider_sendfree_org_get_emails(const char *email, int *count);
 
 /* mailmomy 域名变体（复用 mailmomy 读信） */
-tm_email_info_t *tm_provider_16888888_cyou_generate(void);
-tm_email_t *tm_provider_16888888_cyou_get_emails(const char *email, int *count);
 tm_email_info_t *tm_provider_17666688_shop_generate(void);
 tm_email_t *tm_provider_17666688_shop_get_emails(const char *email, int *count);
 tm_email_info_t *tm_provider_282mail_com_generate(void);
@@ -696,9 +688,6 @@ tm_email_info_t *tm_provider_doxu243_buzz_generate(void);
 tm_email_t *tm_provider_doxu243_buzz_get_emails(const char *email, int *count);
 tm_email_info_t *tm_provider_easyme_pro_generate(void);
 tm_email_t *tm_provider_easyme_pro_get_emails(const char *email, int *count);
-tm_email_info_t *tm_provider_evergreenco_shop_generate(void);
-tm_email_t *tm_provider_evergreenco_shop_get_emails(const char *email,
-                                                    int *count);
 tm_email_info_t *tm_provider_layueming_pics_generate(void);
 tm_email_t *tm_provider_layueming_pics_get_emails(const char *email,
                                                   int *count);
@@ -727,11 +716,6 @@ tm_email_info_t *tm_provider_xkx_me_generate(void);
 tm_email_t *tm_provider_xkx_me_get_emails(const char *token, const char *email,
                                            int *count);
 
-/* gonebox.email — 无需认证 */
-tm_email_info_t *tm_provider_gonebox_email_generate(void);
-tm_email_t *tm_provider_gonebox_email_get_emails(const char *email, int *count);
-
-/* mailcat.ai — 需要 Bearer token */
 tm_email_info_t *tm_provider_mailcat_ai_generate(void);
 tm_email_t *tm_provider_mailcat_ai_get_emails(const char *token,
                                               const char *email, int *count);
@@ -777,5 +761,154 @@ tm_email_info_t *tm_provider_ten_minute_mail_net_generate(void);
 tm_email_t *tm_provider_ten_minute_mail_net_get_emails(const char *token,
                                                        const char *email,
                                                        int *count);
+
+/* ========== 2026-09 新增渠道（与 Go 端 provider 一一对应） ========== */
+
+/* tempmails-io（https://tempmails.io，POST 建箱/GET 读信，token 为 inbox token）
+ */
+tm_email_info_t *tm_provider_tempmails_io_generate(void);
+tm_email_t *tm_provider_tempmails_io_get_emails(const char *email,
+                                                const char *token, int *count);
+
+/* shitpost-email（https://shitpost.email，POST /api/create + GET /api/inbox） */
+tm_email_info_t *tm_provider_shitpost_email_generate(void);
+tm_email_t *tm_provider_shitpost_email_get_emails(const char *email,
+                                                  const char *token,
+                                                  int *count);
+
+/* smails（https://smails.dev，Bearer 认证，列表+详情二拉） */
+tm_email_info_t *tm_provider_smails_generate(void);
+tm_email_t *tm_provider_smails_get_emails(const char *email, const char *token,
+                                          int *count);
+
+/* tempmailportal（https://api.tempmailportal.com，Bearer 认证，列表+详情二拉） */
+tm_email_info_t *tm_provider_tempmailportal_generate(void);
+tm_email_t *tm_provider_tempmailportal_get_emails(const char *email,
+                                                  const char *token,
+                                                  int *count);
+
+/* huskmail（https://api.huskmail.space，JWT Bearer，列表+详情二拉） */
+tm_email_info_t *tm_provider_huskmail_generate(void);
+tm_email_t *tm_provider_huskmail_get_emails(const char *email,
+                                            const char *token, int *count);
+
+/* zerodrop（https://zerodrop.dev，本地建箱，读信解析 raw MIME） */
+tm_email_info_t *tm_provider_zerodrop_generate(void);
+tm_email_t *tm_provider_zerodrop_get_emails(const char *email,
+                                            const char *token, int *count);
+
+/* firetempmail（https://mail.firetempmail.com，本地建箱，需 Origin 头） */
+tm_email_info_t *tm_provider_firetempmail_generate(void);
+tm_email_t *tm_provider_firetempmail_get_emails(const char *email,
+                                                const char *token, int *count);
+
+/* nullmail（https://www.nullmail.cc，列表+正文二拉） */
+tm_email_info_t *tm_provider_nullmail_generate(void);
+tm_email_t *tm_provider_nullmail_get_emails(const char *email,
+                                            const char *token, int *count);
+
+/* tenmin-app（https://api.tenmin.app，GET 首访即建箱，token 为 localpart） */
+tm_email_info_t *tm_provider_tenmin_app_generate(void);
+tm_email_t *tm_provider_tenmin_app_get_emails(const char *email,
+                                              const char *token, int *count);
+
+/* mtempmail（https://mtempmail.com，公共 key 认证，body[] 分段正文） */
+tm_email_info_t *tm_provider_mtempmail_generate(void);
+tm_email_t *tm_provider_mtempmail_get_emails(const char *email,
+                                             const char *token, int *count);
+
+/* tempmail-ee（https://tempmail.ee，Cookie 会话绑定 + sec-ch-ua + 单封 MIME 解析）
+ */
+tm_email_info_t *tm_provider_tempmail_ee_generate(void);
+tm_email_t *tm_provider_tempmail_ee_get_emails(const char *email,
+                                               const char *token, int *count);
+
+/* temporarymail-com（https://temporarymail.com，无认证 REST，secretKey 会话，
+ * 详情与 /view/ 渲染端点二拉） */
+tm_email_info_t *tm_provider_temporarymail_com_generate(void);
+tm_email_t *tm_provider_temporarymail_com_get_emails(const char *email,
+                                                     const char *token,
+                                                     int *count);
+
+/* email30min（https://30minemail.com，无认证 GET 轮询，token 即完整地址） */
+tm_email_info_t *tm_provider_email30min_generate(void);
+tm_email_t *tm_provider_email30min_get_emails(const char *email,
+                                              const char *token, int *count);
+
+/* linshi-xyz（https://linshi.xyz，本地随机 6 位 hex 前缀，免建箱请求） */
+tm_email_info_t *tm_provider_linshi_xyz_generate(void);
+tm_email_t *tm_provider_linshi_xyz_get_emails(const char *email,
+                                              const char *token, int *count);
+
+/* crazymailing（https://crazymailing.com，mailbox id 会话 + 正文二拉） */
+tm_email_info_t *tm_provider_crazymailing_generate(void);
+tm_email_t *tm_provider_crazymailing_get_emails(const char *email,
+                                                const char *token, int *count);
+
+/* noxen-de5-net（https://tempmail.noxen.de5.net，JWT Cookie 会话 + 原始 EML
+ * 本地 MIME 解析，generate 支持首选域名 domain） */
+tm_email_info_t *tm_provider_noxen_de5_net_generate(const char *domain);
+tm_email_t *tm_provider_noxen_de5_net_get_emails(const char *email,
+                                                 const char *token, int *count);
+
+/* nukemail（https://nukemail.app，SHA-256 PoW 建箱 + Cookie 会话） */
+tm_email_info_t *tm_provider_nukemail_generate(void);
+tm_email_t *tm_provider_nukemail_get_emails(const char *email,
+                                            const char *token, int *count);
+
+/* shadowmail（https://shadowmail.win，注册/登录 sessionId 会话，凭据串三分段） */
+tm_email_info_t *tm_provider_shadowmail_generate(void);
+tm_email_t *tm_provider_shadowmail_get_emails(const char *email,
+                                              const char *token, int *count);
+
+/* flybymail（https://flybymail.com，recipient id 建箱，读信按地址查询） */
+tm_email_info_t *tm_provider_flybymail_generate(void);
+tm_email_t *tm_provider_flybymail_get_emails(const char *email,
+                                             const char *token, int *count);
+
+/* nowtempmail（https://nowtempmail.com，JWT Bearer 认证 + 详情二拉） */
+tm_email_info_t *tm_provider_nowtempmail_generate(void);
+tm_email_t *tm_provider_nowtempmail_get_emails(const char *email,
+                                               const char *token, int *count);
+
+/* clawdemail（https://api.clawdemail.com，Bearer 认证 + 嵌套 email 提升） */
+tm_email_info_t *tm_provider_clawdemail_generate(void);
+tm_email_t *tm_provider_clawdemail_get_emails(const char *email,
+                                              const char *token, int *count);
+
+/* tempmail100（https://tempmail100.com，裸 token Authorization，列表-only） */
+tm_email_info_t *tm_provider_tempmail100_generate(void);
+tm_email_t *tm_provider_tempmail100_get_emails(const char *email,
+                                               const char *token, int *count);
+
+/* tempmailto（https://tempmailto.com，Laravel Cookie 会话，POST /get_messages 读信） */
+tm_email_info_t *tm_provider_tempmailto_generate(void);
+tm_email_t *tm_provider_tempmailto_get_emails(const char *email,
+                                              const char *token, int *count);
+
+/* temp-mail-gg（https://temp-mail.gg，Livewire v3 会话，update 建箱/读信） */
+tm_email_info_t *tm_provider_temp_mail_gg_generate(void);
+tm_email_t *tm_provider_temp_mail_gg_get_emails(const char *email,
+                                                const char *token, int *count);
+
+/* tmpkit（https://tmpkit.com，tRPC 会话，initSession 建箱，getEmails/getEmailDetail 读信，
+ * Cookie 由 Set-Cookie 提取后随各请求显式携带） */
+tm_email_info_t *tm_provider_tmpkit_generate(void);
+tm_email_t *tm_provider_tmpkit_get_emails(const char *email,
+                                          const char *token, int *count);
+
+/* internxt（https://internxt.com/temporary-email，Cookie 会话 + csrf-token 头，
+ * create-email 建箱，get-inbox/get-message 读信；XSRF-TOKEN 每次响应刷新，
+ * 模块内静态罐维护最新值） */
+tm_email_info_t *tm_provider_internxt_generate(void);
+tm_email_t *tm_provider_internxt_get_emails(const char *email,
+                                            const char *token, int *count);
+
+/* generator-email（https://generator.email，SSR 网页型，SITE_DATA 快照建箱，
+ * 收信页按 list-group-item2 行解析三要素；inbox_ctx Cookie 模块内静态维护） */
+tm_email_info_t *tm_provider_generator_email_generate(void);
+tm_email_t *tm_provider_generator_email_get_emails(const char *email,
+                                                   const char *token,
+                                                   int *count);
 
 #endif /* TEMPMAIL_INTERNAL_H */

@@ -13,15 +13,37 @@ static CHANNEL_DOMAINS: LazyLock<HashMap<Channel, Vec<&'static str>>> = LazyLock
     let mut m: HashMap<Channel, Vec<&'static str>> = HashMap::new();
     m.insert(Channel::Emailnator, vec!["gmail.com", "googlemail.com"]);
     m.insert(Channel::Tempgmailer, vec!["gmail.com"]);
-    m.insert(Channel::Catchmail, vec!["catchmail.io", "mailistry.com", "zeppost.com"]);
+    m.insert(
+        Channel::Catchmail,
+        vec!["catchmail.io", "mailistry.com", "zeppost.com"],
+    );
     m.insert(Channel::CatchmailMailistry, vec!["mailistry.com"]);
     m.insert(Channel::CatchmailZeppost, vec!["zeppost.com"]);
-    m.insert(Channel::Mailforspam, vec!["mailforspam.com", "tempmail.io", "disposable.email"]);
+    m.insert(
+        Channel::Mailforspam,
+        vec!["mailforspam.com", "tempmail.io", "disposable.email"],
+    );
     m.insert(Channel::MailforspamTempmailIo, vec!["tempmail.io"]);
     m.insert(Channel::MailforspamDisposable, vec!["disposable.email"]);
-    m.insert(Channel::Tempmail365, vec!["fengyou.cc", "shop345.com", "nutemail.com", "qvrf.cn"]);
-    m.insert(Channel::Tempinbox, vec!["tempinbox.xyz", "thepiratebay.cloud", "cryptoblad.nl"]);
-    m.insert(Channel::TenminuteOne, vec!["xghff.com", "oqqaj.com", "psovv.com", "dbwot.com", "ygwpr.com", "imxwe.com"]);
+    m.insert(
+        Channel::Tempmail365,
+        vec!["fengyou.cc", "shop345.com", "nutemail.com", "qvrf.cn"],
+    );
+    m.insert(
+        Channel::Tempinbox,
+        vec!["tempinbox.xyz", "thepiratebay.cloud", "cryptoblad.nl"],
+    );
+    m.insert(
+        Channel::TenminuteOne,
+        vec![
+            "xghff.com",
+            "oqqaj.com",
+            "psovv.com",
+            "dbwot.com",
+            "ygwpr.com",
+            "imxwe.com",
+        ],
+    );
     m.insert(Channel::XghffCom, vec!["xghff.com"]);
     m.insert(Channel::OqqajCom, vec!["oqqaj.com"]);
     m.insert(Channel::PsovvCom, vec!["psovv.com"]);
@@ -29,7 +51,10 @@ static CHANNEL_DOMAINS: LazyLock<HashMap<Channel, Vec<&'static str>>> = LazyLock
     m.insert(Channel::YgwprCom, vec!["ygwpr.com"]);
     m.insert(Channel::ImxweCom, vec!["imxwe.com"]);
     m.insert(Channel::Apihz, vec!["apimail.email", "apimail.vip"]);
-    m.insert(Channel::TwentyfourmailChacuo, vec!["chacuo.net", "027168.com"]);
+    m.insert(
+        Channel::TwentyfourmailChacuo,
+        vec!["chacuo.net", "027168.com"],
+    );
     m.insert(Channel::Mailinator, vec!["mailinator.com"]);
     m.insert(Channel::SogetthisCom, vec!["sogetthis.com"]);
     m.insert(Channel::BobmailInfo, vec!["bobmail.info"]);
@@ -37,7 +62,10 @@ static CHANNEL_DOMAINS: LazyLock<HashMap<Channel, Vec<&'static str>>> = LazyLock
     m.insert(Channel::BinkmailCom, vec!["binkmail.com"]);
     m.insert(Channel::VeryrealemailCom, vec!["veryrealemail.com"]);
     m.insert(Channel::ChammyInfo, vec!["chammy.info"]);
-    m.insert(Channel::ThisisnotmyrealemailCom, vec!["thisisnotmyrealemail.com"]);
+    m.insert(
+        Channel::ThisisnotmyrealemailCom,
+        vec!["thisisnotmyrealemail.com"],
+    );
     m.insert(Channel::NotmailinatorCom, vec!["notmailinator.com"]);
     m.insert(Channel::SpamherepleaseCom, vec!["spamhereplease.com"]);
     m.insert(Channel::SendspamhereCom, vec!["sendspamhere.com"]);
@@ -66,9 +94,11 @@ static CHANNEL_DOMAINS: LazyLock<HashMap<Channel, Vec<&'static str>>> = LazyLock
     m.insert(Channel::GetnadaCom, vec!["getnada.com"]);
     m.insert(Channel::GetnadaEmail, vec!["getnada.email"]);
     m.insert(Channel::GetnadaNet, vec!["getnada.net"]);
-    m.insert(Channel::DisposablemailApp, vec!["disposablemail.dev", "mailmehere.cc"]);
+    m.insert(
+        Channel::DisposablemailApp,
+        vec!["disposablemail.dev", "mailmehere.cc"],
+    );
     m.insert(Channel::Minuteinbox, vec!["minafter.com"]);
-    m.insert(Channel::Mohmal, vec!["emailinbo.live"]);
     m
 });
 

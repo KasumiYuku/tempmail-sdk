@@ -268,7 +268,10 @@ pub fn start_webui(host: Option<&str>, port: Option<u16>) -> std::io::Result<u16
         return Ok(WEBUI_PORT.load(Ordering::SeqCst));
     }
 
-    let host = host.map(|h| h.trim()).filter(|h| !h.is_empty()).unwrap_or("127.0.0.1");
+    let host = host
+        .map(|h| h.trim())
+        .filter(|h| !h.is_empty())
+        .unwrap_or("127.0.0.1");
     let addr = format!("{}:{}", host, port.unwrap_or(0));
     let listener = TcpListener::bind(&addr)?;
     let actual_port = listener.local_addr()?.port();
@@ -333,4 +336,3 @@ pub fn start_webui_if_enabled() -> Option<u16> {
         }
     }
 }
-

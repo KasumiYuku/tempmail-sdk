@@ -58,6 +58,7 @@ typedef enum {
   CHANNEL_MAILFORSPAM,
   CHANNEL_TEMPMAILC,
   CHANNEL_MAILNESIA,
+  CHANNEL_MAILTICKING, /* mailticking.com（POST /get-mailbox 建箱 + activate_token 激活） */
   CHANNEL_THROWAWAYMAIL,
   CHANNEL_TEMPMAIL_FISH,
   CHANNEL_NEIGHBOURS_SH,
@@ -150,7 +151,6 @@ typedef enum {
   CHANNEL_TEMPORAM,
   CHANNEL_LYHLEVI_COM,
   CHANNEL_MAIL10S,
-  CHANNEL_WEBMAILTEMP,
   CHANNEL_TEMPFASTMAIL,
   CHANNEL_SHITTY_EMAIL,
   CHANNEL_TEMPMAILPRO,
@@ -175,7 +175,6 @@ typedef enum {
   CHANNEL_HARIBU,
   CHANNEL_ROOTSH,
   CHANNEL_FAKE_EMAIL_SITE,
-  CHANNEL_MOHMAL,
   CHANNEL_MAILGOLEM,
   CHANNEL_BEST_TEMP_MAIL,
   CHANNEL_DISPOSABLEMAIL_APP,
@@ -196,7 +195,6 @@ typedef enum {
   CHANNEL_TEMPP_MAILS,
   CHANNEL_EMAILTEMP_ORG,
   CHANNEL_MYTEMPMAIL_CC,
-  CHANNEL_TEMP_MAIL_NOW,
   CHANNEL_MAIL_TD,
   CHANNEL_MAILHOLE_DE,
   CHANNEL_TMAIL_LINK,
@@ -265,13 +263,11 @@ typedef enum {
   CHANNEL_NULL_K3VIN_NET,
   CHANNEL_REALLY_ISTRASH_COM,
   CHANNEL_SPAM_HORTUK_OVH,
-  CHANNEL_16888888_CYOU,
   CHANNEL_17666688_SHOP,
   CHANNEL_282MAIL_COM,
   CHANNEL_BSDU32_BUZZ,
   CHANNEL_DOXU243_BUZZ,
   CHANNEL_EASYME_PRO,
-  CHANNEL_EVERGREENCO_SHOP,
   CHANNEL_LAYUEMING_PICS,
   CHANNEL_MINGYUEKEJI_ONLINE,
   CHANNEL_MINGYUEMING_CLICK,
@@ -282,7 +278,6 @@ typedef enum {
   CHANNEL_SBOOK_PICS,
   CHANNEL_XUE32_BUZZ,
   CHANNEL_XKX_ME,
-  CHANNEL_GONEBOX_EMAIL,
   CHANNEL_MAILCAT_AI,
   CHANNEL_B_SMELLY_CC,
   CHANNEL_DEA_SOON_IT,
@@ -298,6 +293,33 @@ typedef enum {
   CHANNEL_RESTMAIL_NET,
   CHANNEL_DROPMAIL_ME,
   CHANNEL_TEN_MINUTE_MAIL_NET,
+  CHANNEL_TEMPMAILS_IO,
+  CHANNEL_SHITPOST_EMAIL,
+  CHANNEL_SMAILS,
+  CHANNEL_TEMPMAILPORTAL,
+  CHANNEL_HUSKMAIL,
+  CHANNEL_ZERODROP,
+  CHANNEL_FIRETEMPMAIL,
+  CHANNEL_NULLMAIL,
+  CHANNEL_TENMIN_APP,
+  CHANNEL_MTEMPMAIL,
+  CHANNEL_TEMPMAIL_EE,
+  CHANNEL_TEMPORARYMAIL_COM, /* temporarymail.com（无认证 REST，secretKey 会话） */
+  CHANNEL_EMAIL30MIN,        /* 30minemail（30minemail.com，无认证轮询） */
+  CHANNEL_LINSHI_XYZ,        /* linshi.xyz（本地随机前缀，免建箱） */
+  CHANNEL_CRAZYMAILING,      /* crazymailing.com（mailbox id + 正文二拉） */
+  CHANNEL_NOXEN_DE5_NET,     /* tempmail.noxen.de5.net（JWT Cookie 会话 + EML 解析） */
+  CHANNEL_NUKEMAIL,          /* nukemail.app（SHA-256 PoW 建箱） */
+  CHANNEL_SHADOWMAIL,        /* shadowmail.win（注册/登录 sessionId 会话） */
+  CHANNEL_FLYBYMAIL,         /* flybymail.com（recipient id 建箱） */
+  CHANNEL_NOWTEMPMAIL,       /* nowtempmail.com（JWT Bearer + 详情二拉） */
+  CHANNEL_CLAWDEMAIL,        /* clawdemail.com（api.clawdemail.com Bearer） */
+  CHANNEL_TEMPMAIL100,       /* tempmail100.com（裸 token Authorization） */
+  CHANNEL_TEMPMAILTO,        /* tempmailto.com（Laravel Cookie 会话，POST /get_messages 读信） */
+  CHANNEL_TEMP_MAIL_GG,      /* temp-mail.gg（Livewire v3 会话，update 建箱/读信） */
+  CHANNEL_TMPKIT,            /* tmpkit.com（Next.js tRPC 会话，initSession 建箱 + getEmails/getEmailDetail 读信） */
+  CHANNEL_INTERNXT,          /* internxt.com（临时邮箱页 Cookie 会话，csrf-token 头 + create-email/get-inbox） */
+  CHANNEL_GENERATOR_EMAIL,   /* generator.email（SSR 网页型，SITE_DATA 快照建箱 + 收信页渲染） */
   CHANNEL_COUNT,       /* 渠道总数 */
   CHANNEL_RANDOM = -1, /* 随机选择 */
 } tm_channel_t;

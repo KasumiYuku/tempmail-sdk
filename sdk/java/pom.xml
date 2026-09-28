@@ -10,7 +10,7 @@
     <packaging>jar</packaging>
 
     <name>tempmail-sdk</name>
-    <description>十端临时邮箱 SDK 的 Java 端：聚合 279 个第三方临时邮箱渠道，输出统一标准化邮件格式</description>
+    <description>十端临时邮箱 SDK 的 Java 端：聚合 284 个第三方临时邮箱渠道，输出统一标准化邮件格式</description>
     <url>https://github.com/XxxXTeam/tempmail-sdk</url>
 
     <licenses>

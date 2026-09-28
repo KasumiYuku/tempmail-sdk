@@ -56,6 +56,8 @@ type tenMinuteMailNetDetailResponse struct {
 /* TenMinuteMailNetGenerate 创建 10minutemail.net 临时邮箱
  * API: GET /address.api.php
  * 服务端通过 session cookie 分配邮箱地址，token 存储 PHPSESSID
+ * @param duration 邮箱有效时长（分钟），平台忽略该参数（平台固定 10 分钟），此处未实际使用
+ * @param domain 指定域名，平台忽略该参数，此处未实际使用
  */
 func TenMinuteMailNetGenerate(duration int, domain string) (*CreatedMailbox, error) {
 	client := HTTPClient()

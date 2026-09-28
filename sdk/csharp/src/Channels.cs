@@ -1,7 +1,7 @@
 namespace XxxXTeam.TempMail;
 
 /// <summary>
-/// 全部 279 个渠道标识常量（与 baseline 逐行一致，供强类型引用）。
+/// 全部 284 个渠道标识常量（与 baseline 逐行一致，供强类型引用）。
 /// </summary>
 public static class Channels
 {
@@ -55,6 +55,8 @@ public static class Channels
     public const string Tempmailc = "tempmailc";
     /// <summary>Mailnesia</summary>
     public const string Mailnesia = "mailnesia";
+    /// <summary>Mailticking（mailticking.com）</summary>
+    public const string Mailticking = "mailticking";
     /// <summary>ThrowawayMail</summary>
     public const string Throwawaymail = "throwawaymail";
     /// <summary>TempMail Fish</summary>
@@ -153,8 +155,6 @@ public static class Channels
     public const string Mail123 = "mail123";
     /// <summary>Mail10s</summary>
     public const string Mail10s = "mail10s";
-    /// <summary>WebMailTemp</summary>
-    public const string Webmailtemp = "webmailtemp";
     /// <summary>TempFastMail</summary>
     public const string Tempfastmail = "tempfastmail";
     /// <summary>1SecMail</summary>
@@ -317,8 +317,6 @@ public static class Channels
     public const string Rootsh = "rootsh";
     /// <summary>FakeEmailSite</summary>
     public const string FakeEmailSite = "fake-email-site";
-    /// <summary>Mohmal</summary>
-    public const string Mohmal = "mohmal";
     /// <summary>MailGolem</summary>
     public const string Mailgolem = "mailgolem";
     /// <summary>BestTempMail</summary>
@@ -359,8 +357,6 @@ public static class Channels
     public const string EmailtempOrg = "emailtemp-org";
     /// <summary>MyTempMail.cc</summary>
     public const string MytempmailCc = "mytempmail-cc";
-    /// <summary>TempMailNow</summary>
-    public const string TempMailNow = "temp-mail-now";
     /// <summary>Mail.td</summary>
     public const string MailTd = "mail-td";
     /// <summary>Mailhole.de</summary>
@@ -373,8 +369,6 @@ public static class Channels
     public const string Nimail = "nimail";
     /// <summary>FreeCustom.Email</summary>
     public const string Freecustom = "freecustom";
-    /// <summary>Mailmomy (16888888.cyou)</summary>
-    public const string N16888888Cyou = "16888888-cyou";
     /// <summary>Mailmomy (17666688.shop)</summary>
     public const string N17666688Shop = "17666688-shop";
     /// <summary>Mailmomy (282mail.com)</summary>
@@ -403,8 +397,6 @@ public static class Channels
     public const string EbsComAr = "ebs-com-ar";
     /// <summary>Mailinator (etgdev.de)</summary>
     public const string EtgdevDe = "etgdev-de";
-    /// <summary>Mailmomy (evergreenco.shop)</summary>
-    public const string EvergreencoShop = "evergreenco-shop";
     /// <summary>Mailinator (fwd2m.eszett.es)</summary>
     public const string Fwd2mEszettEs = "fwd2m-eszett-es";
     /// <summary>Mailinator (jama.trenet.eu)</summary>
@@ -551,8 +543,6 @@ public static class Channels
     public const string TempMailOrg = "temp-mail-org";
     /// <summary>XKX.me</summary>
     public const string XkxMe = "xkx-me";
-    /// <summary>Gonebox Email</summary>
-    public const string GoneboxEmail = "gonebox-email";
     /// <summary>Mailcat AI</summary>
     public const string MailcatAi = "mailcat-ai";
     /// <summary>TempGo Email</summary>
@@ -563,4 +553,58 @@ public static class Channels
     public const string DropmailMe = "dropmail-me";
     /// <summary>10MinuteMail.net</summary>
     public const string TenMinuteMailNet = "ten-minute-mail-net";
+    /// <summary>TempMails.io</summary>
+    public const string TempmailsIo = "tempmails-io";
+    /// <summary>ShitPost.email</summary>
+    public const string ShitpostEmail = "shitpost-email";
+    /// <summary>Smails.dev</summary>
+    public const string Smails = "smails";
+    /// <summary>TempMail Portal</summary>
+    public const string Tempmailportal = "tempmailportal";
+    /// <summary>HuskMail</summary>
+    public const string Huskmail = "huskmail";
+    /// <summary>Zerodrop</summary>
+    public const string Zerodrop = "zerodrop";
+    /// <summary>FireTempMail</summary>
+    public const string Firetempmail = "firetempmail";
+    /// <summary>NullMail</summary>
+    public const string Nullmail = "nullmail";
+    /// <summary>Tenmin.app</summary>
+    public const string TenminApp = "tenmin-app";
+    /// <summary>MTempMail</summary>
+    public const string Mtempmail = "mtempmail";
+    /// <summary>TempMail.ee</summary>
+    public const string TempmailEe = "tempmail-ee";
+    /// <summary>Temporarymail.com</summary>
+    public const string TemporarymailCom = "temporarymail-com";
+    /// <summary>30minemail</summary>
+    public const string Email30min = "30minemail";
+    /// <summary>Linshi.xyz</summary>
+    public const string LinshiXyz = "linshi-xyz";
+    /// <summary>CrazyMailing</summary>
+    public const string Crazymailing = "crazymailing";
+    /// <summary>UniMail Bot</summary>
+    public const string NoxenDe5Net = "noxen-de5-net";
+    /// <summary>NukeMail</summary>
+    public const string Nukemail = "nukemail";
+    /// <summary>ShadowMail</summary>
+    public const string Shadowmail = "shadowmail";
+    /// <summary>FlyByMail</summary>
+    public const string Flybymail = "flybymail";
+    /// <summary>NowTempMail</summary>
+    public const string Nowtempmail = "nowtempmail";
+    /// <summary>ClawdEmail</summary>
+    public const string Clawdemail = "clawdemail";
+    /// <summary>TempMail100</summary>
+    public const string Tempmail100 = "tempmail100";
+    /// <summary>Tempmailto</summary>
+    public const string Tempmailto = "tempmailto";
+    /// <summary>TempMailGG</summary>
+    public const string TempMailGg = "temp-mail-gg";
+    /// <summary>Tmpkit</summary>
+    public const string Tmpkit = "tmpkit";
+    /// <summary>Internxt</summary>
+    public const string Internxt = "internxt";
+    /// <summary>GeneratorEmail</summary>
+    public const string GeneratorEmail = "generator-email";
 }

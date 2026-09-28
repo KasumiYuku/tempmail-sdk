@@ -15,6 +15,15 @@ import (
  *       GET /get-mails 获取邮件列表（返回 HTML 包裹在 JSON 中）
  *       GET /mail/info 获取邮件详情
  * token 存储 address 字符串
+ *
+ * 平台级归因（2026-09-28 探针实测，no-receive 属平台问题，保持本实现）：
+ * - 域名 fmail10.de 的 MX 指向 mx.tempemail.co（Exim，banner 为 srv.ttr.group，
+ *   104.239.47.164），直投 RCPT 返回 "550 SMTP AUTH is required for message
+ *   submission on port 587"：该 MTA 是共享提交服务器，fmail10.de 收件域未真正挂载。
+ * - 先后 5 封哨兵信（bavdoi@fmail10.de / beehul@tempemail.co 等）经发信方 SMTP
+ *   投递后，/get-mails 轮询 120 秒全部为空（count 0），邮件从未落件。
+ * - 平台 API 侧健康：/mail/random 建箱、/get-mails、/mail/info 响应正常；
+ *   SDK 调用参数与前端 main.js 完全一致（mail_id=email_adr&unseen&is_new=1）。
  */
 
 const tempemailCoBaseURL = "https://tempemail.co"

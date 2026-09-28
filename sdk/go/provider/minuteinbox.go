@@ -1,6 +1,7 @@
 package provider
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -131,6 +132,9 @@ func MinuteinboxGenerate(duration int, domain string) (*CreatedMailbox, error) {
 	}
 
 	// 解析 JSON 响应 {"email":"user@minafter.com"}
+	// 实测响应带 UTF-8 BOM（efbbbf），json.Unmarshal 直接解析会报
+	// invalid character (U+FEFF) looking for beginning of value，先剥 BOM。
+	body2 = bytes.TrimPrefix(body2, []byte("\xef\xbb\xbf"))
 	var createResp struct {
 		Email string `json:"email"`
 	}
@@ -210,6 +214,7 @@ func MinuteinboxGetEmails(token, email string) ([]NormEmail, error) {
 		Kdy      string      `json:"kdy"`      // 时间
 		Precteno string      `json:"precteno"` // 已读状态: "new" 或 "precteno"
 	}
+	body = bytes.TrimPrefix(body, []byte("\xef\xbb\xbf"))
 	if err := json.Unmarshal(body, &mailList); err != nil {
 		return nil, fmt.Errorf("minuteinbox: 解析邮件列表失败: %w", err)
 	}
@@ -300,6 +305,8 @@ func minuteinboxFetchDetail(client interface {
 		return nil
 	}
 
+	// 详情响应同样带 BOM，解析前先剥（扫码期正文恒空即此因）
+	body = bytes.TrimPrefix(body, []byte{0xEF, 0xBB, 0xBF})
 	var detail minuteinboxDetail
 	if err := json.Unmarshal(body, &detail); err != nil {
 		return nil

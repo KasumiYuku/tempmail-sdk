@@ -77,13 +77,11 @@ export const backendGroups: Record<string, Channel[]> = {
   ],
   mailmomy: [
     "mailmomy",
-    "16888888-cyou",
     "17666688-shop",
     "282mail-com",
     "bsdu32-buzz",
     "doxu243-buzz",
     "easyme-pro",
-    "evergreenco-shop",
     "layueming-pics",
     "mingyuekeji-online",
     "mingyueming-click",

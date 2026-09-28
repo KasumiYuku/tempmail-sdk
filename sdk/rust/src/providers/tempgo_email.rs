@@ -23,10 +23,7 @@ pub fn generate_email() -> Result<EmailInfo, String> {
             .map_err(|e| format!("tempgo-email: 创建邮箱失败: {}", e))?;
 
         if !resp.status().is_success() {
-            return Err(format!(
-                "tempgo-email: 创建邮箱失败 HTTP {}",
-                resp.status()
-            ));
+            return Err(format!("tempgo-email: 创建邮箱失败 HTTP {}", resp.status()));
         }
 
         let body: Value = resp
@@ -74,10 +71,7 @@ pub fn get_emails(token: &str, email: &str) -> Result<Vec<Email>, String> {
             .map_err(|e| format!("tempgo-email: 获取邮件失败: {}", e))?;
 
         if !resp.status().is_success() {
-            return Err(format!(
-                "tempgo-email: 获取邮件失败 HTTP {}",
-                resp.status()
-            ));
+            return Err(format!("tempgo-email: 获取邮件失败 HTTP {}", resp.status()));
         }
 
         let body: Value = resp

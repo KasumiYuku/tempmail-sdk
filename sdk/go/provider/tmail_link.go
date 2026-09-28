@@ -3,12 +3,14 @@ package provider
 import (
 	"encoding/json"
 	"fmt"
+	"html"
 	"io"
 	"net/url"
 	"regexp"
 	"strings"
 
 	http "github.com/bogdanfinn/fhttp"
+	tls_client "github.com/bogdanfinn/tls-client"
 )
 
 /**
@@ -24,6 +26,12 @@ import (
 const tmailLinkBase = "https://tmail.link"
 
 var tmailLinkEmailRegex = regexp.MustCompile(`([a-zA-Z0-9._%+-]+@tmail\.link)`)
+
+/* tmailLinkPreRE 提取 <pre> 块内的邮件正文，非贪婪匹配 */
+var tmailLinkPreRE = regexp.MustCompile(`(?s)<pre[^>]*>(.*?)</pre>`)
+
+/* tmailLinkFromRE 从 "TempMail Verify <supper@openel.top>" 形式提取尖括号内的回信地址 */
+var tmailLinkFromRE = regexp.MustCompile(`<([^<>]+)>`)
 
 /**
  * TmailLinkGenerate — 创建 tmail.link 临时邮箱
@@ -144,6 +152,7 @@ func TmailLinkGetEmails(token, email string) ([]NormEmail, error) {
 	req2.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	req2.Header.Set("Accept", "application/json")
 	req2.Header.Set("User-Agent", getCurrentUA())
+	req2.Header.Set("X-Requested-With", "XMLHttpRequest")
 	req2.Header.Set("Cookie", "csrftoken="+freshToken)
 	req2.Header.Set("X-CSRFToken", freshToken)
 	req2.Header.Set("Referer", inboxURL)
@@ -180,16 +189,74 @@ func TmailLinkGetEmails(token, email string) ([]NormEmail, error) {
 		if err := json.Unmarshal(raw, &msg); err != nil {
 			continue
 		}
+
+		/* 列表接口仅返回元数据，需追加 GET 详情页取回 <pre> 正文 */
+		body := ""
+		key := firstStr(msg, "key")
+		if key != "" {
+			body = tmailLinkFetchBody(client, inboxURL, key, freshToken)
+		}
+
+		/* 发件人为 "TempMail Verify <supper@openel.top>" 形式时取尖括号内的回信地址 */
+		from := firstStr(msg, "sender", "from")
+		if m := tmailLinkFromRE.FindStringSubmatch(from); len(m) > 1 {
+			from = m[1]
+		}
+
 		row := map[string]any{
-			"id":         msg["key"],
-			"from":       firstStr(msg, "sender", "from"),
+			"id":         key,
+			"from":       from,
 			"to":         email,
 			"subject":    msg["subject"],
-			"text":       firstStr(msg, "body", "text"),
+			"text":       body,
 			"html":       firstStr(msg, "html", "body"),
 			"created_at": firstStr(msg, "date", "created_at"),
 		}
 		out = append(out, NormalizeMap(row, email))
 	}
 	return out, nil
+}
+
+/**
+ * tmailLinkFetchBody — GET 详情页提取 <pre> 正文，
+ * 兼容服务器偶发 TLS EOF 做至多 3 次尝试
+ */
+func tmailLinkFetchBody(client tls_client.HttpClient, inboxURL, key, csrfToken string) string {
+	detailURL := inboxURL + url.PathEscape(key) + "/"
+
+	for attempt := 0; attempt < 3; attempt++ {
+		req, err := http.NewRequest("GET", detailURL, nil)
+		if err != nil {
+			continue
+		}
+		req.Header.Set("Accept", "text/html")
+		req.Header.Set("User-Agent", getCurrentUA())
+		req.Header.Set("X-Requested-With", "XMLHttpRequest")
+		req.Header.Set("Cookie", "csrftoken="+csrfToken)
+		req.Header.Set("Referer", inboxURL)
+
+		resp, err := client.Do(req)
+		if err != nil {
+			/* 服务器偶发 TLS EOF，简单重试 */
+			continue
+		}
+		raw, readErr := io.ReadAll(resp.Body)
+		resp.Body.Close()
+		if readErr != nil {
+			continue
+		}
+		/* 403 说明请求头形态不被服务器接受，重试无意义 */
+		if resp.StatusCode == 403 {
+			return ""
+		}
+		if resp.StatusCode != 200 {
+			continue
+		}
+		m := tmailLinkPreRE.FindSubmatch(raw)
+		if len(m) < 2 {
+			return ""
+		}
+		return html.UnescapeString(strings.TrimSpace(string(m[1])))
+	}
+	return ""
 }

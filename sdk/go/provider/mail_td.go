@@ -20,7 +20,8 @@ import (
  *   1. GET /api/domains 获取可用域名
  *   2. 求解 PoW: SHA-256(address + timestamp + nonce) 需满足 difficulty 个前导零位
  *   3. POST /api/accounts 携带 PoW 创建账户 → 返回 JWT + ID
- *   4. GET /api/accounts/{id}/messages?page=1 携带 Bearer JWT 获取邮件
+ *   4. GET /api/accounts/{id}/messages?page=1 携带 Bearer JWT 获取邮件列表
+ *   5. GET /api/accounts/{id}/messages/{mid} 携带 Bearer JWT 获取正文与附件
  * Token 格式: JSON {"jwt":"...","id":"..."}
  */
 
@@ -53,21 +54,34 @@ type mailTdAccountResponse struct {
 
 /**
  * mailTdMessagesResponse — 邮件列表响应
+ * 列表项只有 sender/from/subject/preview_text/size/is_read/created_at，
+ * 正文与附件需通过详情端点单独获取。
+ * id 为纯字符串 UUID（实测 2026-09-27 两轮返回值），并非嵌套对象。
  */
 type mailTdMessagesResponse struct {
 	Messages []struct {
-		ID   string `json:"id"`
-		From struct {
-			Address string `json:"address"`
-			Name    string `json:"name"`
-		} `json:"from"`
-		Subject   string `json:"subject"`
-		Text      string `json:"text"`
-		HTML      string `json:"html"`
-		Seen      bool   `json:"seen"`
-		CreatedAt string `json:"created_at"`
+		ID        string  `json:"id"`
+		From      string  `json:"from"`
+		Sender    string  `json:"sender"`
+		Preview   string  `json:"preview_text"`
+		Subject   string  `json:"subject"`
+		Size      float64 `json:"size"`
+		IsRead    bool    `json:"is_read"`
+		CreatedAt string  `json:"created_at"`
 	} `json:"messages"`
 	Page int `json:"page"`
+}
+
+/**
+ * mailTdDetailResponse — 邮件详情响应
+ */
+type mailTdDetailResponse struct {
+	TextBody    string `json:"text_body"`
+	HTMLBody    string `json:"html_body"`
+	Attachments []struct {
+		Filename string `json:"filename"`
+		Size     int64  `json:"size"`
+	} `json:"attachments"`
 }
 
 /**
@@ -271,6 +285,44 @@ func MailTdGenerate() (*CreatedMailbox, error) {
 }
 
 /**
+ * mailTdFetchDetail — 拉取单封邮件详情（正文与附件）
+ * accountID / messageID / jwt 由列表循环传入，复用共享 HTTP 客户端
+ */
+func mailTdFetchDetail(client interface {
+	Do(*http.Request) (*http.Response, error)
+}, accountID, messageID, jwt string) (*mailTdDetailResponse, error) {
+	u := fmt.Sprintf("%s/accounts/%s/messages/%s", mailTdBase, accountID, messageID)
+	req, err := http.NewRequest("GET", u, nil)
+	if err != nil {
+		return nil, fmt.Errorf("mail-td: 创建详情请求失败: %w", err)
+	}
+	req.Header.Set("Accept", "application/json")
+	req.Header.Set("Authorization", "Bearer "+jwt)
+	req.Header.Set("User-Agent", getCurrentUA())
+
+	resp, err := client.Do(req)
+	if err != nil {
+		return nil, fmt.Errorf("mail-td: 详情请求失败: %w", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		return nil, fmt.Errorf("mail-td: 详情请求 HTTP %d", resp.StatusCode)
+	}
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, fmt.Errorf("mail-td: 读取详情响应失败: %w", err)
+	}
+
+	var detail mailTdDetailResponse
+	if err := json.Unmarshal(body, &detail); err != nil {
+		return nil, fmt.Errorf("mail-td: 详情响应解析失败: %w", err)
+	}
+	return &detail, nil
+}
+
+/**
  * MailTdGetEmails — 获取 mail.td 邮件列表
  */
 func MailTdGetEmails(token, email string) ([]NormEmail, error) {
@@ -319,15 +371,39 @@ func MailTdGetEmails(token, email string) ([]NormEmail, error) {
 
 	out := make([]NormEmail, 0, len(data.Messages))
 	for _, msg := range data.Messages {
+		/* from 优先，sender 兜底 */
+		from := strings.TrimSpace(msg.From)
+		if from == "" {
+			from = strings.TrimSpace(msg.Sender)
+		}
+
 		row := map[string]any{
 			"id":         msg.ID,
-			"from":       msg.From.Address,
+			"from":       from,
 			"to":         email,
 			"subject":    msg.Subject,
-			"text":       msg.Text,
-			"html":       msg.HTML,
+			"text":       msg.Preview,
 			"created_at": msg.CreatedAt,
+			"is_read":    msg.IsRead,
 		}
+
+		/* 逐封拉取详情端点获取正文与附件，失败时保留列表行已有字段 */
+		messageID := msg.ID
+		if messageID != "" {
+			if detail, err := mailTdFetchDetail(client, tokenData.ID, messageID, tokenData.JWT); err == nil {
+				dAttachments := make([]map[string]any, 0, len(detail.Attachments))
+				for _, att := range detail.Attachments {
+					dAttachments = append(dAttachments, map[string]any{
+						"filename": att.Filename,
+						"size":     att.Size,
+					})
+				}
+				row["text"] = detail.TextBody
+				row["html"] = detail.HTMLBody
+				row["attachments"] = dAttachments
+			}
+		}
+
 		out = append(out, NormalizeMap(row, email))
 	}
 	return out, nil

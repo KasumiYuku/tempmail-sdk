@@ -33,7 +33,8 @@ const (
 	ChannelMailforspamTempmailIo   Channel = "mailforspam-tempmail-io"  // tempmail.io（MailForSpam API 域名）
 	ChannelMailforspamDisposable   Channel = "mailforspam-disposable"   // disposable.email（MailForSpam API 域名）
 	ChannelTempmailc               Channel = "tempmailc"                // tempmailc.com
-	ChannelMailnesia               Channel = "mailnesia"                // mailnesia.com
+	ChannelMailnesia               Channel = "mailnesia"                // mailnesia.com（公开收件箱，GET /mailbox/{name} 即建箱）
+	ChannelMailticking             Channel = "mailticking"              // mailticking.com（POST /get-mailbox 建箱 + activate_token 激活）
 	ChannelThrowawaymail           Channel = "throwawaymail"            // throwawaymail.app
 	ChannelTempmailFish            Channel = "tempmail-fish"            // tempmail.fish
 	ChannelNeighboursSh            Channel = "neighbours-sh"            // neighbours.sh
@@ -83,7 +84,6 @@ const (
 	ChannelVillatogelCom           Channel = "villatogel-com"           // getnada 固定域 villatogel.com
 	ChannelMail123                 Channel = "mail123"                  // mail123.fr
 	ChannelMail10s                 Channel = "mail10s"                  // mail10s.com
-	ChannelWebmailtemp             Channel = "webmailtemp"              // webmailtemp.com
 	ChannelTempfastmail            Channel = "tempfastmail"             // tempfastmail.com
 	ChannelOneSecMail              Channel = "1sec-mail"                // 1sec-mail.com
 	ChannelFakemail                Channel = "fakemail"                 // fakemail.net
@@ -165,7 +165,6 @@ const (
 	ChannelHaribu                  Channel = "haribu"                   // haribu.net（Tempail 类模式，域名 yevme.com）
 	ChannelRootsh                  Channel = "rootsh"                   // rootsh.com（BccTo.CC）
 	ChannelFakeEmailSite           Channel = "fake-email-site"          // fake-email.site
-	ChannelMohmal                  Channel = "mohmal"                   // mohmal.com（HTML 收件箱 + connect.sid Session）
 	ChannelMailgolem               Channel = "mailgolem"                // mailgolem.com（CSRF + Cookie Session）
 	ChannelBestTempMail            Channel = "best-temp-mail"           // best-temp-mail.com（JSON REST API）
 	ChannelDisposablemailApp       Channel = "disposablemail-app"       // disposablemail.app（纯 REST JSON API）
@@ -186,7 +185,6 @@ const (
 	ChannelTemppMails              Channel = "tempp-mails"              // tempp-mails.com（Laravel 临时邮箱模板）
 	ChannelEmailtempOrg            Channel = "emailtemp-org"            // emailtemp.org（Laravel 临时邮箱模板）
 	ChannelMytempmailCc            Channel = "mytempmail-cc"            // mytempmail.cc（JSON REST API）
-	ChannelTempMailNow             Channel = "temp-mail-now"            // temp-mail.now（Session Cookie API）
 	ChannelMailTd                  Channel = "mail-td"                  // mail.td（SHA-256 PoW + JWT REST API）
 	ChannelMailholeDe              Channel = "mailhole-de"              // mailhole.de（公共临时邮箱，无需认证）
 	ChannelTmailLink               Channel = "tmail-link"               // tmail.link（Django CSRF + Cookie）
@@ -255,13 +253,11 @@ const (
 	ChannelSpWootAt                Channel = "sp-woot-at"               // sp.woot.at
 	ChannelFwd2mEszettEs           Channel = "fwd2m-eszett-es"          // fwd2m.eszett.es
 	ChannelM887At                  Channel = "m-887-at"                 // m.887.at
-	ChannelN16888888Cyou           Channel = "16888888-cyou"            // mailmomy 域名 16888888.cyou
 	ChannelN17666688Shop           Channel = "17666688-shop"            // mailmomy 域名 17666688.shop
 	ChannelN282mailCom             Channel = "282mail-com"              // mailmomy 域名 282mail.com
 	ChannelBsdu32Buzz              Channel = "bsdu32-buzz"              // mailmomy 域名 bsdu32.buzz
 	ChannelDoxu243Buzz             Channel = "doxu243-buzz"             // mailmomy 域名 doxu243.buzz
 	ChannelEasymePro               Channel = "easyme-pro"               // mailmomy 域名 easyme.pro
-	ChannelEvergreencoShop         Channel = "evergreenco-shop"         // mailmomy 域名 evergreenco.shop
 	ChannelLayuemingPics           Channel = "layueming-pics"           // mailmomy 域名 layueming.pics
 	ChannelMingyuekejiOnline       Channel = "mingyuekeji-online"       // mailmomy 域名 mingyuekeji.online
 	ChannelMingyuemingClick        Channel = "mingyueming-click"        // mailmomy 域名 mingyueming.click
@@ -282,12 +278,38 @@ const (
 	ChannelTempgmailer             Channel = "tempgmailer"              // tempgmailer.com（Gmail dot trick）
 	ChannelTempMailOrg             Channel = "temp-mail-org"            // temp-mail.org（web2.temp-mail.org 后端，动态域名）
 	ChannelXkxMe                   Channel = "xkx-me"                   // xkx.me
-	ChannelGoneboxEmail            Channel = "gonebox-email"            // gonebox.email
 	ChannelMailcatAi               Channel = "mailcat-ai"               // mailcat.ai
 	ChannelTempgoEmail             Channel = "tempgo-email"             // tempgo.email
 	ChannelRestmailNet             Channel = "restmail-net"             // restmail.net
 	ChannelDropmailMe              Channel = "dropmail-me"              // dropmail.me（GraphQL 临时邮箱）
 	ChannelTenMinuteMailNet        Channel = "ten-minute-mail-net"      // 10minutemail.net（PHP session 临时邮箱）
+	ChannelTempmailsIo             Channel = "tempmails-io"             // tempmails.io（REST 无认证临时邮箱）
+	ChannelFlybymail               Channel = "flybymail"                // flybymail.com（POST /api/recipients 建箱，按邮箱地址 REST 读信）
+	ChannelNowtempmail             Channel = "nowtempmail"              // nowtempmail.com（POST /mailbox 建箱，Bearer JWT 读信）
+	ChannelClawdemail              Channel = "clawdemail"               // clawdemail.com（POST /register 建箱，Bearer token 读信）
+	ChannelTempmail100             Channel = "tempmail100"              // tempmail100.com（POST /init 取 JWT + /web/generate 建箱）
+	ChannelShitpostEmail           Channel = "shitpost-email"           // shitpost.email（CF Workers 公共实例）
+	ChannelSmails                  Channel = "smails"                   // smails.dev（Bearer token 认证）
+	ChannelTempmailportal          Channel = "tempmailportal"           // tempmailportal（p2 token 认证，api.tempmailportal.com）
+	ChannelHuskmail                Channel = "huskmail"                 // huskmail（JWT 认证，收信域 @huskmail.xyz）
+	ChannelZerodrop                Channel = "zerodrop"                 // zerodrop.dev（本地建箱 + REST 读信）
+	ChannelFiretempmail            Channel = "firetempmail"             // firetempmail.com（随机词本地建箱）
+	ChannelNullmail                Channel = "nullmail"                 // nullmail.cc（POST /api/emails 建箱）
+	ChannelTenminApp               Channel = "tenmin-app"               // tenmin.app（GET /api/inbox/{localpart} 建箱+读信）
+	ChannelMtempmail               Channel = "mtempmail"                // mtempmail.com（公共 key，REST 建箱/读信）
+	ChannelTempmailEE              Channel = "tempmail-ee"              // tempmail.ee（Cookie 会话 + 浏览器指纹换箱）
+	ChannelTemporarymailCom        Channel = "temporarymail-com"        // temporarymail.com（secretKey 鉴权 + checkInbox 读信）
+	ChannelEmail30Min              Channel = "30minemail"               // 30minemail.com（服务端建箱 + messages.php 读信）
+	ChannelLinshiXYZ               Channel = "linshi-xyz"               // linshi.xyz（本地生成前缀，无建箱请求）
+	ChannelCrazymailing            Channel = "crazymailing"             // crazymailing.com（POST /api/mailbox 建箱 + REST 读信）
+	ChannelNoxenDe5Net             Channel = "noxen-de5-net"            // UniMail-Bot 公共实例 tempmail.noxen.de5.net（JWT Cookie 会话 + 随机建箱）
+	ChannelNukemail                Channel = "nukemail"                 // nukemail.app（SHA-256 PoW 建箱 + token Cookie 会话）
+	ChannelShadowmail              Channel = "shadowmail"               // shadowmail.win（账号注册 + sessionId Cookie + 每账号 12 个自选前缀地址）
+	ChannelTempmailto              Channel = "tempmailto"               // tempmailto.com（Laravel Cookie 会话，POST /get_messages 读信）
+	ChannelTempMailGG              Channel = "temp-mail-gg"             // temp-mail.gg（Livewire v3 会话，update 建箱/读信）
+	ChannelTmpkit                  Channel = "tmpkit"                   // tmpkit.com（Next.js tRPC 会话，initSession 建箱 + getEmails/getEmailDetail 读信）
+	ChannelInternxt                Channel = "internxt"                 // internxt.com（临时邮箱页 Cookie 会话，csrf-token 头 + create-email/get-inbox）
+	ChannelGeneratorEmail          Channel = "generator-email"          // generator.email（SSR 网页型，SITE_DATA 快照建箱 + 收信渲染）
 )
 
 /*

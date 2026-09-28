@@ -266,13 +266,7 @@ pub fn get_emails(token: &str, email: &str) -> Result<Vec<Email>, String> {
                 .send()
                 .await
                 .ok()
-                .and_then(|r| {
-                    if r.status().is_success() {
-                        Some(r)
-                    } else {
-                        None
-                    }
-                });
+                .filter(|r| r.status().is_success());
 
                 if let Some(resp) = detail_resp {
                     resp.json::<Value>().await.ok()

@@ -1,6 +1,6 @@
 {
     "name": "chanhanzhan/tempmail-sdk",
-    "description": "临时邮箱 SDK（PHP 端），聚合 279 个第三方临时邮箱渠道，提供统一标准化邮件格式",
+    "description": "临时邮箱 SDK（PHP 端），聚合 296 个第三方临时邮箱渠道，提供统一标准化邮件格式",
     "type": "library",
     "license": "GPL-3.0-or-later",
     "keywords": ["tempmail", "temporary-email", "disposable-email", "sdk"],

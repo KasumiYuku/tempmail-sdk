@@ -321,6 +321,17 @@ fn build_registry() -> Vec<ChannelSpec> {
     });
 
     reg.push(ChannelSpec {
+        channel: Channel::Mailticking,
+        name: "MailTicking",
+        website: "mailticking.com",
+        generate: Box::new(|duration, domain| providers::mailticking::generate_email()),
+        get_emails: Box::new(|email, token| {
+            let t = token.ok_or("token is required for mailticking")?;
+            providers::mailticking::get_emails(email, t)
+        }),
+    });
+
+    reg.push(ChannelSpec {
         channel: Channel::Throwawaymail,
         name: "ThrowawayMail",
         website: "throwawaymail.app",
@@ -982,17 +993,6 @@ fn build_registry() -> Vec<ChannelSpec> {
         website: "mail10s.com",
         generate: Box::new(|duration, domain| providers::mail10s::generate_email()),
         get_emails: Box::new(|email, token| providers::mail10s::get_emails(email)),
-    });
-
-    reg.push(ChannelSpec {
-        channel: Channel::Webmailtemp,
-        name: "WebMailTemp",
-        website: "webmailtemp.com",
-        generate: Box::new(|duration, domain| providers::webmailtemp::generate_email()),
-        get_emails: Box::new(|email, token| {
-            let t = token.ok_or("token is required for webmailtemp")?;
-            providers::webmailtemp::get_emails(t, email)
-        }),
     });
 
     reg.push(ChannelSpec {
@@ -1933,17 +1933,6 @@ fn build_registry() -> Vec<ChannelSpec> {
     });
 
     reg.push(ChannelSpec {
-        channel: Channel::Mohmal,
-        name: "Mohmal",
-        website: "mohmal.com",
-        generate: Box::new(|duration, domain| providers::mohmal::generate_email()),
-        get_emails: Box::new(|email, token| {
-            let t = token.ok_or("token is required for mohmal")?;
-            providers::mohmal::get_emails(t, email)
-        }),
-    });
-
-    reg.push(ChannelSpec {
         channel: Channel::Mailgolem,
         name: "MailGolem",
         website: "mailgolem.com",
@@ -2165,17 +2154,6 @@ fn build_registry() -> Vec<ChannelSpec> {
     });
 
     reg.push(ChannelSpec {
-        channel: Channel::TempMailNow,
-        name: "TempMailNow",
-        website: "temp-mail.now",
-        generate: Box::new(|duration, domain| providers::temp_mail_now::generate_email()),
-        get_emails: Box::new(|email, token| {
-            let t = token.ok_or("token is required for temp-mail-now")?;
-            providers::temp_mail_now::get_emails(t, email)
-        }),
-    });
-
-    reg.push(ChannelSpec {
         channel: Channel::MailTd,
         name: "Mail.td",
         website: "mail.td",
@@ -2230,14 +2208,6 @@ fn build_registry() -> Vec<ChannelSpec> {
         website: "freecustom.email",
         generate: Box::new(|duration, domain| providers::freecustom::generate_email()),
         get_emails: Box::new(|email, token| providers::freecustom::get_emails(email)),
-    });
-
-    reg.push(ChannelSpec {
-        channel: Channel::N16888888Cyou,
-        name: "Mailmomy (16888888.cyou)",
-        website: "mailmomy.com",
-        generate: Box::new(|duration, domain| providers::n16888888_cyou::generate_email()),
-        get_emails: Box::new(|email, token| providers::n16888888_cyou::get_emails(email)),
     });
 
     reg.push(ChannelSpec {
@@ -2352,14 +2322,6 @@ fn build_registry() -> Vec<ChannelSpec> {
         website: "mailinator.com",
         generate: Box::new(|duration, domain| providers::etgdev_de::generate_email()),
         get_emails: Box::new(|email, token| providers::etgdev_de::get_emails(email)),
-    });
-
-    reg.push(ChannelSpec {
-        channel: Channel::EvergreencoShop,
-        name: "Mailmomy (evergreenco.shop)",
-        website: "mailmomy.com",
-        generate: Box::new(|duration, domain| providers::evergreenco_shop::generate_email()),
-        get_emails: Box::new(|email, token| providers::evergreenco_shop::get_emails(email)),
     });
 
     reg.push(ChannelSpec {
@@ -2966,14 +2928,6 @@ fn build_registry() -> Vec<ChannelSpec> {
     });
 
     reg.push(ChannelSpec {
-        channel: Channel::GoneboxEmail,
-        name: "Gonebox Email",
-        website: "gonebox.email",
-        generate: Box::new(|duration, domain| providers::gonebox_email::generate_email()),
-        get_emails: Box::new(|email, token| providers::gonebox_email::get_emails(email)),
-    });
-
-    reg.push(ChannelSpec {
         channel: Channel::MailcatAi,
         name: "Mailcat AI",
         website: "mailcat.ai",
@@ -3024,6 +2978,303 @@ fn build_registry() -> Vec<ChannelSpec> {
         get_emails: Box::new(|email, token| {
             let t = token.ok_or("token is required for ten-minute-mail-net")?;
             providers::ten_minute_mail_net::get_emails(t, email)
+        }),
+    });
+
+    reg.push(ChannelSpec {
+        channel: Channel::TempmailsIo,
+        name: "TempMails.io",
+        website: "tempmails.io",
+        generate: Box::new(|duration, domain| providers::tempmails_io::generate_email()),
+        get_emails: Box::new(|email, token| {
+            let t = token.ok_or("token is required for tempmails-io")?;
+            providers::tempmails_io::get_emails(email, t)
+        }),
+    });
+
+    reg.push(ChannelSpec {
+        channel: Channel::ShitpostEmail,
+        name: "ShitPost.email",
+        website: "shitpost.email",
+        generate: Box::new(|duration, domain| providers::shitpost_email::generate_email()),
+        get_emails: Box::new(|email, token| {
+            let t = token.ok_or("token is required for shitpost-email")?;
+            providers::shitpost_email::get_emails(email, t)
+        }),
+    });
+
+    reg.push(ChannelSpec {
+        channel: Channel::Smails,
+        name: "Smails.dev",
+        website: "smails.dev",
+        generate: Box::new(|duration, domain| providers::smails::generate_email()),
+        get_emails: Box::new(|email, token| {
+            let t = token.ok_or("token is required for smails")?;
+            providers::smails::get_emails(email, t)
+        }),
+    });
+
+    reg.push(ChannelSpec {
+        channel: Channel::Tempmailportal,
+        name: "TempMail Portal",
+        website: "tempmailportal.com",
+        generate: Box::new(|duration, domain| providers::tempmailportal::generate_email()),
+        get_emails: Box::new(|email, token| {
+            let t = token.ok_or("token is required for tempmailportal")?;
+            providers::tempmailportal::get_emails(email, t)
+        }),
+    });
+
+    reg.push(ChannelSpec {
+        channel: Channel::Huskmail,
+        name: "HuskMail",
+        website: "huskmail.xyz",
+        generate: Box::new(|duration, domain| providers::huskmail::generate_email()),
+        get_emails: Box::new(|email, token| {
+            let t = token.ok_or("token is required for huskmail")?;
+            providers::huskmail::get_emails(email, t)
+        }),
+    });
+
+    reg.push(ChannelSpec {
+        channel: Channel::Zerodrop,
+        name: "Zerodrop",
+        website: "zerodrop.dev",
+        generate: Box::new(|duration, domain| providers::zerodrop::generate_email()),
+        get_emails: Box::new(|email, token| {
+            let t = token.ok_or("token is required for zerodrop")?;
+            providers::zerodrop::get_emails(email, t)
+        }),
+    });
+
+    reg.push(ChannelSpec {
+        channel: Channel::Firetempmail,
+        name: "FireTempMail",
+        website: "firetempmail.com",
+        generate: Box::new(|duration, domain| providers::firetempmail::generate_email()),
+        get_emails: Box::new(|email, token| {
+            let t = token.ok_or("token is required for firetempmail")?;
+            providers::firetempmail::get_emails(email, t)
+        }),
+    });
+
+    reg.push(ChannelSpec {
+        channel: Channel::Nullmail,
+        name: "NullMail",
+        website: "nullmail.cc",
+        generate: Box::new(|duration, domain| providers::nullmail::generate_email()),
+        get_emails: Box::new(|email, token| {
+            let t = token.ok_or("token is required for nullmail")?;
+            providers::nullmail::get_emails(email, t)
+        }),
+    });
+
+    reg.push(ChannelSpec {
+        channel: Channel::TenminApp,
+        name: "Tenmin.app",
+        website: "tenmin.app",
+        generate: Box::new(|duration, domain| providers::tenmin_app::generate_email()),
+        get_emails: Box::new(|email, token| {
+            let t = token.ok_or("token is required for tenmin-app")?;
+            providers::tenmin_app::get_emails(email, t)
+        }),
+    });
+
+    reg.push(ChannelSpec {
+        channel: Channel::Mtempmail,
+        name: "MTempMail",
+        website: "mtempmail.com",
+        generate: Box::new(|duration, domain| providers::mtempmail::generate_email()),
+        get_emails: Box::new(|email, token| {
+            let t = token.ok_or("token is required for mtempmail")?;
+            providers::mtempmail::get_emails(email, t)
+        }),
+    });
+
+    reg.push(ChannelSpec {
+        channel: Channel::TempmailEe,
+        name: "TempMail.ee",
+        website: "tempmail.ee",
+        generate: Box::new(|duration, domain| providers::tempmail_ee::generate_email()),
+        get_emails: Box::new(|email, token| {
+            let t = token.ok_or("token is required for tempmail-ee")?;
+            providers::tempmail_ee::get_emails(email, t)
+        }),
+    });
+
+    reg.push(ChannelSpec {
+        channel: Channel::TemporarymailCom,
+        name: "Temporarymail.com",
+        website: "temporarymail.com",
+        generate: Box::new(|duration, domain| providers::temporarymail_com::generate_email()),
+        get_emails: Box::new(|email, token| {
+            let t = token.ok_or("token is required for temporarymail-com")?;
+            providers::temporarymail_com::get_emails(email, t)
+        }),
+    });
+
+    reg.push(ChannelSpec {
+        channel: Channel::Email30Min,
+        name: "30minemail",
+        website: "30minemail.com",
+        generate: Box::new(|duration, domain| providers::email30min::generate_email()),
+        get_emails: Box::new(|email, token| {
+            let t = token.ok_or("token is required for 30minemail")?;
+            providers::email30min::get_emails(email, t)
+        }),
+    });
+
+    reg.push(ChannelSpec {
+        channel: Channel::LinshiXyz,
+        name: "Linshi.xyz",
+        website: "linshi.xyz",
+        generate: Box::new(|duration, domain| providers::linshi_xyz::generate_email()),
+        get_emails: Box::new(|email, token| {
+            let t = token.ok_or("token is required for linshi-xyz")?;
+            providers::linshi_xyz::get_emails(email, t)
+        }),
+    });
+
+    reg.push(ChannelSpec {
+        channel: Channel::Crazymailing,
+        name: "CrazyMailing",
+        website: "crazymailing.com",
+        generate: Box::new(|duration, domain| providers::crazymailing::generate_email()),
+        get_emails: Box::new(|email, token| {
+            let t = token.ok_or("token is required for crazymailing")?;
+            providers::crazymailing::get_emails(email, t)
+        }),
+    });
+
+    reg.push(ChannelSpec {
+        channel: Channel::NoxenDe5Net,
+        name: "UniMail Bot",
+        website: "tempmail.noxen.de5.net",
+        generate: Box::new(|duration, domain| providers::noxen_de5_net::generate_email()),
+        get_emails: Box::new(|email, token| {
+            let t = token.ok_or("token is required for noxen-de5-net")?;
+            providers::noxen_de5_net::get_emails(email, t)
+        }),
+    });
+
+    reg.push(ChannelSpec {
+        channel: Channel::Nukemail,
+        name: "NukeMail",
+        website: "nukemail.app",
+        generate: Box::new(|duration, domain| providers::nukemail::generate_email()),
+        get_emails: Box::new(|email, token| {
+            let t = token.ok_or("token is required for nukemail")?;
+            providers::nukemail::get_emails(email, t)
+        }),
+    });
+
+    reg.push(ChannelSpec {
+        channel: Channel::Shadowmail,
+        name: "ShadowMail",
+        website: "shadowmail.win",
+        generate: Box::new(|duration, domain| providers::shadowmail::generate_email()),
+        get_emails: Box::new(|email, token| {
+            let t = token.ok_or("token is required for shadowmail")?;
+            providers::shadowmail::get_emails(email, t)
+        }),
+    });
+
+    reg.push(ChannelSpec {
+        channel: Channel::Flybymail,
+        name: "FlyByMail",
+        website: "flybymail.com",
+        generate: Box::new(|duration, domain| providers::flybymail::generate_email()),
+        get_emails: Box::new(|email, token| {
+            let t = token.ok_or("token is required for flybymail")?;
+            providers::flybymail::get_emails(email, t)
+        }),
+    });
+
+    reg.push(ChannelSpec {
+        channel: Channel::Nowtempmail,
+        name: "NowTempMail",
+        website: "nowtempmail.com",
+        generate: Box::new(|duration, domain| providers::nowtempmail::generate_email()),
+        get_emails: Box::new(|email, token| {
+            let t = token.ok_or("token is required for nowtempmail")?;
+            providers::nowtempmail::get_emails(email, t)
+        }),
+    });
+
+    reg.push(ChannelSpec {
+        channel: Channel::Clawdemail,
+        name: "ClawdEmail",
+        website: "clawdemail.com",
+        generate: Box::new(|duration, domain| providers::clawdemail::generate_email()),
+        get_emails: Box::new(|email, token| {
+            let t = token.ok_or("token is required for clawdemail")?;
+            providers::clawdemail::get_emails(email, t)
+        }),
+    });
+
+    reg.push(ChannelSpec {
+        channel: Channel::Tempmail100,
+        name: "TempMail100",
+        website: "tempmail100.com",
+        generate: Box::new(|duration, domain| providers::tempmail100::generate_email()),
+        get_emails: Box::new(|email, token| {
+            let t = token.ok_or("token is required for tempmail100")?;
+            providers::tempmail100::get_emails(email, t)
+        }),
+    });
+
+    reg.push(ChannelSpec {
+        channel: Channel::Tempmailto,
+        name: "Tempmailto",
+        website: "tempmailto.com",
+        generate: Box::new(|duration, domain| providers::tempmailto::generate_email()),
+        get_emails: Box::new(|email, token| {
+            let t = token.ok_or("token is required for tempmailto")?;
+            providers::tempmailto::get_emails(email, t)
+        }),
+    });
+
+    reg.push(ChannelSpec {
+        channel: Channel::TempMailGg,
+        name: "TempMailGG",
+        website: "temp-mail.gg",
+        generate: Box::new(|duration, domain| providers::temp_mail_gg::generate_email()),
+        get_emails: Box::new(|email, token| {
+            let t = token.ok_or("token is required for temp-mail-gg")?;
+            providers::temp_mail_gg::get_emails(email, t)
+        }),
+    });
+
+    reg.push(ChannelSpec {
+        channel: Channel::Tmpkit,
+        name: "Tmpkit",
+        website: "tmpkit.com",
+        generate: Box::new(|duration, domain| providers::tmpkit::generate_email()),
+        get_emails: Box::new(|email, token| {
+            let t = token.ok_or("token is required for tmpkit")?;
+            providers::tmpkit::get_emails(email, t)
+        }),
+    });
+
+    reg.push(ChannelSpec {
+        channel: Channel::Internxt,
+        name: "Internxt",
+        website: "internxt.com",
+        generate: Box::new(|duration, domain| providers::internxt::generate_email()),
+        get_emails: Box::new(|email, token| {
+            let t = token.ok_or("token is required for internxt")?;
+            providers::internxt::get_emails(email, t)
+        }),
+    });
+
+    reg.push(ChannelSpec {
+        channel: Channel::GeneratorEmail,
+        name: "GeneratorEmail",
+        website: "generator.email",
+        generate: Box::new(|duration, domain| providers::generator_email::generate_email()),
+        get_emails: Box::new(|email, token| {
+            let t = token.ok_or("token is required for generator-email")?;
+            providers::generator_email::get_emails(email, t)
         }),
     });
 

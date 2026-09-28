@@ -592,6 +592,11 @@ static tm_email_info_t *tm_reg_gen_89(const tm_gen_ctx_t *ctx) {
   (void)ctx;
   return tm_provider_mailnesia_generate();
 }
+static tm_email_info_t *tm_reg_gen_302(const tm_gen_ctx_t *ctx) {
+  /* CHANNEL_MAILTICKING */
+  (void)ctx;
+  return tm_provider_mailticking_generate();
+}
 
 static tm_email_info_t *tm_reg_gen_90(const tm_gen_ctx_t *ctx) {
   /* CHANNEL_THROWAWAYMAIL */
@@ -923,13 +928,6 @@ static tm_email_info_t *tm_reg_gen_138(const tm_gen_ctx_t *ctx) {
   (void)ctx;
   return tm_provider_mail10s_generate();
 }
-
-static tm_email_info_t *tm_reg_gen_139(const tm_gen_ctx_t *ctx) {
-  /* CHANNEL_WEBMAILTEMP */
-  (void)ctx;
-  return tm_provider_webmailtemp_generate();
-}
-
 static tm_email_info_t *tm_reg_gen_140(const tm_gen_ctx_t *ctx) {
   /* CHANNEL_TEMPFASTMAIL */
   (void)ctx;
@@ -1025,13 +1023,6 @@ static tm_email_info_t *tm_reg_gen_155(const tm_gen_ctx_t *ctx) {
   (void)ctx;
   return tm_provider_fake_email_site_generate();
 }
-
-static tm_email_info_t *tm_reg_gen_156(const tm_gen_ctx_t *ctx) {
-  /* CHANNEL_MOHMAL */
-  (void)ctx;
-  return tm_provider_mohmal_generate();
-}
-
 static tm_email_info_t *tm_reg_gen_157(const tm_gen_ctx_t *ctx) {
   /* CHANNEL_MAILGOLEM */
   (void)ctx;
@@ -1151,13 +1142,6 @@ static tm_email_info_t *tm_reg_gen_176(const tm_gen_ctx_t *ctx) {
   (void)ctx;
   return tm_provider_mytempmail_cc_generate();
 }
-
-static tm_email_info_t *tm_reg_gen_177(const tm_gen_ctx_t *ctx) {
-  /* CHANNEL_TEMP_MAIL_NOW */
-  (void)ctx;
-  return tm_provider_temp_mail_now_generate();
-}
-
 static tm_email_info_t *tm_reg_gen_178(const tm_gen_ctx_t *ctx) {
   /* CHANNEL_MAIL_TD */
   (void)ctx;
@@ -1565,13 +1549,6 @@ static tm_email_info_t *tm_reg_gen_245(const tm_gen_ctx_t *ctx) {
   (void)ctx;
   return tm_provider_spam_hortuk_ovh_generate();
 }
-
-static tm_email_info_t *tm_reg_gen_246(const tm_gen_ctx_t *ctx) {
-  /* CHANNEL_16888888_CYOU */
-  (void)ctx;
-  return tm_provider_16888888_cyou_generate();
-}
-
 static tm_email_info_t *tm_reg_gen_247(const tm_gen_ctx_t *ctx) {
   /* CHANNEL_17666688_SHOP */
   (void)ctx;
@@ -1601,13 +1578,6 @@ static tm_email_info_t *tm_reg_gen_251(const tm_gen_ctx_t *ctx) {
   (void)ctx;
   return tm_provider_easyme_pro_generate();
 }
-
-static tm_email_info_t *tm_reg_gen_252(const tm_gen_ctx_t *ctx) {
-  /* CHANNEL_EVERGREENCO_SHOP */
-  (void)ctx;
-  return tm_provider_evergreenco_shop_generate();
-}
-
 static tm_email_info_t *tm_reg_gen_253(const tm_gen_ctx_t *ctx) {
   /* CHANNEL_LAYUEMING_PICS */
   (void)ctx;
@@ -1667,13 +1637,6 @@ static tm_email_info_t *tm_reg_gen_262(const tm_gen_ctx_t *ctx) {
   (void)ctx;
   return tm_provider_xkx_me_generate();
 }
-
-static tm_email_info_t *tm_reg_gen_263(const tm_gen_ctx_t *ctx) {
-  /* CHANNEL_GONEBOX_EMAIL */
-  (void)ctx;
-  return tm_provider_gonebox_email_generate();
-}
-
 static tm_email_info_t *tm_reg_gen_264(const tm_gen_ctx_t *ctx) {
   /* CHANNEL_MAILCAT_AI */
   (void)ctx;
@@ -1768,6 +1731,145 @@ static tm_email_info_t *tm_reg_gen_279(const tm_gen_ctx_t *ctx) {
   /* CHANNEL_TEN_MINUTE_MAIL_NET */
   (void)ctx;
   return tm_provider_ten_minute_mail_net_generate();
+}
+static tm_email_info_t *tm_reg_gen_280(const tm_gen_ctx_t *ctx) {
+  /* CHANNEL_TEMPMAILS_IO */
+  (void)ctx;
+  return tm_provider_tempmails_io_generate();
+}
+static tm_email_info_t *tm_reg_gen_281(const tm_gen_ctx_t *ctx) {
+  /* CHANNEL_SHITPOST_EMAIL */
+  (void)ctx;
+  return tm_provider_shitpost_email_generate();
+}
+static tm_email_info_t *tm_reg_gen_282(const tm_gen_ctx_t *ctx) {
+  /* CHANNEL_SMAILS */
+  (void)ctx;
+  return tm_provider_smails_generate();
+}
+static tm_email_info_t *tm_reg_gen_283(const tm_gen_ctx_t *ctx) {
+  /* CHANNEL_TEMPMAILPORTAL */
+  (void)ctx;
+  return tm_provider_tempmailportal_generate();
+}
+static tm_email_info_t *tm_reg_gen_284(const tm_gen_ctx_t *ctx) {
+  /* CHANNEL_HUSKMAIL */
+  (void)ctx;
+  return tm_provider_huskmail_generate();
+}
+static tm_email_info_t *tm_reg_gen_285(const tm_gen_ctx_t *ctx) {
+  /* CHANNEL_ZERODROP */
+  (void)ctx;
+  return tm_provider_zerodrop_generate();
+}
+static tm_email_info_t *tm_reg_gen_286(const tm_gen_ctx_t *ctx) {
+  /* CHANNEL_FIRETEMPMAIL */
+  (void)ctx;
+  return tm_provider_firetempmail_generate();
+}
+static tm_email_info_t *tm_reg_gen_287(const tm_gen_ctx_t *ctx) {
+  /* CHANNEL_NULLMAIL */
+  (void)ctx;
+  return tm_provider_nullmail_generate();
+}
+static tm_email_info_t *tm_reg_gen_288(const tm_gen_ctx_t *ctx) {
+  /* CHANNEL_TENMIN_APP */
+  (void)ctx;
+  return tm_provider_tenmin_app_generate();
+}
+static tm_email_info_t *tm_reg_gen_289(const tm_gen_ctx_t *ctx) {
+  /* CHANNEL_MTEMPMAIL */
+  (void)ctx;
+  return tm_provider_mtempmail_generate();
+}
+static tm_email_info_t *tm_reg_gen_290(const tm_gen_ctx_t *ctx) {
+  /* CHANNEL_TEMPMAIL_EE */
+  (void)ctx;
+  return tm_provider_tempmail_ee_generate();
+}
+static tm_email_info_t *tm_reg_gen_291(const tm_gen_ctx_t *ctx) {
+  /* CHANNEL_TEMPORARYMAIL_COM */
+  (void)ctx;
+  return tm_provider_temporarymail_com_generate();
+}
+static tm_email_info_t *tm_reg_gen_292(const tm_gen_ctx_t *ctx) {
+  /* CHANNEL_EMAIL30MIN */
+  (void)ctx;
+  return tm_provider_email30min_generate();
+}
+static tm_email_info_t *tm_reg_gen_293(const tm_gen_ctx_t *ctx) {
+  /* CHANNEL_LINSHI_XYZ */
+  (void)ctx;
+  return tm_provider_linshi_xyz_generate();
+}
+static tm_email_info_t *tm_reg_gen_294(const tm_gen_ctx_t *ctx) {
+  /* CHANNEL_CRAZYMAILING */
+  (void)ctx;
+  return tm_provider_crazymailing_generate();
+}
+static tm_email_info_t *tm_reg_gen_295(const tm_gen_ctx_t *ctx) {
+  /* CHANNEL_NOXEN_DE5_NET */
+  return tm_provider_noxen_de5_net_generate(ctx->domain);
+}
+static tm_email_info_t *tm_reg_gen_296(const tm_gen_ctx_t *ctx) {
+  /* CHANNEL_NUKEMAIL */
+  (void)ctx;
+  return tm_provider_nukemail_generate();
+}
+static tm_email_info_t *tm_reg_gen_297(const tm_gen_ctx_t *ctx) {
+  /* CHANNEL_SHADOWMAIL */
+  (void)ctx;
+  return tm_provider_shadowmail_generate();
+}
+static tm_email_info_t *tm_reg_gen_298(const tm_gen_ctx_t *ctx) {
+  /* CHANNEL_FLYBYMAIL */
+  (void)ctx;
+  return tm_provider_flybymail_generate();
+}
+static tm_email_info_t *tm_reg_gen_299(const tm_gen_ctx_t *ctx) {
+  /* CHANNEL_NOWTEMPMAIL */
+  (void)ctx;
+  return tm_provider_nowtempmail_generate();
+}
+static tm_email_info_t *tm_reg_gen_300(const tm_gen_ctx_t *ctx) {
+  /* CHANNEL_CLAWDEMAIL */
+  (void)ctx;
+  return tm_provider_clawdemail_generate();
+}
+static tm_email_info_t *tm_reg_gen_301(const tm_gen_ctx_t *ctx) {
+  /* CHANNEL_TEMPMAIL100 */
+  (void)ctx;
+  return tm_provider_tempmail100_generate();
+}
+
+static tm_email_info_t *tm_reg_gen_303(const tm_gen_ctx_t *ctx) {
+  /* CHANNEL_TEMPMAILTO */
+  (void)ctx;
+  return tm_provider_tempmailto_generate();
+}
+
+static tm_email_info_t *tm_reg_gen_304(const tm_gen_ctx_t *ctx) {
+  /* CHANNEL_TEMP_MAIL_GG */
+  (void)ctx;
+  return tm_provider_temp_mail_gg_generate();
+}
+
+static tm_email_info_t *tm_reg_gen_305(const tm_gen_ctx_t *ctx) {
+  /* CHANNEL_TMPKIT */
+  (void)ctx;
+  return tm_provider_tmpkit_generate();
+}
+
+static tm_email_info_t *tm_reg_gen_306(const tm_gen_ctx_t *ctx) {
+  /* CHANNEL_INTERNXT */
+  (void)ctx;
+  return tm_provider_internxt_generate();
+}
+
+static tm_email_info_t *tm_reg_gen_307(const tm_gen_ctx_t *ctx) {
+  /* CHANNEL_GENERATOR_EMAIL */
+  (void)ctx;
+  return tm_provider_generator_email_generate();
 }
 
 /* ========== 获取邮件 thunk（统一签名，逐字复刻原 switch 分支） ========== */
@@ -2242,6 +2344,14 @@ static tm_email_t *tm_reg_get_57(const char *email, const char *token, int *coun
   (void)token;
   return tm_provider_mailnesia_get_emails(email, count);
 }
+static tm_email_t *tm_reg_get_231(const char *email, const char *token, int *count) {
+  /* CHANNEL_MAILTICKING */
+  if (!token || !token[0]) {
+    *count = -1;
+    return NULL;
+  }
+  return tm_provider_mailticking_get_emails(email, token, count);
+}
 
 static tm_email_t *tm_reg_get_58(const char *email, const char *token, int *count) {
   /* CHANNEL_THROWAWAYMAIL */
@@ -2327,16 +2437,6 @@ static tm_email_t *tm_reg_get_68(const char *email, const char *token, int *coun
   /* CHANNEL_MAIL10S */
   (void)token;
   return tm_provider_mail10s_get_emails(email, count);
-}
-
-static tm_email_t *tm_reg_get_69(const char *email, const char *token, int *count) {
-  /* CHANNEL_WEBMAILTEMP */
-  if (!token) {
-    *count = -1;
-    return NULL;
-  }
-  return tm_provider_webmailtemp_get_emails(token,
-                                                  email, count);
 }
 
 static tm_email_t *tm_reg_get_70(const char *email, const char *token, int *count) {
@@ -2463,16 +2563,6 @@ static tm_email_t *tm_reg_get_84(const char *email, const char *token, int *coun
   /* CHANNEL_FAKE_EMAIL_SITE */
   (void)token;
   return tm_provider_fake_email_site_get_emails(email, count);
-}
-
-static tm_email_t *tm_reg_get_85(const char *email, const char *token, int *count) {
-  /* CHANNEL_MOHMAL */
-  if (!token) {
-    *count = -1;
-    return NULL;
-  }
-  return tm_provider_mohmal_get_emails(token,
-                                             email, count);
 }
 
 static tm_email_t *tm_reg_get_86(const char *email, const char *token, int *count) {
@@ -2662,16 +2752,6 @@ static tm_email_t *tm_reg_get_105(const char *email, const char *token, int *cou
     return NULL;
   }
   return tm_provider_mytempmail_cc_get_emails(token,
-                                                    email, count);
-}
-
-static tm_email_t *tm_reg_get_106(const char *email, const char *token, int *count) {
-  /* CHANNEL_TEMP_MAIL_NOW */
-  if (!token) {
-    *count = -1;
-    return NULL;
-  }
-  return tm_provider_temp_mail_now_get_emails(token,
                                                     email, count);
 }
 
@@ -3095,13 +3175,6 @@ static tm_email_t *tm_reg_get_174(const char *email, const char *token, int *cou
   (void)token;
   return tm_provider_spam_hortuk_ovh_get_emails(email, count);
 }
-
-static tm_email_t *tm_reg_get_175(const char *email, const char *token, int *count) {
-  /* CHANNEL_16888888_CYOU */
-  (void)token;
-  return tm_provider_16888888_cyou_get_emails(email, count);
-}
-
 static tm_email_t *tm_reg_get_176(const char *email, const char *token, int *count) {
   /* CHANNEL_17666688_SHOP */
   (void)token;
@@ -3131,13 +3204,6 @@ static tm_email_t *tm_reg_get_180(const char *email, const char *token, int *cou
   (void)token;
   return tm_provider_easyme_pro_get_emails(email, count);
 }
-
-static tm_email_t *tm_reg_get_181(const char *email, const char *token, int *count) {
-  /* CHANNEL_EVERGREENCO_SHOP */
-  (void)token;
-  return tm_provider_evergreenco_shop_get_emails(email, count);
-}
-
 static tm_email_t *tm_reg_get_182(const char *email, const char *token, int *count) {
   /* CHANNEL_LAYUEMING_PICS */
   (void)token;
@@ -3201,13 +3267,6 @@ static tm_email_t *tm_reg_get_191(const char *email, const char *token, int *cou
   return tm_provider_xkx_me_get_emails(token,
                                               email, count);
 }
-
-static tm_email_t *tm_reg_get_192(const char *email, const char *token, int *count) {
-  /* CHANNEL_GONEBOX_EMAIL */
-  (void)token;
-  return tm_provider_gonebox_email_get_emails(email, count);
-}
-
 static tm_email_t *tm_reg_get_193(const char *email, const char *token, int *count) {
   /* CHANNEL_MAILCAT_AI */
   if (!token) {
@@ -3326,8 +3385,230 @@ static tm_email_t *tm_reg_get_208(const char *email, const char *token, int *cou
   }
   return tm_provider_ten_minute_mail_net_get_emails(token, email, count);
 }
+static tm_email_t *tm_reg_get_209(const char *email, const char *token, int *count) {
+  /* CHANNEL_TEMPMAILS_IO */
+  if (!token) {
+    *count = -1;
+    return NULL;
+  }
+  return tm_provider_tempmails_io_get_emails(email, token, count);
+}
+static tm_email_t *tm_reg_get_210(const char *email, const char *token, int *count) {
+  /* CHANNEL_SHITPOST_EMAIL */
+  if (!token) {
+    *count = -1;
+    return NULL;
+  }
+  return tm_provider_shitpost_email_get_emails(email, token, count);
+}
+static tm_email_t *tm_reg_get_211(const char *email, const char *token, int *count) {
+  /* CHANNEL_SMAILS */
+  if (!token) {
+    *count = -1;
+    return NULL;
+  }
+  return tm_provider_smails_get_emails(email, token, count);
+}
+static tm_email_t *tm_reg_get_212(const char *email, const char *token, int *count) {
+  /* CHANNEL_TEMPMAILPORTAL */
+  if (!token) {
+    *count = -1;
+    return NULL;
+  }
+  return tm_provider_tempmailportal_get_emails(email, token, count);
+}
+static tm_email_t *tm_reg_get_213(const char *email, const char *token, int *count) {
+  /* CHANNEL_HUSKMAIL */
+  if (!token) {
+    *count = -1;
+    return NULL;
+  }
+  return tm_provider_huskmail_get_emails(email, token, count);
+}
+static tm_email_t *tm_reg_get_214(const char *email, const char *token, int *count) {
+  /* CHANNEL_ZERODROP */
+  if (!token) {
+    *count = -1;
+    return NULL;
+  }
+  return tm_provider_zerodrop_get_emails(email, token, count);
+}
+static tm_email_t *tm_reg_get_215(const char *email, const char *token, int *count) {
+  /* CHANNEL_FIRETEMPMAIL */
+  if (!token) {
+    *count = -1;
+    return NULL;
+  }
+  return tm_provider_firetempmail_get_emails(email, token, count);
+}
+static tm_email_t *tm_reg_get_216(const char *email, const char *token, int *count) {
+  /* CHANNEL_NULLMAIL */
+  if (!token) {
+    *count = -1;
+    return NULL;
+  }
+  return tm_provider_nullmail_get_emails(email, token, count);
+}
+static tm_email_t *tm_reg_get_217(const char *email, const char *token, int *count) {
+  /* CHANNEL_TENMIN_APP */
+  if (!token) {
+    *count = -1;
+    return NULL;
+  }
+  return tm_provider_tenmin_app_get_emails(email, token, count);
+}
+static tm_email_t *tm_reg_get_218(const char *email, const char *token, int *count) {
+  /* CHANNEL_MTEMPMAIL */
+  if (!token) {
+    *count = -1;
+    return NULL;
+  }
+  return tm_provider_mtempmail_get_emails(email, token, count);
+}
+static tm_email_t *tm_reg_get_219(const char *email, const char *token, int *count) {
+  /* CHANNEL_TEMPMAIL_EE */
+  if (!token) {
+    *count = -1;
+    return NULL;
+  }
+  return tm_provider_tempmail_ee_get_emails(email, token, count);
+}
+static tm_email_t *tm_reg_get_220(const char *email, const char *token, int *count) {
+  /* CHANNEL_TEMPORARYMAIL_COM */
+  if (!token || !token[0]) {
+    *count = -1;
+    return NULL;
+  }
+  return tm_provider_temporarymail_com_get_emails(email, token, count);
+}
+static tm_email_t *tm_reg_get_221(const char *email, const char *token, int *count) {
+  /* CHANNEL_EMAIL30MIN */
+  if (!token || !token[0]) {
+    *count = -1;
+    return NULL;
+  }
+  return tm_provider_email30min_get_emails(email, token, count);
+}
+static tm_email_t *tm_reg_get_222(const char *email, const char *token, int *count) {
+  /* CHANNEL_LINSHI_XYZ */
+  if (!token || !token[0]) {
+    *count = -1;
+    return NULL;
+  }
+  return tm_provider_linshi_xyz_get_emails(email, token, count);
+}
+static tm_email_t *tm_reg_get_223(const char *email, const char *token, int *count) {
+  /* CHANNEL_CRAZYMAILING */
+  if (!token || !token[0]) {
+    *count = -1;
+    return NULL;
+  }
+  return tm_provider_crazymailing_get_emails(email, token, count);
+}
+static tm_email_t *tm_reg_get_224(const char *email, const char *token, int *count) {
+  /* CHANNEL_NOXEN_DE5_NET */
+  if (!token || !token[0]) {
+    *count = -1;
+    return NULL;
+  }
+  return tm_provider_noxen_de5_net_get_emails(email, token, count);
+}
+static tm_email_t *tm_reg_get_225(const char *email, const char *token, int *count) {
+  /* CHANNEL_NUKEMAIL */
+  if (!token || !token[0]) {
+    *count = -1;
+    return NULL;
+  }
+  return tm_provider_nukemail_get_emails(email, token, count);
+}
+static tm_email_t *tm_reg_get_226(const char *email, const char *token, int *count) {
+  /* CHANNEL_SHADOWMAIL */
+  if (!token || !token[0]) {
+    *count = -1;
+    return NULL;
+  }
+  return tm_provider_shadowmail_get_emails(email, token, count);
+}
+static tm_email_t *tm_reg_get_227(const char *email, const char *token, int *count) {
+  /* CHANNEL_FLYBYMAIL */
+  if (!token || !token[0]) {
+    *count = -1;
+    return NULL;
+  }
+  return tm_provider_flybymail_get_emails(email, token, count);
+}
+static tm_email_t *tm_reg_get_228(const char *email, const char *token, int *count) {
+  /* CHANNEL_NOWTEMPMAIL */
+  if (!token || !token[0]) {
+    *count = -1;
+    return NULL;
+  }
+  return tm_provider_nowtempmail_get_emails(email, token, count);
+}
+static tm_email_t *tm_reg_get_229(const char *email, const char *token, int *count) {
+  /* CHANNEL_CLAWDEMAIL */
+  if (!token || !token[0]) {
+    *count = -1;
+    return NULL;
+  }
+  return tm_provider_clawdemail_get_emails(email, token, count);
+}
+static tm_email_t *tm_reg_get_230(const char *email, const char *token, int *count) {
+  /* CHANNEL_TEMPMAIL100 */
+  if (!token || !token[0]) {
+    *count = -1;
+    return NULL;
+  }
+  return tm_provider_tempmail100_get_emails(email, token, count);
+}
+
+static tm_email_t *tm_reg_get_232(const char *email, const char *token, int *count) {
+  /* CHANNEL_TEMPMAILTO */
+  if (!token || !token[0]) {
+    *count = -1;
+    return NULL;
+  }
+  return tm_provider_tempmailto_get_emails(email, token, count);
+}
+
+static tm_email_t *tm_reg_get_233(const char *email, const char *token, int *count) {
+  /* CHANNEL_TEMP_MAIL_GG */
+  if (!token || !token[0]) {
+    *count = -1;
+    return NULL;
+  }
+  return tm_provider_temp_mail_gg_get_emails(email, token, count);
+}
+
+static tm_email_t *tm_reg_get_234(const char *email, const char *token, int *count) {
+  /* CHANNEL_TMPKIT */
+  if (!token || !token[0]) {
+    *count = -1;
+    return NULL;
+  }
+  return tm_provider_tmpkit_get_emails(email, token, count);
+}
+
+static tm_email_t *tm_reg_get_235(const char *email, const char *token, int *count) {
+  /* CHANNEL_INTERNXT */
+  if (!token || !token[0]) {
+    *count = -1;
+    return NULL;
+  }
+  return tm_provider_internxt_get_emails(email, token, count);
+}
+
+static tm_email_t *tm_reg_get_236(const char *email, const char *token, int *count) {
+  /* CHANNEL_GENERATOR_EMAIL */
+  if (!token || !token[0]) {
+    *count = -1;
+    return NULL;
+  }
+  return tm_provider_generator_email_get_emails(email, token, count);
+}
 
 /* ========== 有序渠道注册表（顺序即 baseline / listChannels 顺序） ========== */
+    /* ========== 有序渠道注册表（顺序即 baseline / listChannels 顺序） ========== */
 static const tm_channel_spec_t g_channel_registry[] = {
     {CHANNEL_TEMPMAIL, "TempMail", "tempmail.ing", tm_reg_gen_0, tm_reg_get_0},
     {CHANNEL_TEMPMAIL_CN, "TempMail CN", "tempmail.cn", tm_reg_gen_1, tm_reg_get_1},
@@ -3354,6 +3635,7 @@ static const tm_channel_spec_t g_channel_registry[] = {
     {CHANNEL_MAILFORSPAM_DISPOSABLE, "MailForSpam Disposable", "disposable.email", tm_reg_gen_87, tm_reg_get_55},
     {CHANNEL_TEMPMAILC, "TempMailC", "tempmailc.com", tm_reg_gen_88, tm_reg_get_56},
     {CHANNEL_MAILNESIA, "Mailnesia", "mailnesia.com", tm_reg_gen_89, tm_reg_get_57},
+    {CHANNEL_MAILTICKING, "MailTicking", "mailticking.com", tm_reg_gen_302, tm_reg_get_231},
     {CHANNEL_THROWAWAYMAIL, "ThrowawayMail", "throwawaymail.app", tm_reg_gen_90, tm_reg_get_58},
     {CHANNEL_TEMPMAIL_FISH, "TempMail Fish", "tempmail.fish", tm_reg_gen_91, tm_reg_get_59},
     {CHANNEL_NEIGHBOURS_SH, "Neighbours", "neighbours.sh", tm_reg_gen_92, tm_reg_get_60},
@@ -3403,7 +3685,6 @@ static const tm_channel_spec_t g_channel_registry[] = {
     {CHANNEL_VILLATOGEL_COM, "villatogel.com", "getnada.net", tm_reg_gen_136, tm_reg_get_66},
     {CHANNEL_MAIL123, "Mail123", "mail123.fr", tm_reg_gen_137, tm_reg_get_67},
     {CHANNEL_MAIL10S, "Mail10s", "mail10s.com", tm_reg_gen_138, tm_reg_get_68},
-    {CHANNEL_WEBMAILTEMP, "WebMailTemp", "webmailtemp.com", tm_reg_gen_139, tm_reg_get_69},
     {CHANNEL_TEMPFASTMAIL, "TempFastMail", "tempfastmail.com", tm_reg_gen_140, tm_reg_get_70},
     {CHANNEL_ONE_SEC_MAIL, "1SecMail", "1sec-mail.com", tm_reg_gen_141, tm_reg_get_71},
     {CHANNEL_FAKEMAIL, "FakeMail", "fakemail.net", tm_reg_gen_142, tm_reg_get_72},
@@ -3485,7 +3766,6 @@ static const tm_channel_spec_t g_channel_registry[] = {
     {CHANNEL_HARIBU, "Haribu", "haribu.net", tm_reg_gen_153, tm_reg_get_82},
     {CHANNEL_ROOTSH, "Rootsh(BccTo)", "rootsh.com", tm_reg_gen_154, tm_reg_get_83},
     {CHANNEL_FAKE_EMAIL_SITE, "FakeEmailSite", "fake-email.site", tm_reg_gen_155, tm_reg_get_84},
-    {CHANNEL_MOHMAL, "Mohmal", "mohmal.com", tm_reg_gen_156, tm_reg_get_85},
     {CHANNEL_MAILGOLEM, "MailGolem", "mailgolem.com", tm_reg_gen_157, tm_reg_get_86},
     {CHANNEL_BEST_TEMP_MAIL, "BestTempMail", "best-temp-mail.com", tm_reg_gen_158, tm_reg_get_87},
     {CHANNEL_DISPOSABLEMAIL_APP, "DisposableMail", "disposablemail.app", tm_reg_gen_159, tm_reg_get_88},
@@ -3506,14 +3786,12 @@ static const tm_channel_spec_t g_channel_registry[] = {
     {CHANNEL_TEMPP_MAILS, "TemppMails", "tempp-mails.com", tm_reg_gen_174, tm_reg_get_103},
     {CHANNEL_EMAILTEMP_ORG, "EmailTemp", "emailtemp.org", tm_reg_gen_175, tm_reg_get_104},
     {CHANNEL_MYTEMPMAIL_CC, "MyTempMail.cc", "mytempmail.cc", tm_reg_gen_176, tm_reg_get_105},
-    {CHANNEL_TEMP_MAIL_NOW, "TempMailNow", "temp-mail.now", tm_reg_gen_177, tm_reg_get_106},
     {CHANNEL_MAIL_TD, "MailTd", "mail.td", tm_reg_gen_178, tm_reg_get_107},
     {CHANNEL_MAILHOLE_DE, "Mailhole.de", "mailhole.de", tm_reg_gen_179, tm_reg_get_108},
     {CHANNEL_TMAIL_LINK, "TMail.link", "tmail.link", tm_reg_gen_180, tm_reg_get_109},
     {CHANNEL_24MAIL_CHACUO, "24Mail Chacuo", "24mail.chacuo.net", tm_reg_gen_181, tm_reg_get_110},
     {CHANNEL_NIMAIL, "Nimail", "nimail.cn", tm_reg_gen_182, tm_reg_get_111},
     {CHANNEL_FREECUSTOM, "FreeCustom.Email", "freecustom.email", tm_reg_gen_183, tm_reg_get_112},
-    {CHANNEL_16888888_CYOU, "16888888.cyou", "mailmomy.com", tm_reg_gen_246, tm_reg_get_175},
     {CHANNEL_17666688_SHOP, "17666688.shop", "mailmomy.com", tm_reg_gen_247, tm_reg_get_176},
     {CHANNEL_282MAIL_COM, "282mail.com", "mailmomy.com", tm_reg_gen_248, tm_reg_get_177},
     {CHANNEL_BLACKHOLE_DJURBY_SE, "Mailinator (blackhole.djurby.se)", "mailinator.com", tm_reg_gen_230, tm_reg_get_159},
@@ -3528,7 +3806,6 @@ static const tm_channel_spec_t g_channel_registry[] = {
     {CHANNEL_EASYME_PRO, "easyme.pro", "mailmomy.com", tm_reg_gen_251, tm_reg_get_180},
     {CHANNEL_EBS_COM_AR, "Mailinator (ebs.com.ar)", "mailinator.com", tm_reg_gen_228, tm_reg_get_157},
     {CHANNEL_ETGDEV_DE, "Mailinator (etgdev.de)", "mailinator.com", tm_reg_gen_221, tm_reg_get_150},
-    {CHANNEL_EVERGREENCO_SHOP, "evergreenco.shop", "mailmomy.com", tm_reg_gen_252, tm_reg_get_181},
     {CHANNEL_FWD2M_ESZETT_ES, "Mailinator (fwd2m.eszett.es)", "mailinator.com", tm_reg_gen_240, tm_reg_get_169},
     {CHANNEL_JAMA_TRENET_EU, "Mailinator (jama.trenet.eu)", "mailinator.com", tm_reg_gen_229, tm_reg_get_158},
     {CHANNEL_J_FAIRUSE_ORG, "Mailinator (j.fairuse.org)", "mailinator.com", tm_reg_gen_271, tm_reg_get_200},
@@ -3602,12 +3879,38 @@ static const tm_channel_spec_t g_channel_registry[] = {
     {CHANNEL_TEMPGMAILER, "TempGmailer", "tempgmailer.com", tm_reg_gen_275, tm_reg_get_204},
     {CHANNEL_TEMP_MAIL_ORG, "Temp-Mail.org", "temp-mail.org", tm_reg_gen_276, tm_reg_get_205},
     {CHANNEL_XKX_ME, "XKX.me", "xkx.me", tm_reg_gen_262, tm_reg_get_191},
-    {CHANNEL_GONEBOX_EMAIL, "Gonebox Email", "gonebox.email", tm_reg_gen_263, tm_reg_get_192},
     {CHANNEL_MAILCAT_AI, "Mailcat AI", "mailcat.ai", tm_reg_gen_264, tm_reg_get_193},
     {CHANNEL_TEMPGO_EMAIL, "TempGo Email", "tempgo.email", tm_reg_gen_265, tm_reg_get_194},
     {CHANNEL_RESTMAIL_NET, "Restmail.net", "restmail.net", tm_reg_gen_266, tm_reg_get_195},
     {CHANNEL_DROPMAIL_ME, "DropMail.me", "dropmail.me", tm_reg_gen_278, tm_reg_get_207},
     {CHANNEL_TEN_MINUTE_MAIL_NET, "10MinuteMail.net", "10minutemail.net", tm_reg_gen_279, tm_reg_get_208},
+    {CHANNEL_TEMPMAILS_IO, "TempMails.io", "tempmails.io", tm_reg_gen_280, tm_reg_get_209},
+    {CHANNEL_SHITPOST_EMAIL, "ShitPost.email", "shitpost.email", tm_reg_gen_281, tm_reg_get_210},
+    {CHANNEL_SMAILS, "Smails.dev", "smails.dev", tm_reg_gen_282, tm_reg_get_211},
+    {CHANNEL_TEMPMAILPORTAL, "TempMail Portal", "tempmailportal.com", tm_reg_gen_283, tm_reg_get_212},
+    {CHANNEL_HUSKMAIL, "HuskMail", "huskmail.xyz", tm_reg_gen_284, tm_reg_get_213},
+    {CHANNEL_ZERODROP, "Zerodrop", "zerodrop.dev", tm_reg_gen_285, tm_reg_get_214},
+    {CHANNEL_FIRETEMPMAIL, "FireTempMail", "firetempmail.com", tm_reg_gen_286, tm_reg_get_215},
+    {CHANNEL_NULLMAIL, "NullMail", "nullmail.cc", tm_reg_gen_287, tm_reg_get_216},
+    {CHANNEL_TENMIN_APP, "Tenmin.app", "tenmin.app", tm_reg_gen_288, tm_reg_get_217},
+    {CHANNEL_MTEMPMAIL, "MTempMail", "mtempmail.com", tm_reg_gen_289, tm_reg_get_218},
+    {CHANNEL_TEMPMAIL_EE, "TempMail.ee", "tempmail.ee", tm_reg_gen_290, tm_reg_get_219},
+    {CHANNEL_TEMPORARYMAIL_COM, "Temporarymail.com", "temporarymail.com", tm_reg_gen_291, tm_reg_get_220},
+    {CHANNEL_EMAIL30MIN, "30minemail", "30minemail.com", tm_reg_gen_292, tm_reg_get_221},
+    {CHANNEL_LINSHI_XYZ, "Linshi.xyz", "linshi.xyz", tm_reg_gen_293, tm_reg_get_222},
+    {CHANNEL_CRAZYMAILING, "CrazyMailing", "crazymailing.com", tm_reg_gen_294, tm_reg_get_223},
+    {CHANNEL_NOXEN_DE5_NET, "UniMail Bot", "tempmail.noxen.de5.net", tm_reg_gen_295, tm_reg_get_224},
+    {CHANNEL_NUKEMAIL, "NukeMail", "nukemail.app", tm_reg_gen_296, tm_reg_get_225},
+    {CHANNEL_SHADOWMAIL, "ShadowMail", "shadowmail.win", tm_reg_gen_297, tm_reg_get_226},
+    {CHANNEL_FLYBYMAIL, "FlyByMail", "flybymail.com", tm_reg_gen_298, tm_reg_get_227},
+    {CHANNEL_NOWTEMPMAIL, "NowTempMail", "nowtempmail.com", tm_reg_gen_299, tm_reg_get_228},
+    {CHANNEL_CLAWDEMAIL, "ClawdEmail", "clawdemail.com", tm_reg_gen_300, tm_reg_get_229},
+    {CHANNEL_TEMPMAIL100, "TempMail100", "tempmail100.com", tm_reg_gen_301, tm_reg_get_230},
+    {CHANNEL_TEMPMAILTO, "Tempmailto", "tempmailto.com", tm_reg_gen_303, tm_reg_get_232},
+    {CHANNEL_TEMP_MAIL_GG, "TempMailGG", "temp-mail.gg", tm_reg_gen_304, tm_reg_get_233},
+    {CHANNEL_TMPKIT, "Tmpkit", "tmpkit.com", tm_reg_gen_305, tm_reg_get_234},
+    {CHANNEL_INTERNXT, "Internxt", "internxt.com", tm_reg_gen_306, tm_reg_get_235},
+    {CHANNEL_GENERATOR_EMAIL, "GeneratorEmail", "generator.email", tm_reg_gen_307, tm_reg_get_236},
 };
 
 #define TM_REGISTRY_N ((int)(sizeof(g_channel_registry) / sizeof(g_channel_registry[0])))

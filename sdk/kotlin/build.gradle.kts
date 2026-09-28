@@ -1,4 +1,5 @@
 plugins {
+
     kotlin("jvm") version "2.0.21"
     kotlin("plugin.serialization") version "2.0.21"
     id("com.vanniktech.maven.publish") version "0.34.0"
@@ -34,11 +35,6 @@ kotlin {
 tasks.test {
     useJUnitPlatform()
 }
-
-// 发布到 Maven Central（Sonatype Central Portal）。
-// 凭据与 GPG 私钥通过环境变量注入（ORG_GRADLE_PROJECT_ 前缀）：
-//   ORG_GRADLE_PROJECT_mavenCentralUsername / mavenCentralPassword —— Central Portal User Token
-//   ORG_GRADLE_PROJECT_signingInMemoryKey / signingInMemoryKeyPassword —— ASCII armored GPG 私钥与密码
 mavenPublishing {
     publishToMavenCentral()
     signAllPublications()
@@ -47,7 +43,7 @@ mavenPublishing {
 
     pom {
         name.set("TempMail SDK")
-        description.set("Kotlin SDK for temporary email services, aggregating 279 channels")
+        description.set("Kotlin SDK for temporary email services, aggregating 284 channels")
         inceptionYear.set("2026")
         url.set("https://github.com/XxxXTeam/tempmail-sdk")
         licenses {

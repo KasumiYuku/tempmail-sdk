@@ -17,6 +17,7 @@ import * as catchmail from "./providers/catchmail";
 import * as mailforspam from "./providers/mailforspam";
 import * as tempmailc from "./providers/tempmailc";
 import * as mailnesia from "./providers/mailnesia";
+import * as mailticking from "./providers/mailticking";
 import * as throwawaymail from "./providers/throwawaymail";
 import * as tempmailFish from "./providers/tempmail-fish";
 import * as neighboursSh from "./providers/neighbours-sh";
@@ -30,7 +31,6 @@ import * as inboxkitten from "./providers/inboxkitten";
 import * as getnada from "./providers/getnada";
 import * as mail123 from "./providers/mail123";
 import * as mail10s from "./providers/mail10s";
-import * as webmailtemp from "./providers/webmailtemp";
 import * as tempfastmail from "./providers/tempfastmail";
 import * as oneSecMail from "./providers/one-sec-mail";
 import * as fakemail from "./providers/fakemail";
@@ -122,13 +122,11 @@ import * as rauxaSenyCat from "./providers/rauxa-seny-cat";
 import * as spWootAt from "./providers/sp-woot-at";
 import * as fwd2mEszettEs from "./providers/fwd2m-eszett-es";
 import * as m887At from "./providers/m-887-at";
-import * as n16888888Cyou from "./providers/16888888-cyou";
 import * as n17666688Shop from "./providers/17666688-shop";
 import * as n282mailCom from "./providers/282mail-com";
 import * as bsdu32Buzz from "./providers/bsdu32-buzz";
 import * as doxu243Buzz from "./providers/doxu243-buzz";
 import * as easymePro from "./providers/easyme-pro";
-import * as evergreencoShop from "./providers/evergreenco-shop";
 import * as layuemingPics from "./providers/layueming-pics";
 import * as mingyuekejiOnline from "./providers/mingyuekeji-online";
 import * as mingyuemingClick from "./providers/mingyueming-click";
@@ -162,7 +160,6 @@ import * as lroid from "./providers/lroid";
 import * as haribu from "./providers/haribu";
 import * as rootsh from "./providers/rootsh";
 import * as fakeEmailSite from "./providers/fake-email-site";
-import * as mohmal from "./providers/mohmal";
 import * as mailgolem from "./providers/mailgolem";
 import * as bestTempMail from "./providers/best-temp-mail";
 import * as disposablemailApp from "./providers/disposablemail-app";
@@ -183,7 +180,6 @@ import * as disposablemailCom from "./providers/disposablemail-com";
 import * as temppMails from "./providers/tempp-mails";
 import * as emailtempOrg from "./providers/emailtemp-org";
 import * as mytempmailCc from "./providers/mytempmail-cc";
-import * as tempMailNow from "./providers/temp-mail-now";
 import * as mailTd from "./providers/mail-td";
 import * as mailholeDe from "./providers/mailhole-de";
 import * as tmailLink from "./providers/tmail-link";
@@ -192,12 +188,38 @@ import * as nimail from "./providers/nimail";
 import * as freecustom from "./providers/freecustom";
 import * as apihz from "./providers/apihz";
 import * as xkxMe from "./providers/xkx-me";
-import * as goneboxEmail from "./providers/gonebox-email";
 import * as mailcatAi from "./providers/mailcat-ai";
 import * as tempgoEmail from "./providers/tempgo-email";
 import * as restmailNet from "./providers/restmail-net";
 import * as dropmailMe from "./providers/dropmail-me";
 import * as tenMinuteMailNet from "./providers/ten-minute-mail-net";
+import * as tempmailsIo from "./providers/tempmails-io";
+import * as shitpostEmail from "./providers/shitpost-email";
+import * as smails from "./providers/smails";
+import * as tempmailportal from "./providers/tempmailportal";
+import * as huskmail from "./providers/huskmail";
+import * as zerodrop from "./providers/zerodrop";
+import * as firetempmail from "./providers/firetempmail";
+import * as nullmail from "./providers/nullmail";
+import * as tenminApp from "./providers/tenmin-app";
+import * as mtempmail from "./providers/mtempmail";
+import * as tempmailEe from "./providers/tempmail-ee";
+import * as temporarymailCom from "./providers/temporarymail-com";
+import * as email30Min from "./providers/30minemail";
+import * as linshiXyz from "./providers/linshi-xyz";
+import * as crazymailing from "./providers/crazymailing";
+import * as noxenDe5Net from "./providers/noxen-de5-net";
+import * as nukemail from "./providers/nukemail";
+import * as shadowmail from "./providers/shadowmail";
+import * as flybymail from "./providers/flybymail";
+import * as nowtempmail from "./providers/nowtempmail";
+import * as clawdemail from "./providers/clawdemail";
+import * as tempmail100 from "./providers/tempmail100";
+import * as tempmailto from "./providers/tempmailto";
+import * as tempMailGg from "./providers/temp-mail-gg";
+import * as tmpkit from "./providers/tmpkit";
+import * as internxt from "./providers/internxt";
+import * as generatorEmail from "./providers/generator-email";
 import {
   sharklasers,
   sharklasersCom,
@@ -559,6 +581,20 @@ import { registerChannel } from "./registry";
     },
     getEmails: (email: string, token?: string): Promise<Email[]> => {
         return mailnesia.getEmails(email);
+    },
+  });
+
+  registerChannel({
+    channel: "mailticking",
+    name: "MailTicking",
+    website: "mailticking.com",
+    generate: (options: GenerateEmailOptions): Promise<InternalEmailInfo> => {
+        return mailticking.generateEmail();
+    },
+    getEmails: (email: string, token?: string): Promise<Email[]> => {
+        if (!token)
+          throw new Error("internal error: token missing for mailticking");
+        return mailticking.getEmails(email, token);
     },
   });
 
@@ -1224,20 +1260,6 @@ import { registerChannel } from "./registry";
     },
     getEmails: (email: string, token?: string): Promise<Email[]> => {
         return mail10s.getEmails(email);
-    },
-  });
-
-  registerChannel({
-    channel: "webmailtemp",
-    name: "WebMailTemp",
-    website: "webmailtemp.com",
-    generate: (options: GenerateEmailOptions): Promise<InternalEmailInfo> => {
-        return webmailtemp.generateEmail();
-    },
-    getEmails: (email: string, token?: string): Promise<Email[]> => {
-        if (!token)
-          throw new Error("internal error: token missing for webmailtemp");
-        return webmailtemp.getEmails(token, email);
     },
   });
 
@@ -2326,19 +2348,6 @@ import { registerChannel } from "./registry";
   });
 
   registerChannel({
-    channel: "mohmal",
-    name: "Mohmal",
-    website: "mohmal.com",
-    generate: (options: GenerateEmailOptions): Promise<InternalEmailInfo> => {
-        return mohmal.generateEmail();
-    },
-    getEmails: (email: string, token?: string): Promise<Email[]> => {
-        if (!token) throw new Error("internal error: token missing for mohmal");
-        return mohmal.getEmails(email, token);
-    },
-  });
-
-  registerChannel({
     channel: "mailgolem",
     name: "MailGolem",
     website: "mailgolem.com",
@@ -2622,20 +2631,6 @@ import { registerChannel } from "./registry";
   });
 
   registerChannel({
-    channel: "temp-mail-now",
-    name: "TempMailNow",
-    website: "temp-mail.now",
-    generate: (options: GenerateEmailOptions): Promise<InternalEmailInfo> => {
-        return tempMailNow.generateEmail();
-    },
-    getEmails: (email: string, token?: string): Promise<Email[]> => {
-        if (!token)
-          throw new Error("internal error: token missing for temp-mail-now");
-        return tempMailNow.getEmails(token, email);
-    },
-  });
-
-  registerChannel({
     channel: "mail-td",
     name: "Mail.td",
     website: "mail.td",
@@ -2711,18 +2706,6 @@ import { registerChannel } from "./registry";
     },
     getEmails: (email: string, token?: string): Promise<Email[]> => {
         return freecustom.getEmails(token || "", email);
-    },
-  });
-
-  registerChannel({
-    channel: "16888888-cyou",
-    name: "Mailmomy (16888888.cyou)",
-    website: "mailmomy.com",
-    generate: (options: GenerateEmailOptions): Promise<InternalEmailInfo> => {
-        return n16888888Cyou.generateEmail();
-    },
-    getEmails: (email: string, token?: string): Promise<Email[]> => {
-        return n16888888Cyou.getEmails(token || "", email);
     },
   });
 
@@ -2891,18 +2874,6 @@ import { registerChannel } from "./registry";
     },
     getEmails: (email: string, token?: string): Promise<Email[]> => {
         return etgdevDe.getEmails(token || "", email);
-    },
-  });
-
-  registerChannel({
-    channel: "evergreenco-shop",
-    name: "Mailmomy (evergreenco.shop)",
-    website: "mailmomy.com",
-    generate: (options: GenerateEmailOptions): Promise<InternalEmailInfo> => {
-        return evergreencoShop.generateEmail();
-    },
-    getEmails: (email: string, token?: string): Promise<Email[]> => {
-        return evergreencoShop.getEmails(token || "", email);
     },
   });
 
@@ -3790,18 +3761,6 @@ import { registerChannel } from "./registry";
   });
 
   registerChannel({
-    channel: "gonebox-email",
-    name: "GoneBox Email",
-    website: "gonebox.email",
-    generate: (options: GenerateEmailOptions): Promise<InternalEmailInfo> => {
-        return goneboxEmail.generateEmail();
-    },
-    getEmails: (email: string, token?: string): Promise<Email[]> => {
-        return goneboxEmail.getEmails("", email);
-    },
-  });
-
-  registerChannel({
     channel: "mailcat-ai",
     name: "MailCat AI",
     website: "mailcat.ai",
@@ -3866,5 +3825,383 @@ import { registerChannel } from "./registry";
         if (!token)
           throw new Error("internal error: token missing for ten-minute-mail-net");
         return tenMinuteMailNet.getEmails(token, email);
+    },
+  });
+
+  registerChannel({
+    channel: "tempmails-io",
+    name: "TempMails.io",
+    website: "tempmails.io",
+    generate: (options: GenerateEmailOptions): Promise<InternalEmailInfo> => {
+        return tempmailsIo.generateEmail();
+    },
+    getEmails: (email: string, token?: string): Promise<Email[]> => {
+        if (!token)
+          throw new Error("internal error: token missing for tempmails-io");
+        return tempmailsIo.getEmails(email, token);
+    },
+  });
+
+  registerChannel({
+    channel: "shitpost-email",
+    name: "ShitPost.email",
+    website: "shitpost.email",
+    generate: (options: GenerateEmailOptions): Promise<InternalEmailInfo> => {
+        return shitpostEmail.generateEmail();
+    },
+    getEmails: (email: string, token?: string): Promise<Email[]> => {
+        if (!token)
+          throw new Error("internal error: token missing for shitpost-email");
+        return shitpostEmail.getEmails(email, token);
+    },
+  });
+
+  registerChannel({
+    channel: "smails",
+    name: "Smails.dev",
+    website: "smails.dev",
+    generate: (options: GenerateEmailOptions): Promise<InternalEmailInfo> => {
+        return smails.generateEmail();
+    },
+    getEmails: (email: string, token?: string): Promise<Email[]> => {
+        if (!token)
+          throw new Error("internal error: token missing for smails");
+        return smails.getEmails(email, token);
+    },
+  });
+
+  registerChannel({
+    channel: "tempmailportal",
+    name: "TempMail Portal",
+    website: "tempmailportal.com",
+    generate: (options: GenerateEmailOptions): Promise<InternalEmailInfo> => {
+        return tempmailportal.generateEmail();
+    },
+    getEmails: (email: string, token?: string): Promise<Email[]> => {
+        if (!token)
+          throw new Error("internal error: token missing for tempmailportal");
+        return tempmailportal.getEmails(email, token);
+    },
+  });
+
+  registerChannel({
+    channel: "huskmail",
+    name: "HuskMail",
+    website: "huskmail.xyz",
+    generate: (options: GenerateEmailOptions): Promise<InternalEmailInfo> => {
+        return huskmail.generateEmail();
+    },
+    getEmails: (email: string, token?: string): Promise<Email[]> => {
+        if (!token)
+          throw new Error("internal error: token missing for huskmail");
+        return huskmail.getEmails(email, token);
+    },
+  });
+
+  registerChannel({
+    channel: "zerodrop",
+    name: "Zerodrop",
+    website: "zerodrop.dev",
+    generate: (options: GenerateEmailOptions): Promise<InternalEmailInfo> => {
+        return zerodrop.generateEmail();
+    },
+    getEmails: (email: string, token?: string): Promise<Email[]> => {
+        if (!token)
+          throw new Error("internal error: token missing for zerodrop");
+        return zerodrop.getEmails(email, token);
+    },
+  });
+
+  registerChannel({
+    channel: "firetempmail",
+    name: "FireTempMail",
+    website: "firetempmail.com",
+    generate: (options: GenerateEmailOptions): Promise<InternalEmailInfo> => {
+        return firetempmail.generateEmail();
+    },
+    getEmails: (email: string, token?: string): Promise<Email[]> => {
+        if (!token)
+          throw new Error("internal error: token missing for firetempmail");
+        return firetempmail.getEmails(email, token);
+    },
+  });
+
+  registerChannel({
+    channel: "nullmail",
+    name: "NullMail",
+    website: "nullmail.cc",
+    generate: (options: GenerateEmailOptions): Promise<InternalEmailInfo> => {
+        return nullmail.generateEmail();
+    },
+    getEmails: (email: string, token?: string): Promise<Email[]> => {
+        if (!token)
+          throw new Error("internal error: token missing for nullmail");
+        return nullmail.getEmails(email, token);
+    },
+  });
+
+  registerChannel({
+    channel: "tenmin-app",
+    name: "Tenmin.app",
+    website: "tenmin.app",
+    generate: (options: GenerateEmailOptions): Promise<InternalEmailInfo> => {
+        return tenminApp.generateEmail();
+    },
+    getEmails: (email: string, token?: string): Promise<Email[]> => {
+        if (!token)
+          throw new Error("internal error: token missing for tenmin-app");
+        return tenminApp.getEmails(email, token);
+    },
+  });
+
+  registerChannel({
+    channel: "mtempmail",
+    name: "MTempMail",
+    website: "mtempmail.com",
+    generate: (options: GenerateEmailOptions): Promise<InternalEmailInfo> => {
+        return mtempmail.generateEmail();
+    },
+    getEmails: (email: string, token?: string): Promise<Email[]> => {
+        if (!token)
+          throw new Error("internal error: token missing for mtempmail");
+        return mtempmail.getEmails(email, token);
+    },
+  });
+
+  registerChannel({
+    channel: "tempmail-ee",
+    name: "TempMail.ee",
+    website: "tempmail.ee",
+    generate: (options: GenerateEmailOptions): Promise<InternalEmailInfo> => {
+        return tempmailEe.generateEmail();
+    },
+    getEmails: (email: string, token?: string): Promise<Email[]> => {
+        if (!token)
+          throw new Error("internal error: token missing for tempmail-ee");
+        return tempmailEe.getEmails(email, token);
+    },
+  });
+
+  registerChannel({
+    channel: "temporarymail-com",
+    name: "Temporarymail.com",
+    website: "temporarymail.com",
+    generate: (options: GenerateEmailOptions): Promise<InternalEmailInfo> => {
+        return temporarymailCom.generateEmail();
+    },
+    getEmails: (email: string, token?: string): Promise<Email[]> => {
+        if (!token)
+          throw new Error("internal error: token missing for temporarymail-com");
+        return temporarymailCom.getEmails(email, token);
+    },
+  });
+
+  registerChannel({
+    channel: "30minemail",
+    name: "30minemail",
+    website: "30minemail.com",
+    generate: (options: GenerateEmailOptions): Promise<InternalEmailInfo> => {
+        return email30Min.generateEmail();
+    },
+    getEmails: (email: string, token?: string): Promise<Email[]> => {
+        if (!token)
+          throw new Error("internal error: token missing for 30minemail");
+        return email30Min.getEmails(email, token);
+    },
+  });
+
+  registerChannel({
+    channel: "linshi-xyz",
+    name: "Linshi.xyz",
+    website: "linshi.xyz",
+    generate: (options: GenerateEmailOptions): Promise<InternalEmailInfo> => {
+        return linshiXyz.generateEmail();
+    },
+    getEmails: (email: string, token?: string): Promise<Email[]> => {
+        if (!token)
+          throw new Error("internal error: token missing for linshi-xyz");
+        return linshiXyz.getEmails(email, token);
+    },
+  });
+
+  registerChannel({
+    channel: "crazymailing",
+    name: "CrazyMailing",
+    website: "crazymailing.com",
+    generate: (options: GenerateEmailOptions): Promise<InternalEmailInfo> => {
+        return crazymailing.generateEmail();
+    },
+    getEmails: (email: string, token?: string): Promise<Email[]> => {
+        if (!token)
+          throw new Error("internal error: token missing for crazymailing");
+        return crazymailing.getEmails(email, token);
+    },
+  });
+
+  registerChannel({
+    channel: "noxen-de5-net",
+    name: "UniMail Bot",
+    website: "tempmail.noxen.de5.net",
+    generate: (options: GenerateEmailOptions): Promise<InternalEmailInfo> => {
+        return noxenDe5Net.generateEmail();
+    },
+    getEmails: (email: string, token?: string): Promise<Email[]> => {
+        if (!token)
+          throw new Error("internal error: token missing for noxen-de5-net");
+        return noxenDe5Net.getEmails(email, token);
+    },
+  });
+
+  registerChannel({
+    channel: "nukemail",
+    name: "NukeMail",
+    website: "nukemail.app",
+    generate: (options: GenerateEmailOptions): Promise<InternalEmailInfo> => {
+        return nukemail.generateEmail();
+    },
+    getEmails: (email: string, token?: string): Promise<Email[]> => {
+        if (!token)
+          throw new Error("internal error: token missing for nukemail");
+        return nukemail.getEmails(email, token);
+    },
+  });
+
+  registerChannel({
+    channel: "shadowmail",
+    name: "ShadowMail",
+    website: "shadowmail.win",
+    generate: (options: GenerateEmailOptions): Promise<InternalEmailInfo> => {
+        return shadowmail.generateEmail();
+    },
+    getEmails: (email: string, token?: string): Promise<Email[]> => {
+        if (!token)
+          throw new Error("internal error: token missing for shadowmail");
+        return shadowmail.getEmails(email, token);
+    },
+  });
+
+  registerChannel({
+    channel: "flybymail",
+    name: "FlyByMail",
+    website: "flybymail.com",
+    generate: (options: GenerateEmailOptions): Promise<InternalEmailInfo> => {
+        return flybymail.generateEmail();
+    },
+    getEmails: (email: string, token?: string): Promise<Email[]> => {
+        if (!token)
+          throw new Error("internal error: token missing for flybymail");
+        return flybymail.getEmails(email, token);
+    },
+  });
+
+  registerChannel({
+    channel: "nowtempmail",
+    name: "NowTempMail",
+    website: "nowtempmail.com",
+    generate: (options: GenerateEmailOptions): Promise<InternalEmailInfo> => {
+        return nowtempmail.generateEmail();
+    },
+    getEmails: (email: string, token?: string): Promise<Email[]> => {
+        if (!token)
+          throw new Error("internal error: token missing for nowtempmail");
+        return nowtempmail.getEmails(email, token);
+    },
+  });
+
+  registerChannel({
+    channel: "clawdemail",
+    name: "ClawdEmail",
+    website: "clawdemail.com",
+    generate: (options: GenerateEmailOptions): Promise<InternalEmailInfo> => {
+        return clawdemail.generateEmail();
+    },
+    getEmails: (email: string, token?: string): Promise<Email[]> => {
+        if (!token)
+          throw new Error("internal error: token missing for clawdemail");
+        return clawdemail.getEmails(email, token);
+    },
+  });
+
+  registerChannel({
+    channel: "tempmail100",
+    name: "TempMail100",
+    website: "tempmail100.com",
+    generate: (options: GenerateEmailOptions): Promise<InternalEmailInfo> => {
+        return tempmail100.generateEmail();
+    },
+    getEmails: (email: string, token?: string): Promise<Email[]> => {
+        if (!token)
+          throw new Error("internal error: token missing for tempmail100");
+        return tempmail100.getEmails(email, token);
+    },
+  });
+
+  registerChannel({
+    channel: "tempmailto",
+    name: "Tempmailto",
+    website: "tempmailto.com",
+    generate: (options: GenerateEmailOptions): Promise<InternalEmailInfo> => {
+        return tempmailto.generateEmail();
+    },
+    getEmails: (email: string, token?: string): Promise<Email[]> => {
+        if (!token)
+          throw new Error("internal error: token missing for tempmailto");
+        return tempmailto.getEmails(email, token);
+    },
+  });
+
+  registerChannel({
+    channel: "temp-mail-gg",
+    name: "TempMailGG",
+    website: "temp-mail.gg",
+    generate: (options: GenerateEmailOptions): Promise<InternalEmailInfo> => {
+        return tempMailGg.generateEmail();
+    },
+    getEmails: (email: string, token?: string): Promise<Email[]> => {
+        if (!token)
+          throw new Error("internal error: token missing for temp-mail-gg");
+        return tempMailGg.getEmails(email, token);
+    },
+  });
+
+  registerChannel({
+    channel: "tmpkit",
+    name: "Tmpkit",
+    website: "tmpkit.com",
+    generate: (options: GenerateEmailOptions): Promise<InternalEmailInfo> => {
+        return tmpkit.generateEmail();
+    },
+    getEmails: (email: string, token?: string): Promise<Email[]> => {
+        if (!token)
+          throw new Error("internal error: token missing for tmpkit");
+        return tmpkit.getEmails(email, token);
+    },
+  });
+
+  registerChannel({
+    channel: "internxt",
+    name: "Internxt",
+    website: "internxt.com",
+    generate: (options: GenerateEmailOptions): Promise<InternalEmailInfo> => {
+        return internxt.generateEmail();
+    },
+    getEmails: (email: string, token?: string): Promise<Email[]> => {
+        if (!token)
+          throw new Error("internal error: token missing for internxt");
+        return internxt.getEmails(email, token);
+    },
+  });
+
+  registerChannel({
+    channel: "generator-email",
+    name: "GeneratorEmail",
+    website: "generator.email",
+    generate: (options: GenerateEmailOptions): Promise<InternalEmailInfo> => {
+        return generatorEmail.generateEmail();
+    },
+    getEmails: (email: string, token?: string): Promise<Email[]> => {
+        if (!token)
+          throw new Error("internal error: token missing for generator-email");
+        return generatorEmail.getEmails(email, token);
     },
   });
